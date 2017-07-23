@@ -1,0 +1,93 @@
+classdef Reducer < handle
+	% This is where all your reducers go.
+	% Actions are dispatched by emitting events from various classes. Those
+	% action-events are registered here in the Reducer. Each action-event
+	% gets its own reducer.
+	%
+	% Right now, it seems like every reducer has to know the overall
+	% structure of the state; it would be nice if a reducer only had to
+	% get/set a small portion of state.
+	
+	properties
+		state
+	end
+	
+	methods
+		function this = Reducer(state)
+			p = inputParser;
+			p.addRequired('state', @(state) (isa(state, 'vt.State')));
+			p.parse(state);
+			
+			this.state = p.Results.state;
+		end
+		
+% 		function [] = addDecrementListener(this, uibutton)
+% 			addlistener(uibutton, 'DECREMENT', @(source, eventdata) decrement(this, source, eventdata));
+% 		end
+% 		
+% 		function [] = addIncrementListener(this, uibutton)
+% 			addlistener(uibutton, 'INCREMENT', @(source, eventdata) increment(this, source, eventdata));
+% 		end
+% 		
+% 		function [] = addCloseGuiListener(this, vtwindow)
+% 			addlistener(vtwindow, 'CLOSE_GUI', @(source, eventdata) closeGui(this, source, eventdata));
+% 		end
+		
+		function [] = registerEventListener(this, obj, eventname)
+			p = inputParser;
+			p.addRequired('this', @(this) isa(this, 'vt.Reducer'));
+			p.addRequired('obj', @(obj) isa(obj, 'vt.Component'));
+			p.addRequired('eventname', @ischar);
+			p.parse(this, obj, eventname);
+			
+			method = str2func(this.camelCase(p.Results.eventname));
+			
+			addlistener( ...
+				p.Results.obj, ...
+				p.Results.eventname, ...
+				@(source, eventdata) method(this, source, eventdata)...
+			);
+		end
+		
+		function [] = registerActionListener(this, obj, eventname)
+			this.registerEventListener(obj, eventname);
+		end
+		
+		function methodName = camelCase(~, underscore_action)
+			methodName = regexprep(lower(underscore_action), '_+(\w?)', '${upper($1)}');
+		end
+	end
+	
+	% Method names are found using the camelCase function.
+	% Examples :
+	%   Event 'INCREMENT' --> Method 'increment'
+	%   Event 'CLOSE_GUI' --> Method 'closeGui'
+	%   Event 'LOAD_VOCAL_TRACT' --> Method 'loadVocalTract'
+	methods (Access = private)
+		function [] = decrement(this, ~, ~)
+			this.state.currentFrame = this.state.currentFrame - 1;
+		end
+		
+		function [] = increment(this, ~, ~)
+			this.state.currentFrame = this.state.currentFrame + 1;
+		end
+		
+		function [] = closeGui(~, ~, ~)
+			closereq();
+		end
+		
+		function [] = loadAvi(this, source, eventdata)
+			disp('Loading AVI...');
+		end
+		
+		function [] = loadVocalTract(this, source, eventdata)
+			disp('Loading VocalTract...');
+		end
+		
+		function [] = help(this, source, eventdata)
+			disp('Showing Help...');
+		end
+	end
+	
+end
+
