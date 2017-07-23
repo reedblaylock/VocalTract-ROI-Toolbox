@@ -1,6 +1,14 @@
 # VocalTract ROI Toolbox
 
-APPLICATION ARCHITECTURE
+## Who should use this toolbox
+
+No one. At least, not right now--it's still a work in progress.
+
+## How to use this toolbox
+
+Do not. See above.
+
+## Application architecture
 
 VT_Gui.m generates the user interface by constructing various VT_Component 
 objects, most of which are wrappers for the GUI Layout Toolbox classes (uix.*) 
