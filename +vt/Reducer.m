@@ -37,23 +37,6 @@ classdef Reducer < handle
 			);
 		end
 		
-% 		function [] = registerEventListener(this, obj, eventname)
-% 			p = inputParser;
-% 			p.addRequired('this', @(this) isa(this, 'vt.Reducer'));
-% 			p.addRequired('obj', @(obj) isa(obj, 'vt.Component'));
-% 			p.addRequired('eventname', @ischar);
-% 			p.parse(this, obj, eventname);
-% 			
-% 			method = str2func(this.camelCase(p.Results.eventname));
-% 			
-% 			addlistener( ...
-% 				p.Results.obj, ...
-% 				p.Results.eventname, ...
-% 				@(source, eventdata) method(this, source, eventdata)...
-% 			);
-% 		end
-
-		
 		function [] = registerActionListener(this, obj)
 			this.registerEventListener(obj);
 		end
@@ -69,10 +52,6 @@ classdef Reducer < handle
 	%   Event 'CLOSE_GUI' --> Method 'closeGui'
 	%   Event 'LOAD_VOCAL_TRACT' --> Method 'loadVocalTract'
 	methods (Access = private)
-% 		function [] = decrement(this, ~, ~)
-% 			this.state.currentFrame = this.state.currentFrame - 1;
-% 		end
-		
 		function [] = increment(this, ~, eventData)
 			this.state.currentFrame = this.state.currentFrame + eventData.data;
 		end
@@ -88,10 +67,13 @@ classdef Reducer < handle
 		
 		function [] = setVideoData(this, source, eventData)
 			disp('Loading video data...');
+			
 			fields = fieldnames(eventData.data);
 			for f = 1:numel(fields)
 				this.state.(fields{f}) = eventData.data{f};
 			end
+			
+			this.finishedLoading(source, eventdata);
 		end
 		
 		function [] = finishedLoading(this, source, eventdata)

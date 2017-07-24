@@ -13,6 +13,12 @@ classdef Gui < handle
 			this.styles = this.createStyles();
 			this.gui = this.createInterface();
 			
+			% In the real app, you might not want to initialize the state: it
+			% throws errors in, for instance, the VideoLoader, which expects a
+			% string value but gets false(). Obviously you could make it so that
+			% the initial value is a string, but the bigger point is that giving
+			% your application a state of *nothing* might be more trouble than
+			% it's worth.
 			this.state.initialize();
 		end
 		
@@ -87,7 +93,6 @@ classdef Gui < handle
 			this.reducer.registerActionListener( gui.Decrement10Button );
 			this.reducer.registerActionListener( gui.IncrementButton );
 			this.reducer.registerActionListener( gui.Increment10Button );
-
 
 			% Can this be done when you're creating the object?
 			gui.FrameDecrementControls.setParameters( 'ButtonSize', [70 35], 'Spacing', this.styles.Spacing + 2 );

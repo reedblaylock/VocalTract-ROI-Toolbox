@@ -9,7 +9,6 @@ classdef Axes < vt.UpdatingComponent
 			
 		end
 		
-		% this, source, new data from state
 		function [] = update(this, ~, currentFrame)
 			plot(this.handle, 1:10, (1:10).^currentFrame);
 		end

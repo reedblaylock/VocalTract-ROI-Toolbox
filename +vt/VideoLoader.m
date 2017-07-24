@@ -91,9 +91,3 @@ classdef VideoLoader < vt.StateListener & vt.ActionDispatcherWithData
 		end
 	end
 end
-
-% MenuItem (load) --> callback event --> Reducer --> State.isLoading --> PropSet event --> Loader --> emit action --> Reducer.setVideoData --> PropSet event --> vt.Axes.redraw()
-% 
-% reducer.addActionListener( LoadAviMenuItem, 'LOAD', 'avi' )
-% loader.addStateListener( state, 'isLoading' )
-% reducer.addActionListener( Loader, 'SET_VIDEO_DATA', videoData )
