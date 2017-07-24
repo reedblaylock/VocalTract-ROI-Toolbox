@@ -1,7 +1,4 @@
 classdef VBoxFlex < vt.LayoutComponent
-	properties
-	end
-	
 	methods
 		function this = VBoxFlex(parent, varargin)
 			this@vt.LayoutComponent(parent, varargin{:});

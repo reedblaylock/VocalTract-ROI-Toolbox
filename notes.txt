@@ -1,38 +1,26 @@
-% TODO
-%
-% - Make State a non-singleton (you currently set it and forget it, only calling
-% state.initialize() once; if you can find a way to keep it out of VT_Gui
-% entirely, that would keep it out of your components too. You have a Reducer
-% that's in charge of reducing Actions; maybe you need another "reducer" in
-% charge of registering/emitting state changes? The callbacks might get messy,
-% though. I suppose one option is to have a state-event-reducer that just
-% changes the props on your component, and let the component listen for changes
-% to its own props. Seems like it's just adding a middle-man, though.) The point
-% of not having a singleton is that you don't have to worry about clearing it,
-% and you can have two GUIs running at once.
-% UPDATE: Yeah, don't even think about using that persistent singleton anymore.
-% That was a disaster--removing the singleton fixed bugs that seemed to come
-% from *nowhere*, including multiple useless function calls (e.g. plot in
-% VT_Axes).
-%
-% - Get the window to close properly!
-% UPDATE: The simplest things are the best things. VT_Window now uses its
-% default closing function, and the Exit VT_MenuItem calls (in the end)
-% @closereq -- which is the same function that figures naturally call :)
-%
-% - Use MATLAB class naming conventions (camelCase?)
-% UPDATE: Revisit this later: http://www.datatool.com/downloads/MatlabStyle2%20book.pdf
-%
-% - Move everything into a different folder and set up the package
-% architecture/namespacing. The sooner you start, the less you have to do it
-% later (probably).
-% UPDATE: Done! Now you just have to remember to do it for future classes...
-%
-% - Make a github repo
-%
-% - Extract the input-parsing from the subclass constructors. There's a lot of
-% repetition from class to class, and it would be easy to forget how to do
-% optional actions from one class to another...
-%
-% - Extend event.EventData so you can pass additional information with your
-% actions
+TODO
+
+- Use MATLAB class naming conventions (camelCase?)
+UPDATE: Revisit this later: http://www.datatool.com/downloads/MatlabStyle2%20book.pdf
+
+- Extract the input-parsing from the subclass constructors. There's a lot of
+repetition from class to class, and it would be easy to forget how to do
+optional actions from one class to another...
+UPDATE: It's annoying, but it makes the most sense to repeat the inputParser 
+stuff in every file. If you were really fastidious about input parsing (which 
+you're trying to be), then every function could mean additional layers of input
+parsing; and, with each successive layer, it's harder to remember what you were 
+trying to do in the first place.
+But, maybe you just haven't thought of the right approach yet.
+
+- Extend event.EventData so you can pass additional information with your
+actions
+UPDATE: This can be done (e.g. IncrementEventData and IncrementButton). You'll
+probably want to spend some time thinking of the right way to do this, because 
+at first glance it means a lot of subclassing. Keep moving forward with other 
+application changes, and see how you feel.
+
+- Make a real application! Start by loading videos/VocalTract objects/VocalTract
+object file strings and displaying the frame on the screen. Add a slider so you 
+can go back and forth faster (and try to get the screen to update as the slider 
+moves). http://undocumentedmatlab.com/blog/continuous-slider-callback

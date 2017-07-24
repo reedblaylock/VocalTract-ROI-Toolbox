@@ -1,8 +1,4 @@
-classdef Axes < vt.Component
-	
-	properties
-	end
-	
+classdef Axes < vt.UpdatingComponent
 	methods
 		function this = Axes(parent)
 			p = vt.InputParser;
@@ -13,10 +9,8 @@ classdef Axes < vt.Component
 			
 		end
 		
-		% this, source, eventdata
-% 		function [] = redraw(this, ~, eventdata)
-% 			c = eventdata.AffectedObject.currentFrame;
-		function [] = redraw(this, ~, currentFrame)
+		% this, source, new data from state
+		function [] = update(this, ~, currentFrame)
 			plot(this.handle, 1:10, (1:10).^currentFrame);
 		end
 	end

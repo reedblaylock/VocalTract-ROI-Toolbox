@@ -21,24 +21,41 @@ classdef Reducer < handle
 			this.state = p.Results.state;
 		end
 		
-		function [] = registerEventListener(this, obj, eventname)
+		function [] = registerEventListener(this, obj)
 			p = inputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Reducer'));
-			p.addRequired('obj', @(obj) isa(obj, 'vt.Component'));
-			p.addRequired('eventname', @ischar);
-			p.parse(this, obj, eventname);
+			p.addRequired('obj', @(obj) isa(obj, 'vt.ActionDispatcher'));
+			p.parse(this, obj);
 			
-			method = str2func(this.camelCase(p.Results.eventname));
+			action = p.Results.obj.getAction();
+			method = str2func(this.camelCase(action));
 			
 			addlistener( ...
 				p.Results.obj, ...
-				p.Results.eventname, ...
+				action, ...
 				@(source, eventdata) method(this, source, eventdata)...
 			);
 		end
 		
-		function [] = registerActionListener(this, obj, eventname)
-			this.registerEventListener(obj, eventname);
+% 		function [] = registerEventListener(this, obj, eventname)
+% 			p = inputParser;
+% 			p.addRequired('this', @(this) isa(this, 'vt.Reducer'));
+% 			p.addRequired('obj', @(obj) isa(obj, 'vt.Component'));
+% 			p.addRequired('eventname', @ischar);
+% 			p.parse(this, obj, eventname);
+% 			
+% 			method = str2func(this.camelCase(p.Results.eventname));
+% 			
+% 			addlistener( ...
+% 				p.Results.obj, ...
+% 				p.Results.eventname, ...
+% 				@(source, eventdata) method(this, source, eventdata)...
+% 			);
+% 		end
+
+		
+		function [] = registerActionListener(this, obj)
+			this.registerEventListener(obj);
 		end
 		
 		function methodName = camelCase(~, underscore_action)
@@ -57,7 +74,7 @@ classdef Reducer < handle
 % 		end
 		
 		function [] = increment(this, ~, eventData)
-			this.state.currentFrame = this.state.currentFrame + eventData.incrementValue;
+			this.state.currentFrame = this.state.currentFrame + eventData.data;
 		end
 		
 		function [] = closeGui(~, ~, ~)

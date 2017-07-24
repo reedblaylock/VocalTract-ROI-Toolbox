@@ -1,18 +1,10 @@
-classdef VideoLoader < handle
-	
-	properties
-% 		filename
-% 		vidMatrix
-% 		framerate
-% 		numFrames
-% 		width
-% 		height
-% 		silence_start
-% 		silence_end
+classdef VideoLoader < vt.StateListener & vt.ActionDispatcherWithData
+	events
+		SET_VIDEO_DATA
 	end
 	
 	methods
-		function [] = redraw(this, ~, loadType)
+		function [] = update(this, ~, loadType)
 			[filename, pathname] = uigetfile(['*.' loadType], ['Select ' loadType ' file to load']);
 			file = fullfile(pathname, filename);
 			
@@ -39,6 +31,7 @@ classdef VideoLoader < handle
 					% Do nothing
 			end
 			
+			% https://stackoverflow.com/questions/31988224/how-to-set-listener-to-a-matlab-objects-structures-field
 			video = struct();
 			video.width = vr.Width;
 			video.height = vr.Height;
@@ -47,110 +40,10 @@ classdef VideoLoader < handle
 			video.matrix = vm;
 			video.currentFrame = 1;
 			
-			this.dispatchAction('SET_VIDEO_DATA', video);
+			this.setData(video);
+			
+			this.dispatchAction();
 		end
-		
-		function [] = dispatchAction(this, action, data)
-			eventdata = vt.EventData(data);
-			notify(this, action, eventdata);
-		end
-		
-% 		function [obj] = Video(varargin)
-% 			% Number of inputs must be >=1 and <=4
-% 			narginchk(1,4);
-% 			silence_start = [];
-% 			silence_end = [];
-% 			
-% 			if isnumeric(varargin{1})
-% 				% first argument is a matrix
-% 				[h, w, f] = size(varargin{1});
-% 				obj.height = h;
-% 				obj.width = w;
-% 				obj.numFrames = f;
-% 				pre_vm = varargin{1};
-% 				vec_length = h*w;
-% 
-% 				% Reshape matrix
-% 				M = zeros(obj.numFrames,vec_length);
-% 				for itor = 1:obj.numFrames
-% 					M(itor,:) = reshape(double(pre_vm(:,:,itor)),1,vec_length);
-% 				end
-% 				
-% 				% Normalize matrix
-% 				vm = M./repmat(mean(M,2),1,size(M,2));
-% 				
-% 				% there must be a second argument, and it must be a float
-% 				if nargin < 2 || ~isnumeric(varargin{2}) || varargin{2} == 0 || varargin{2} == 1
-% 					error('Second argument must be a frame rate');
-% 				else
-% 					obj.framerate = varargin{2};
-% 				end
-% 				
-% 				% there must be a third argument, and it must be a string
-% 				if nargin < 3 || isnumeric(varargin{3}) || ~isempty(strfind(varargin{3}, '.'))
-% 					error('Third argument must be a name for this data (without extension).');
-% 				else
-% 					obj.filename = varargin{3};
-% 				end
-% 				
-% 				% optional boolean fourth argument controls normalization
-% 				if nargin > 3
-% 					if varargin{4} == 1
-% 						obj.vidMatrix = Normalizer.normalize(vm);
-% 						disp('normalizing now');
-% 					else
-% 						obj.vidMatrix = vm;
-% 					end
-% 				else
-% 					obj.vidMatrix = vm;
-% 				end
-% 				
-% 			else
-% 				% first argument is a string
-% 				
-% 				if nargin > 2
-% 					error('Too many input arguments');
-% 				end
-% 				
-% 				parts = strsplit(varargin{1}, '.');
-% 				name = parts(1);
-% 				if size(parts, 2) < 2
-% 					ext = 'avi';
-% 				else
-% 					ext = parts(2);
-% 				end
-% 
-% 				f = cellstr(strjoin(cellstr([name, ext]), '.')); % just [x y] strcat?
-% 				obj.filename = f{1};
-% 
-% 				vr = VideoReader(obj.filename);
-% 				obj.numFrames = vr.NumberOfFrames;
-% 				obj.framerate = vr.FrameRate;
-% 				vm = obj.vr2Matrix(vr);
-% 
-% 				if nargin > 1 && varargin{2}
-% 					obj.vidMatrix = Normalizer.normalize(vm);
-% 					disp('normalizing now');
-% 				else
-% 					obj.vidMatrix = vm;
-% 				end
-% 
-% 				obj.width = vr.Width;
-% 				obj.height = vr.Height;
-% 			end
-% 		end
-		
-% 		function [meanimage] = mean_image(obj)
-% 			meanimage = reshape(mean(obj.vidMatrix,1),obj.width,obj.height);
-% 		end
-% 		
-% 		function [stdimage] = std_image(obj)
-% 			stdimage = reshape(std(obj.vidMatrix,1),obj.width,obj.height);
-% 		end
-% 		
-% 		function [image] = frame(obj, n)
-% 			image = reshape(obj.vidMatrix(n,:),obj.width,obj.height);
-% 		end
 		
 		function [M] = vr2Matrix(obj, vr)
 % 			

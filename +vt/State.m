@@ -18,7 +18,14 @@ classdef (Sealed) State < handle
 	
 	methods
 		function [] = initialize(this)
-			this.video = [];
+			this.isLoading = false;
+			
+			%
+			this.width = 0;
+			this.height = 0;
+			this.nFrames = 0;
+			this.frameRate = 0;
+			this.matrix = [];
 			this.currentFrame = 0;
 		end
 	end

@@ -1,7 +1,4 @@
 classdef VButtonBox < vt.LayoutComponent
-	properties
-	end
-	
 	methods
 		function this = VButtonBox(parent, varargin)
 			this@vt.LayoutComponent(parent, varargin{:});

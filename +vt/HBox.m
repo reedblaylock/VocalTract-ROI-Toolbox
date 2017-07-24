@@ -1,8 +1,8 @@
 classdef HBox < vt.LayoutComponent
-	properties
-	end
-	
 	methods
+		% It seems like I should be able to get away without a constructor here,
+		% but MATLAB doesn't seem to like it. Maybe it has something to do with
+		% varargin?
 		function this = HBox(parent, varargin)
 			this@vt.LayoutComponent(parent, varargin{:});
 		end

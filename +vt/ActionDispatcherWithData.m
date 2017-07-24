@@ -7,7 +7,8 @@ classdef (Abstract) ActionDispatcherWithData < vt.ActionDispatcher
 	methods
 		function [] = dispatchAction(this, ~, ~)
 			action = this.getAction();
-			notify(this, action, this.data);
+			actionData = vt.EventData(this.data);
+			notify(this, action, actionData);
 		end
 		
 		function [] = setData(this, data)

@@ -4,23 +4,15 @@ classdef Container < vt.Component
 	% concrete components like axes that are difficult to work with (e.g.
 	% resize).
 	
-	properties
-	end
-	
 	methods
-		function this = Container(parent, varargin)
+		function this = Container(parent)
 			p = vt.InputParser;
 			p.addParent();
-			p.addOptionalAction();
-			p.parse(parent, varargin{:});
+			p.parse(parent);
 			
 			this.handle = uicontainer(...
 				'Parent', p.Results.parent.handle ...
 			);
-			
-			if(~isempty(p.Results.action))
-				this.setCallback( p.Results.action );
-			end
 		end
 	end
 	

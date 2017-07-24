@@ -11,14 +11,16 @@ classdef (Abstract, AllowedSubclasses = {?vt.ActionDispatcherWithData, ?vt.Actio
 				% Error: this class does not have an action specified
 			end
 		end
+		
+		[] = dispatchAction(this, ~, ~);
 	end
 	
 	methods (Access = ?vt.Component)
-		function [] = setCallback(this, callbackName)
+		function [] = setCallback(this, varargin)
 			p = inputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.ActionDispatcher'));
 			p.addOptional('callbackName', 'Callback', @ischar);
-			p.parse(this, callbackName);
+			p.parse(this, varargin{:});
 			
 			set( ...
 				this.handle, ...
@@ -26,8 +28,6 @@ classdef (Abstract, AllowedSubclasses = {?vt.ActionDispatcherWithData, ?vt.Actio
 				@(source, eventdata) dispatchAction(this, source, eventdata) ...
 			);
 		end
-		
-		[] = dispatchAction(this, ~, ~);
 	end
 	
 end

@@ -1,17 +1,14 @@
-classdef Window < vt.Component;
-	properties
-	end
-	
-	events
-		CLOSE_GUI
-	end
+classdef Window < vt.Component
+	% This class has a default callback. Closing figures is often more trouble
+	% than it's worth, so avoid doing a custom job. If you want to see an
+	% example of a custom window callback, see the Exit button and
+	% vt.Reducer.closeGui().
 	
 	methods
-		function this = Window(name, varargin)
+		function this = Window(name)
 			p = vt.InputParser();
 			p.addRequired('name', @ischar);
-			p.addOptionalAction();
-			p.parse(name, varargin{:});
+			p.parse(name);
 			
 			this.handle = figure( ...
 				'Name', p.Results.name, ...
@@ -19,18 +16,6 @@ classdef Window < vt.Component;
 				'MenuBar', 'none', ...
 				'Toolbar', 'none' ...
 			);
-% 				'HandleVisibility', 'off' ...
-		
-			this.setCallbackName()
-			
-			% Defaults to the standard @closereq function for all figures.
-			if(~isempty(p.Results.action))
-				this.setCallback(p.Results.action);
-			end
-		end
-		
-		function [] = setCallbackName(this)
-			this.callbackName = 'CloseRequestFcn';
 		end
 	end
 	

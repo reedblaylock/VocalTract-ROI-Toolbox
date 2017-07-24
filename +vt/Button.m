@@ -1,27 +1,19 @@
 classdef Button < vt.Component
-	properties
-	end
-	
-	events
-% 		DECREMENT
-% 		INCREMENT
-	end
+	% This button won't do anything. If you want to make a button that does
+	% something, you'll have to make a subclass that inherits from vt.Button and
+	% vt.ActionDispatcher{With|Without}Data.
 	
 	methods
-		% TODO: add optional event information to be emitted with action
-		function this = Button(parent, label, action)
+		function this = Button(parent, label)
 			p = vt.InputParser;
 			p.addParent();
 			p.addRequired('label', @ischar);
-			p.addRequiredAction();
-			p.parse(parent, label, action);
+			p.parse(parent, label);
 			
 			this.handle = uicontrol(...
 				'Parent', p.Results.parent.handle, ...
 				'String', p.Results.label ...
 			);
-		
-			this.setCallback( p.Results.action );
 		end
 	end
 	
