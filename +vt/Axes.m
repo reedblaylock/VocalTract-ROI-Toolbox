@@ -14,9 +14,10 @@ classdef Axes < vt.Component
 		end
 		
 		% this, source, eventdata
-		function [] = redraw(this, ~, eventdata)
-			c = eventdata.AffectedObject.currentFrame;
-			plot(this.handle, 1:10, (1:10).^c);
+% 		function [] = redraw(this, ~, eventdata)
+% 			c = eventdata.AffectedObject.currentFrame;
+		function [] = redraw(this, ~, currentFrame)
+			plot(this.handle, 1:10, (1:10).^currentFrame);
 		end
 	end
 	

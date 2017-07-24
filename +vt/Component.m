@@ -7,7 +7,7 @@ classdef (Abstract) Component < handle
 	
 	methods
 		function [] = registerStateListener(this, state, propertyName)
-			addlistener(state, propertyName, 'PostSet', @(source, eventdata) redraw(this, source, eventdata));
+			addlistener(state, propertyName, 'PostSet', @(source, eventdata) redraw(this, source, eventdata.AffectedObject.(propertyName)));
 		end
 		
 		[] = setCallbackName(this);

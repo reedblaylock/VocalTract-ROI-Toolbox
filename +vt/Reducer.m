@@ -21,18 +21,6 @@ classdef Reducer < handle
 			this.state = p.Results.state;
 		end
 		
-% 		function [] = addDecrementListener(this, uibutton)
-% 			addlistener(uibutton, 'DECREMENT', @(source, eventdata) decrement(this, source, eventdata));
-% 		end
-% 		
-% 		function [] = addIncrementListener(this, uibutton)
-% 			addlistener(uibutton, 'INCREMENT', @(source, eventdata) increment(this, source, eventdata));
-% 		end
-% 		
-% 		function [] = addCloseGuiListener(this, vtwindow)
-% 			addlistener(vtwindow, 'CLOSE_GUI', @(source, eventdata) closeGui(this, source, eventdata));
-% 		end
-		
 		function [] = registerEventListener(this, obj, eventname)
 			p = inputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Reducer'));
@@ -64,12 +52,12 @@ classdef Reducer < handle
 	%   Event 'CLOSE_GUI' --> Method 'closeGui'
 	%   Event 'LOAD_VOCAL_TRACT' --> Method 'loadVocalTract'
 	methods (Access = private)
-		function [] = decrement(this, ~, ~)
-			this.state.currentFrame = this.state.currentFrame - 1;
-		end
+% 		function [] = decrement(this, ~, ~)
+% 			this.state.currentFrame = this.state.currentFrame - 1;
+% 		end
 		
-		function [] = increment(this, ~, ~)
-			this.state.currentFrame = this.state.currentFrame + 1;
+		function [] = increment(this, ~, eventData)
+			this.state.currentFrame = this.state.currentFrame + eventData.incrementValue;
 		end
 		
 		function [] = closeGui(~, ~, ~)
@@ -78,6 +66,20 @@ classdef Reducer < handle
 		
 		function [] = loadAvi(this, source, eventdata)
 			disp('Loading AVI...');
+			this.state.isLoading = 'avi';
+		end
+		
+		function [] = setVideoData(this, source, eventData)
+			disp('Loading video data...');
+			fields = fieldnames(eventData.data);
+			for f = 1:numel(fields)
+				this.state.(fields{f}) = eventData.data{f};
+			end
+		end
+		
+		function [] = finishedLoading(this, source, eventdata)
+			disp('Done loading!');
+			this.state.isLoading = false;
 		end
 		
 		function [] = loadVocalTract(this, source, eventdata)

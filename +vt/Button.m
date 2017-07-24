@@ -3,11 +3,12 @@ classdef Button < vt.Component
 	end
 	
 	events
-		DECREMENT
-		INCREMENT
+% 		DECREMENT
+% 		INCREMENT
 	end
 	
 	methods
+		% TODO: add optional event information to be emitted with action
 		function this = Button(parent, label, action)
 			p = vt.InputParser;
 			p.addParent();
