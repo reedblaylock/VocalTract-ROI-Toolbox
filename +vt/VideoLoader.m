@@ -1,20 +1,16 @@
-classdef VideoLoader < vt.StateListener & vt.ActionDispatcherWithData
-	events
-		SET_VIDEO_DATA
-	end
-	
+classdef VideoLoader < handle
 	methods
-		function [] = update(this, ~, loadType)
+		function video = loadVideo(this, loadType)
 			[filename, pathname] = uigetfile(['*.' loadType], ['Select ' loadType ' file to load']);
-			file = fullfile(pathname, filename);
+			fullpath = fullfile(pathname, filename);
 			
 			% Check that the file exists
-			if(exist(file, 'file') ~= 2)
+			if(exist(fullpath, 'file') ~= 2)
 				% Error: file does not exist
 			end
 			
 			% Check that the file really has extension loadType
-			[~, ~, ext] = fileparts(file);
+			[~, ~, ext] = fileparts(fullpath);
 			if(~strcmp(ext, ['.' loadType]))
 				% Error: file is incorrect type
 				% But maybe a user thought they wanted an AVI but actually
@@ -25,52 +21,40 @@ classdef VideoLoader < vt.StateListener & vt.ActionDispatcherWithData
 			
 			switch(loadType)
 				case 'avi'
-					vr = VideoReader(file);
-					vm = vr2matrix(vr);
+					vr = VideoReader(fullpath);
+					matrix = this.vr2matrix(vr);
 				otherwise
-					% Do nothing
+					% Error: unknown request type
+					disp('Error: Unknown load request. Loading has failed. Please try again.');
+					return;
 			end
 			
-			% https://stackoverflow.com/questions/31988224/how-to-set-listener-to-a-matlab-objects-structures-field
-			video = struct();
-			video.width = vr.Width;
-			video.height = vr.Height;
-			video.nFrames = vr.NumberOfFrames; %#ok<GENDEP> % still good as of R2017a
-			video.frameRate = vr.FrameRate;
-			video.matrix = vm;
-			video.currentFrame = 1;
-			
-			this.setData(video);
-			
-			this.dispatchAction();
+			video = vt.Video( ...
+				filename, ...
+				fullpath, ...
+				vr.Width, ...
+				vr.Height, ...
+				vr.NumberOfFrames, ...
+				vr.FrameRate, ...
+				matrix ...
+			); %#ok<GENDEP> vr.NumberOfFrames is still ok to use as of R2017a
 		end
-		
-		function [M] = vr2Matrix(obj, vr)
-% 			
-% 			Adam Lammert (2010)
-% 			Modified by Reed Blaylock (2014) to make compatible with VideoReader and
-% 			to consolidate code
-% 			
-% 			Convert Avi file to Matrix of Frames
-% 			
-% 			INPUT 
-% 			  vr: VideoReader object
-% 			OUTPUT
-% 			  M: the normalized movie matrix 
-% 			      (rows are frames, columns are linearly indexed pixels)
 
+% 		Adam Lammert (2010)
+% 		Modified by Reed Blaylock (2014)
+		function [M] = vr2matrix(~, vr)
 			% Get data from VideoReader
 			vidFrames = read(vr);
 			
-			% sometimes, the last frame doesn't want to be read
-			num_read_frames = size(vidFrames, 4);
-			if num_read_frames ~= obj.numFrames
-				disp(['Only able to read ' num2str(num_read_frames) ' frames of ' num2str(obj.numFrames) ' frames. Processing with ' num2str(num_read_frames) ' frames.']);
-				obj.numFrames = num_read_frames;
-			end
+% 			% sometimes, the last frame doesn't want to be read
+% 			num_read_frames = size(vidFrames, 4);
+% 			if num_read_frames ~= this.numFrames
+% 				disp(['Only able to read ' num2str(num_read_frames) ' frames of ' num2str(this.numFrames) ' frames. Processing with ' num2str(num_read_frames) ' frames.']);
+% 				this.numFrames = num_read_frames;
+% 			end
 
 			% Convert VideoReader output to something usable
-			for k = 1 : num_read_frames;
+			for k = 1 : vr.NumberOfFrames;
 				mov(k).cdata = vidFrames(:,:,:,k); %#ok<AGROW>
 				mov(k).colormap = []; %#ok<AGROW>
 			end
@@ -81,8 +65,8 @@ classdef VideoLoader < vt.StateListener & vt.ActionDispatcherWithData
 			vec_length = frame_height*frame_width;
 
 			% Reshape matrix
-			M = zeros(obj.numFrames,vec_length);
-			for itor = 1:obj.numFrames
+			M = zeros(vr.NumberOfFrames,vec_length);
+			for itor = 1:vr.NumberOfFrames
 				M(itor,:) = reshape(double(mov(itor).cdata(:,:,1)),1,vec_length);
 			end
 

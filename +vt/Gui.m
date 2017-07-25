@@ -19,7 +19,7 @@ classdef Gui < handle
 			% the initial value is a string, but the bigger point is that giving
 			% your application a state of *nothing* might be more trouble than
 			% it's worth.
-			this.state.initialize();
+% 			this.state.initialize();
 		end
 		
 		function styles = createStyles(~)
@@ -42,11 +42,11 @@ classdef Gui < handle
 			gui.LoadMenu = vt.MenuItem( gui.FileMenu, 'Load...' );
 			gui.ExitMenu = vt.ExitMenuItem( gui.FileMenu, 'Exit' );
 			gui.LoadAvi = vt.LoadMenuItem( gui.LoadMenu, 'AVI', 'avi' );
-			gui.LoadVocalTract = vt.LoadMenuItem( gui.LoadMenu, 'VocalTract', 'VocalTract' );
+% 			gui.LoadVocalTract = vt.LoadMenuItem( gui.LoadMenu, 'VocalTract', 'VocalTract' );
 			
 			this.reducer.registerActionListener( gui.ExitMenu );
 			this.reducer.registerActionListener( gui.LoadAvi );
-			this.reducer.registerActionListener( gui.LoadVocalTract );
+% 			this.reducer.registerActionListener( gui.LoadVocalTract );
 
 			% + Help menu
 			gui.HelpMenu = vt.MenuItem( gui.Window, 'Help' );
@@ -82,8 +82,9 @@ classdef Gui < handle
 			% Can this be done when you're creating the object?
 			gui.LeftBox.setParameters( 'Heights', [-1, 35] );
 
-			gui.FrameImage = vt.Axes( gui.LeftBoxImageContainer );
-			gui.FrameImage.registerStateListener( this.state, 'currentFrame' );
+			gui.Frame = vt.Frame( gui.LeftBoxImageContainer );
+			frameContainer = vt.FrameContainer( gui.Frame );
+			frameContainer.registerStateListener( this.state, 'currentFrameNo' );
 			
 			gui.Decrement10Button = vt.IncrementButton( gui.FrameDecrementControls, '<<', -10 );
 			gui.DecrementButton = vt.IncrementButton( gui.FrameDecrementControls, '<', -1 );
@@ -97,11 +98,6 @@ classdef Gui < handle
 			% Can this be done when you're creating the object?
 			gui.FrameDecrementControls.setParameters( 'ButtonSize', [70 35], 'Spacing', this.styles.Spacing + 2 );
 			gui.FrameIncrementControls.setParameters( 'ButtonSize', [70 35], 'Spacing', this.styles.Spacing + 2 );
-			
-% 			this.reducer.addActionListener( LoadAviMenuItem, 'LOAD', 'avi' )
-			loader = vt.VideoLoader();
-			loader.registerStateListener( this.state, 'isLoading' );
-			this.reducer.registerActionListener( loader );
 		end
 	end
 end

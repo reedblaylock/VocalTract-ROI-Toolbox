@@ -1,4 +1,4 @@
-classdef Frame < vt.UpdatingComponent
+classdef Frame < vt.Component
 	methods
 		function this = Frame(parent)
 			p = vt.InputParser;
@@ -9,12 +9,10 @@ classdef Frame < vt.UpdatingComponent
 			axis image;
 		end
 		
-		% TODO:
-		% Do you want to keep the whole matrix in the props? I think you have
-		% to, since the update is coming from the state props change
-		function [] = update(this, ~, currentFrameNo)
-			currentFrame = reshape(obj.vidMatrix(currentFrameNo,:),obj.width,obj.height)
-			imagesc(currentFrame);
+		function [] = update(this, frame)
+			imagesc(frame, 'Parent', this.handle);
+			axis image;
+			colormap gray;
 		end
 	end
 	

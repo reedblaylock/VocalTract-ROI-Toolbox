@@ -25,4 +25,6 @@ object file strings and displaying the frame on the screen. Add a slider so you
 can go back and forth faster (and try to get the screen to update as the slider 
 moves). http://undocumentedmatlab.com/blog/continuous-slider-callback
 
-http://undocumentedmatlab.com/blog/waiting-for-asynchronous-events
+- http://undocumentedmatlab.com/blog/waiting-for-asynchronous-events
+
+- Make state settable only in the Reducer

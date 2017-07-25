@@ -1,4 +1,4 @@
-classdef Reducer < handle
+classdef Reducer < vt.Listener & vt.StateSetter
 	% This is where all your reducers go.
 	% Actions are dispatched by emitting events from various classes. Those
 	% action-events are registered here in the Reducer. Each action-event
@@ -28,7 +28,7 @@ classdef Reducer < handle
 			p.parse(this, obj);
 			
 			action = p.Results.obj.getAction();
-			method = str2func(this.camelCase(action));
+			method = this.action2method(action);
 			
 			addlistener( ...
 				p.Results.obj, ...
@@ -40,10 +40,6 @@ classdef Reducer < handle
 		function [] = registerActionListener(this, obj)
 			this.registerEventListener(obj);
 		end
-		
-		function methodName = camelCase(~, underscore_action)
-			methodName = regexprep(lower(underscore_action), '_+(\w?)', '${upper($1)}');
-		end
 	end
 	
 	% Method names are found using the camelCase function.
@@ -51,38 +47,29 @@ classdef Reducer < handle
 	%   Event 'INCREMENT' --> Method 'increment'
 	%   Event 'CLOSE_GUI' --> Method 'closeGui'
 	%   Event 'LOAD_VOCAL_TRACT' --> Method 'loadVocalTract'
-	methods (Access = private)
+	methods
 		function [] = increment(this, ~, eventData)
-			this.state.currentFrame = this.state.currentFrame + eventData.data;
+			newFrameNo = this.state.currentFrameNo + eventData.data;
+			if(newFrameNo > this.state.video.nFrames), newFrameNo = this.state.video.nFrames; end
+			if(newFrameNo < 1), newFrameNo = 1; end
+			this.state.currentFrameNo = newFrameNo;
 		end
 		
 		function [] = closeGui(~, ~, ~)
 			closereq();
 		end
 		
-		function [] = loadAvi(this, source, eventdata)
-			disp('Loading AVI...');
-			this.state.isLoading = 'avi';
-		end
-		
-		function [] = setVideoData(this, source, eventData)
+		function [] = load(this, source, eventData)
 			disp('Loading video data...');
 			
-			fields = fieldnames(eventData.data);
-			for f = 1:numel(fields)
-				this.state.(fields{f}) = eventData.data{f};
-			end
-			
-			this.finishedLoading(source, eventdata);
-		end
-		
-		function [] = finishedLoading(this, source, eventdata)
-			disp('Done loading!');
-			this.state.isLoading = false;
-		end
-		
-		function [] = loadVocalTract(this, source, eventdata)
-			disp('Loading VocalTract...');
+			% TODO: This currently breaks if a video fails to load (see
+			% vt.VideoLoader)
+			% TODO: How much of this implementation logic should the Reducer
+			% have? All? None?
+			videoLoader = vt.VideoLoader();
+			video = videoLoader.loadVideo(eventData.data);
+			this.state.video = video;
+			this.state.currentFrameNo = 1;
 		end
 		
 		function [] = help(this, source, eventdata)
