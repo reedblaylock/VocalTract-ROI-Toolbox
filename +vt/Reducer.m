@@ -49,6 +49,10 @@ classdef Reducer < vt.Listener & vt.StateSetter
 	%   Event 'LOAD_VOCAL_TRACT' --> Method 'loadVocalTract'
 	methods
 		function [] = increment(this, ~, eventData)
+			if(isempty(this.state.currentFrameNo))
+				return
+			end
+			
 			newFrameNo = this.state.currentFrameNo + eventData.data;
 			if(newFrameNo > this.state.video.nFrames), newFrameNo = this.state.video.nFrames; end
 			if(newFrameNo < 1), newFrameNo = 1; end
@@ -59,7 +63,7 @@ classdef Reducer < vt.Listener & vt.StateSetter
 			closereq();
 		end
 		
-		function [] = load(this, source, eventData)
+		function [] = load(this, ~, eventData)
 			disp('Loading video data...');
 			
 			% TODO: This currently breaks if a video fails to load (see
@@ -68,11 +72,15 @@ classdef Reducer < vt.Listener & vt.StateSetter
 			% have? All? None?
 			videoLoader = vt.VideoLoader();
 			video = videoLoader.loadVideo(eventData.data);
-			this.state.video = video;
-			this.state.currentFrameNo = 1;
+			if(isempty(this.state.video))
+				this.state.video = video;
+				this.state.currentFrameNo = 1;
+			else
+				this.state.video = video;
+			end
 		end
 		
-		function [] = help(this, source, eventdata)
+		function [] = help(~, ~, ~)
 			disp('Showing Help...');
 		end
 	end

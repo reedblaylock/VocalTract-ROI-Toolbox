@@ -21,6 +21,10 @@ classdef FrameContainer < vt.StateListener
 			this.showFrame(state.video, state.currentFrameNo);
 		end
 		
+		function [] = updateVideo(this, state)
+			this.showFrame(state.video, 1);
+		end
+		
 		% Action methods %
 		function [] = showFrame(this, video, frameNo)
 			img = this.getFrame(video, frameNo);

@@ -1,4 +1,4 @@
-function [] = runGui()
+function runGui()
 	close all force;
 	clear;
 	

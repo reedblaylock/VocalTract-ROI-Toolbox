@@ -3,6 +3,8 @@ classdef StateListener < vt.Listener
 	end
 	
 	methods
+		% For registering individual state listeners; this will probably be
+		% replaced by registerStateListenerObject
 		function [] = registerStateListener(this, state, propertyName)
 			p = inputParser;
 			p.addRequired('this',  @(this) isa(this, 'vt.StateListener'));
@@ -18,6 +20,20 @@ classdef StateListener < vt.Listener
 				@(source, eventdata) update(p.Results.this, source.Name, eventdata.AffectedObject) ...
 			);
 		end
+		
+% 		function [] = registerStateListenerObject(this, state)
+% 			p = inputParser;
+% 			p.addRequired('this',  @(this) isa(this, 'vt.StateListener'));
+% 			p.addRequired('state', @(state) isa(state, 'vt.State'));
+% 			p.parse(this, state);
+% 			
+% 			m = methods(p.Results.this);
+% 			
+% 			for iMethod = 1:numel(m)
+% 				method = m{iMethod};
+% 				
+% 			end
+% 		end
 		
 		function [] = update(this, propertyName, state)
 			p = inputParser;

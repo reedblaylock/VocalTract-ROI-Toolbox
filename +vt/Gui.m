@@ -1,4 +1,4 @@
-classdef Gui < handle
+classdef Gui < vt.ActionDispatcherWithData
 	properties
 		state
 		styles
@@ -13,13 +13,7 @@ classdef Gui < handle
 			this.styles = this.createStyles();
 			this.gui = this.createInterface();
 			
-			% In the real app, you might not want to initialize the state: it
-			% throws errors in, for instance, the VideoLoader, which expects a
-			% string value but gets false(). Obviously you could make it so that
-			% the initial value is a string, but the bigger point is that giving
-			% your application a state of *nothing* might be more trouble than
-			% it's worth.
-% 			this.state.initialize();
+			this.loadShortcuts();
 		end
 		
 		function styles = createStyles(~)
@@ -36,6 +30,7 @@ classdef Gui < handle
 			
 			% Open a window and add some menus
 			gui.Window = vt.Window( 'VocalTract ROI Toolbox' );
+			gui.Window.registerStateListener( this.state, 'video' );
 			
 			% + File menu
 			gui.FileMenu = vt.MenuItem( gui.Window,   'File' );
@@ -84,7 +79,7 @@ classdef Gui < handle
 
 			gui.Frame = vt.Frame( gui.LeftBoxImageContainer );
 			frameContainer = vt.FrameContainer( gui.Frame );
-			frameContainer.registerStateListener( this.state, 'currentFrameNo' );
+			frameContainer.registerStateListener( this.state, {'currentFrameNo', 'video'} );
 			
 			gui.Decrement10Button = vt.IncrementButton( gui.FrameDecrementControls, '<<', -10 );
 			gui.DecrementButton = vt.IncrementButton( gui.FrameDecrementControls, '<', -1 );
@@ -98,6 +93,10 @@ classdef Gui < handle
 			% Can this be done when you're creating the object?
 			gui.FrameDecrementControls.setParameters( 'ButtonSize', [70 35], 'Spacing', this.styles.Spacing + 2 );
 			gui.FrameIncrementControls.setParameters( 'ButtonSize', [70 35], 'Spacing', this.styles.Spacing + 2 );
+		end
+		
+		function [] = loadShortcuts()
+			
 		end
 	end
 end

@@ -13,13 +13,6 @@ parsing; and, with each successive layer, it's harder to remember what you were
 trying to do in the first place.
 But, maybe you just haven't thought of the right approach yet.
 
-- Extend event.EventData so you can pass additional information with your
-actions
-UPDATE: This can be done (e.g. IncrementEventData and IncrementButton). You'll
-probably want to spend some time thinking of the right way to do this, because 
-at first glance it means a lot of subclassing. Keep moving forward with other 
-application changes, and see how you feel.
-
 - Make a real application! Start by loading videos/VocalTract objects/VocalTract
 object file strings and displaying the frame on the screen. Add a slider so you 
 can go back and forth faster (and try to get the screen to update as the slider 
@@ -27,4 +20,101 @@ moves). http://undocumentedmatlab.com/blog/continuous-slider-callback
 
 - http://undocumentedmatlab.com/blog/waiting-for-asynchronous-events
 
-- Make state settable only in the Reducer
+== LOAD TEST ==
+1. Load a file from the menu --DONE
+2. Over-load the current file with another --DONE
+3. Load a file from runGui
+
+- Display video with VideoReader, but do analysis with the matrix? Depends what it can get you...
+https://www.mathworks.com/matlabcentral/fileexchange/15880-mmplay
+THIS: https://www.mathworks.com/matlabcentral/answers/95933-how-can-i-play-audio-in-matlab-8-1-r2013a-while-simultaneously-moving-a-marker-on-a-plot-of-the-au
+
+- Implement shortcut keystrokes soon; if you can implement those, you should be able to issue actions from anywhere
+https://www.mathworks.com/help/matlab/ref/figure-properties.html
+
+- Look into the Interruptible property for figures
+
+*********************************ERROR MANAGER**********************************
+You're going to have to use a bunch of try/catch blocks
+
+Your core classes all inherit from vt.Logger (or maybe vt.Root)
+==vt.Logger/Root==
+Properties:
+- log = vt.Log();
+==================
+This way, in every class, you can do something like...
+try
+	% broken code
+catch exception {MException} % all MATLAB errors are MExceptions under the hood
+	this.log.exception(exception)
+end
+
+When an exception occurs, you want it to appear in a few places:
+- The error log file (in which information older than 30 days [or however long, 
+  specified in the preferences] gets dumped to make room for new errors)
+- A user-friendly notification bar at the bottom of the GUI, which changes 
+  colors depending on the message type/content
+- The MATLAB console, in debug mode
+
+It would be nice to define some error behavior to minimize the likelihood of the
+program crashing or becoming unresponsive.
+- Execution stops (this might actually be easier with an event-based system, 
+  because the events will just stop firing. Puts you in a sticky position if the
+  most recent event opened a new window or something.
+- Interface reverts to a previous state (there's a big risk of accidentally 
+  reverting too far back, but it would be a nice way to keep the program running
+  smoothly after errors)
+**********************************ACTION PLAN***********************************
+Every action is a vt.Action object
+== vt.Action ==
+Properties:
+- data (optional)
+Events:
+- {the action name}
+Methods:
+- dispatch(this)
+===============
+== vt.ActionDispatcher ==
+Properties: (Abstract=true)
+- action {an Action instance}
+=========================
+Actions are heard either by an ActionListener or by a StateSetter (aka vt.Reducer)
+You probably don't want an action heard by *both*, though...
+Maybe there are two classes of Action: StateSetting and non-StateSetting?
+
+% When registering shortcuts...
+switch(keyStroke)
+	case 'Ctrl+L'
+		action = LoadAction();
+		action.dispatch();
+	case 'rightarrow'
+		action = IncrementAction(1);
+		action.dispatch();
+	case 'Shift+rightarrow'
+		action = IncrementAction(2);
+		action.dispatch();
+	otherwise
+		% key stroke is invalid
+end
+
+% Example ActionDispatcher...
+classdef LoadAviMenuItem < vt.MenuItem & vt.ActionDispatcher
+	properties
+		action = LoadAction('avi');
+	end
+	
+	methods
+		function this = LoadAviMenuItem(this, ...)
+			...
+			this@vt.MenuItem(...)
+			this@vt.ActionDispatcher()
+		end
+	end
+end
+
+Unresolved issues:
+- Not sure if the whole "with data"/"without data" thing is still a problem, or 
+  if making the actions classes avoids that, since it doesn't have to be 
+  specified in the component anymore
+- Registering the event listeners can't be avoided. How do you register all the 
+  actions without calling their registration from the class? Do you need to?
