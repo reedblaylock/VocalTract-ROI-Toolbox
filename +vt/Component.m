@@ -1,4 +1,4 @@
-classdef (Abstract) Component < handle
+classdef (Abstract) Component < vt.Root
 	
 	properties
 		handle

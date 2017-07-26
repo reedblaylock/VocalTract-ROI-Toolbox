@@ -1,4 +1,4 @@
-classdef Gui < vt.ActionDispatcherWithData
+classdef Gui < vt.Root
 	properties
 		state
 		styles
@@ -8,12 +8,12 @@ classdef Gui < vt.ActionDispatcherWithData
 	
 	methods
 		function [] = run(this)
+			this.log.on();
+			
 			this.state = vt.State();
 			this.reducer = vt.Reducer(this.state);
 			this.styles = this.createStyles();
 			this.gui = this.createInterface();
-			
-			this.loadShortcuts();
 		end
 		
 		function styles = createStyles(~)
@@ -50,10 +50,18 @@ classdef Gui < vt.ActionDispatcherWithData
 			this.reducer.registerActionListener( gui.DocumentationMenu );
 
 			% Arrange the main interface
-			gui.MainLayout = vt.HBoxFlex( ...
+			gui.MainLayoutWrapper = vt.VBoxFlex( ...
 				gui.Window, ...
 				'Spacing', this.styles.Spacing ...
 			);
+			gui.MainLayout = vt.HBoxFlex( ...
+				gui.MainLayoutWrapper, ...
+				'Spacing', this.styles.Spacing ...
+			);
+			gui.NotificationBar = vt.NotificationBar( ...
+				gui.MainLayoutWrapper ...
+			);
+			gui.MainLayoutWrapper.setParameters('Heights', [-15, -1]);
 			gui.LeftBox = vt.VBox( ...
 				gui.MainLayout, ...
 				'Padding', this.styles.Padding, ...
@@ -95,8 +103,8 @@ classdef Gui < vt.ActionDispatcherWithData
 			gui.FrameIncrementControls.setParameters( 'ButtonSize', [70 35], 'Spacing', this.styles.Spacing + 2 );
 		end
 		
-		function [] = loadShortcuts()
-			
+		function [] = delete(~)
+			disp('GUI is being deleted');
 		end
 	end
 end
