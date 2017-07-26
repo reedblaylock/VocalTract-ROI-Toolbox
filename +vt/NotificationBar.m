@@ -1,0 +1,26 @@
+classdef NotificationBar < vt.Text
+	properties
+	end
+	
+	methods
+		function this = NotificationBar(parent)
+			this@vt.Text(parent);
+			
+			this.setParameters( ...
+				'String', 'Welcome to the VocalTract ROI Toolbox!', ...
+				'BackgroundColor', 'red', ...
+				'FontSize', 16, ...
+				'HorizontalAlignment', 'left' ...
+			);
+		end
+		
+		function [] = updateBar(this, string, color)
+			this.setParameters( ...
+				'String', string, ...
+				'BackgroundColor', color ...
+			);
+		end
+	end
+	
+end
+
