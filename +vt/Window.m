@@ -27,6 +27,11 @@ classdef Window < vt.Component & vt.StateListener
 		function [] = updateVideo(this, state)
 			this.setParameters('Name', [this.baseName ' - ' state.video.fullpath]);
 		end
+		
+		function [] = delete(this)
+			disp('Window is being deleted');
+			this.log.off();
+		end
 	end
 	
 end
