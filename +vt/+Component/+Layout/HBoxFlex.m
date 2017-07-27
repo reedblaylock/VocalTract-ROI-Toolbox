@@ -8,7 +8,7 @@ classdef HBoxFlex < vt.Component.Layout
 	methods (Access = protected)
 		function [] = construct(this, parent)
 			p = vt.InputParser;
-			p.addRequired('this', @(this) isa(this, 'vt.HBoxFlex'));
+			p.addRequired('this', @(this) isa(this, 'vt.Component.Layout.HBoxFlex'));
 			p.addParent();
 			parse(p, this, parent);
 			

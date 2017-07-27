@@ -15,16 +15,6 @@ classdef Load < vt.Component.MenuItem & vt.Action.Dispatcher
 	end
 	
 	methods
-		% TODO: This is a good case for putting the parsing in a different
-		% function. You'd want to have one function that puts all the additions
-		% on p (so you can subclass it and put more additions on it) before
-		% returning it and parsing it
-		%
-		% Although, I don't know how you parse it without all the data?
-		%
-		% ...
-		%
-		% I guess you can just pass all the paramters to the parsing function?
 		function this = Load(parent, label, data)
 			p = vt.InputParser;
 			p.addParent();
@@ -34,7 +24,8 @@ classdef Load < vt.Component.MenuItem & vt.Action.Dispatcher
 			
 			this@vt.Component.MenuItem(p.Results.parent, p.Results.label);
 			
-			this@vt.Action.Dispatcher(p.Results.data);
+			this@vt.Action.Dispatcher();
+			this.action.data = p.Results.data;
 			
 			this.setCallback();
 		end

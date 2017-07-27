@@ -16,31 +16,5 @@ classdef (Sealed) State < handle
 		currentFrameNo
 		video
 	end
-	
-	methods
-		function [] = initialize(this)
-% 			this.isLoading = false;
-% 			
-% 			%
-% 			this.width = 0;
-% 			this.height = 0;
-% 			this.nFrames = 0;
-% 			this.frameRate = 0;
-% 			this.matrix = [];
-			
-% 			videoStruct = struct();
-% 			videoStruct.filename = '';
-% 			videoStruct.fullpath = '';
-% 			videoStruct.width = 0;
-% 			videoStruct.height = 0;
-% 			videoStruct.nFrames = 0;
-% 			videoStruct.frameRate = 0;
-% 			videoStruct.matrix = [];
-% 			this.video = videoStruct;
-			
-			this.currentFrameNo = 0;
-		end
-	end
-	
 end
 

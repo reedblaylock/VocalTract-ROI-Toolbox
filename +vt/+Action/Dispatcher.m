@@ -3,10 +3,23 @@
 % action whenever it is clicked.
 % Action.Dispatchers all carry an instance of an Action.Factory that registers
 % actions to some Listener.
+%
+% There are three types of actions:
+% 1. Actions that do not carry any data
+% 2. Actions that carry a static piece of data
+% 3. Actions that carry dynamic data
+%
+% You can account for each of these with vt.Action.Dispatcher.
+% 1. Put the constructor handle for the appropriate action in this.actionType
+% 2. Do #1. Call vt.Action.Dispatcher() in the constructor, and set
+%    this.action.data = {the static data you want to send}.
+% 3. Do #1. Overwrite vt.Action.Dispatcher/dispatchAction() to get, and validate
+%    your data. Set this.action.data = {the data you want to send}, then do
+%    this.action.dispatch().
 classdef (Abstract) Dispatcher < vt.Root
-	properties (Constant)
-		actionFactory = vt.Action.Factory(vt.Action.Listener())
-	end
+% 	properties (Constant)
+% 		actionFactory = vt.Action.Factory(vt.Action.Listener())
+% 	end
 	
 	properties
 		action
@@ -18,21 +31,12 @@ classdef (Abstract) Dispatcher < vt.Root
 	end
 	
 	methods
-		function this = Dispatcher(varargin)
-			p = inputParser;
-			p.addOptional('data', []);
-			parse(p, varargin{:});
-			
-			if(isempty(p.Results.data))
-				actionData = this.data;
-			else
-				actionData = p.Results.data;
-			end
-			
-			this.action = this.actionFactory.createAndRegisterAction( ...
-				this.actionType, ...
-				actionData ...
-			);
+		function this = Dispatcher()
+			this.action = this.actionType();
+% 			actionFactory = vt.Action.Factory.getFactory();
+% 			this.action = actionFactory.createAndRegisterAction( ...
+% 				this.actionType ...
+% 			);
 		end
 		
 		function tf = isActionHandle(~, actionType)
@@ -45,17 +49,20 @@ classdef (Abstract) Dispatcher < vt.Root
 			end
 		end
 		
-		function [] = dispatchAction(this, varargin)
+		function [] = dispatchAction(this, ~, ~)
 			p = inputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Action.Dispatcher'));
-			p.addOptional('data', []);
-			parse(p, this, varargin{:});
+			parse(p, this);
+% 			p.addOptional('data', []);
+% 			parse(p, this, data);
 			
-			if(isempty(p.Results.data))
-				this.action.dispatch(this.data);
-			else
-				this.action.dispatch(p.Results.data);
-			end
+			this.action.dispatch();
+			
+% 			if(isempty(p.Results.data))
+% 				this.action.dispatch();
+% 			else
+% 				this.action.dispatch(p.Results.data);
+% 			end
 		end
 	end
 end

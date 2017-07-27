@@ -8,7 +8,7 @@ classdef VBox < vt.Component.Layout
 	methods (Access = protected)
 		function [] = construct(this, parent)
 			p = vt.InputParser;
-			p.addRequired('this', @(this) isa(this, 'vt.VBox'));
+			p.addRequired('this', @(this) isa(this, 'vt.Component.Layout.VBox'));
 			p.addParent();
 			parse(p, this, parent);
 			

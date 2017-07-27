@@ -4,13 +4,13 @@ classdef Action < vt.Root
 	end
 	
 	methods
-		function this = Action(varargin)
-			p = inputParser;
-			p.addOptional('data', []);
-			parse(p, varargin{:});
-			
-			this.data = p.Results.data;
-		end
+% 		function this = Action(varargin)
+% 			p = inputParser;
+% 			p.addOptional('data', []);
+% 			parse(p, varargin{:});
+% 			
+% 			this.data = p.Results.data;
+% 		end
 		
 		function [] = dispatch(this, varargin)
 			p = inputParser;
@@ -18,7 +18,7 @@ classdef Action < vt.Root
 			p.addOptional('data', []);
 			parse(p, this, varargin{:});
 			
-			actionName = this.getActionName();
+			actionName = this.getName();
 			if(isempty(p.Results.data))
 				actionData = vt.EventData(this.data);
 			else
@@ -28,11 +28,11 @@ classdef Action < vt.Root
 			notify(this, actionName, actionData);
 		end
 		
-		function actionName = getActionName(this)
+		function actionName = getName(this)
 			e = events(this);
 			actionName = e{1};
 			try
-				assert(strcmp(actionName, 'ObjectBeingDestroyed'))
+				assert(~strcmp(actionName, 'ObjectBeingDestroyed'))
 				% Error: this class does not have an action specified
 			catch excp
 				this.log.exception(excp);

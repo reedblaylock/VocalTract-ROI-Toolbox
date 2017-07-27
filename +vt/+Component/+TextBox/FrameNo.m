@@ -1,7 +1,6 @@
 classdef FrameNo < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listener
 	properties
 		actionType = @vt.Action.SetCurrentFrameNo;
-		data = [];
 	end
 	
 	methods

@@ -1,10 +1,11 @@
 classdef Loader < vt.Root & vt.Action.Dispatcher
 	properties
-		actionType = @vt.Action.Load
+		actionType = @vt.Action.SetVideo
 	end
 	
 	methods
-		function video = loadVideo(this, loadType)
+		function tf = loadVideo(this, loadType)
+			tf = false;
 			[filename, pathname] = uigetfile(['*.' loadType], ['Select ' loadType ' file to load']);
 			fullpath = fullfile(pathname, filename);
 			
@@ -44,6 +45,7 @@ classdef Loader < vt.Root & vt.Action.Dispatcher
 			); %#ok<GENDEP> vr.NumberOfFrames is still ok to use as of R2017a
 		
 			this.action.dispatch(video);
+			tf = true;
 		end
 
 % 		Adam Lammert (2010)

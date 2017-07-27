@@ -14,39 +14,10 @@ classdef Reducer < vt.Listener & vt.State.Setter
 	
 	methods
 		function this = Reducer(state)
-			p = inputParser;
-			p.addRequired('state', @(state) (isa(state, 'vt.State')));
-			p.parse(state);
-			
-			this.state = p.Results.state;
+			this.state = state;
 		end
-		
-% 		function [] = registerEventListener(this, obj)
-% 			p = inputParser;
-% 			p.addRequired('this', @(this) isa(this, 'vt.Reducer'));
-% 			p.addRequired('obj', @(obj) isa(obj, 'vt.ActionDispatcher'));
-% 			p.parse(this, obj);
-% 			
-% 			action = p.Results.obj.getAction();
-% 			method = this.action2method(action);
-% 			
-% 			addlistener( ...
-% 				p.Results.obj, ...
-% 				action, ...
-% 				@(source, eventdata) method(this, source, eventdata)...
-% 			);
-% 		end
-% 		
-% 		function [] = registerActionListener(this, obj)
-% 			this.registerEventListener(obj);
-% 		end
 	end
 	
-	% Method names are found using the camelCase function.
-	% Examples :
-	%   Event 'INCREMENT' --> Method 'increment'
-	%   Event 'CLOSE_GUI' --> Method 'closeGui'
-	%   Event 'LOAD_VOCAL_TRACT' --> Method 'loadVocalTract'
 	methods
 		function [] = increment(this, ~, eventData)
 			if(isempty(this.state.currentFrameNo))
@@ -70,12 +41,18 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			% TODO: Should the reducer also change the current frame number, or
 			% should that come from a separate event triggered when a component
 			% gets a video update? (The latter, I think)
-			if(isempty(this.state.video))
-				this.state.video = eventData.data;
-				this.state.currentFrameNo = 1;
-			else
-				this.state.video = eventData.data;
-			end
+			disp('Reducer: setVideo()');
+			this.state.video = eventData.data;
+% 			if(isempty(this.state.video))
+% 				this.state.video = eventData.data;
+% 				this.state.currentFrameNo = 1;
+% 			else
+% 				this.state.video = eventData.data;
+% 			end
+		end
+		
+		function [] = delete(~)
+			disp('Reducer is being destroyed');
 		end
 	end
 	

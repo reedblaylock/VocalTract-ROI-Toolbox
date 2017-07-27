@@ -4,6 +4,7 @@ classdef Gui < vt.Root
 		styles
 		reducer
 		gui
+		actionListener
 	end
 	
 	methods
@@ -12,8 +13,25 @@ classdef Gui < vt.Root
 			
 			this.state = vt.State();
 			this.reducer = vt.Reducer(this.state);
+			this.actionListener = vt.Action.Listener(this.reducer);
+			
 			this.styles = this.createStyles();
 			this.gui = this.createInterface();
+			
+			this.initializeListeners();
+		end
+		
+		function [] = initializeListeners(this)
+			fields = fieldnames(this.gui);
+			for iField = 1:numel(fields)
+				obj = this.gui.(fields{iField});
+				if(isa(obj, 'vt.State.Listener'))
+					obj.registerAllMethodsToState(this.state);
+				end
+				if(isa(obj, 'vt.Action.Dispatcher'))
+					this.actionListener.registerAction(obj.action);
+				end
+			end
 		end
 		
 		function styles = createStyles(~)
@@ -30,13 +48,13 @@ classdef Gui < vt.Root
 			
 			% Open a window and add some menus
 			gui.Window = vt.Component.Window( 'VocalTract ROI Toolbox' );
-			gui.Window.registerStateListener( this.state, 'video' );
+% 			gui.Window.registerStateListener( this.state, 'video' );
 			
 			% + File menu
 			gui.FileMenu = vt.Component.MenuItem( gui.Window,   'File' );
 			gui.LoadMenu = vt.Component.MenuItem( gui.FileMenu, 'Load...' );
 			gui.ExitMenu = vt.Component.MenuItem.Exit( gui.FileMenu, 'Exit' );
-			gui.LoadAvi = vt.MenuItem.Load( gui.LoadMenu, 'AVI', 'avi' );
+			gui.LoadAvi  = vt.Component.MenuItem.Load( gui.LoadMenu, 'AVI', 'avi' );
 % 			gui.LoadVocalTract = vt.LoadMenuItem( gui.LoadMenu, 'VocalTract', 'VocalTract' );
 			
 % 			this.reducer.registerActionListener( gui.ExitMenu );
@@ -44,8 +62,8 @@ classdef Gui < vt.Root
 % 			this.reducer.registerActionListener( gui.LoadVocalTract );
 
 			% + Help menu
-			gui.HelpMenu = vt.MenuItem( gui.Window, 'Help' );
-			gui.DocumentationMenu = vt.MenuItem.Help( gui.HelpMenu, 'Documentation' );
+			gui.HelpMenu = vt.Component.MenuItem( gui.Window, 'Help' );
+			gui.DocumentationMenu = vt.Component.MenuItem.Help( gui.HelpMenu, 'Documentation' );
 			
 % 			this.reducer.registerActionListener( gui.DocumentationMenu );
 
@@ -77,6 +95,9 @@ classdef Gui < vt.Root
 				gui.LeftBoxImageControls, ...
 				'HorizontalAlignment', 'left' ...
 				);
+			gui.SetCurrentFrameNoControl = vt.Component.TextBox.FrameNo( ...
+				gui.LeftBoxImageControls ...
+			);
 			gui.FrameIncrementControls = vt.Component.Layout.HButtonBox( ...
 				gui.LeftBoxImageControls, ...
 				'HorizontalAlignment', 'right' ...
@@ -86,13 +107,13 @@ classdef Gui < vt.Root
 			gui.LeftBox.setParameters( 'Heights', [-1, 35] );
 
 			gui.Frame = vt.Component.Frame( gui.LeftBoxImageContainer );
-			frameContainer = vt.Container.Frame( gui.Frame );
-			frameContainer.registerStateListener( this.state, {'currentFrameNo', 'video'} );
+			gui.frameContainer = vt.Component.Wrapper.Frame( gui.Frame );
+% 			frameContainer.registerStateListener( this.state, {'currentFrameNo', 'video'} );
 			
-			gui.Decrement10Button = vt.IncrementButton( gui.FrameDecrementControls, '<<', -10 );
-			gui.DecrementButton = vt.IncrementButton( gui.FrameDecrementControls, '<', -1 );
-			gui.IncrementButton = vt.IncrementButton( gui.FrameIncrementControls, '>', 1 );
-			gui.Increment10Button = vt.IncrementButton( gui.FrameIncrementControls, '>>', 10 );
+			gui.Decrement10Button = vt.Component.Button.Increment( gui.FrameDecrementControls, '<<', -10 );
+			gui.DecrementButton = vt.Component.Button.Increment( gui.FrameDecrementControls, '<', -1 );
+			gui.IncrementButton = vt.Component.Button.Increment( gui.FrameIncrementControls, '>', 1 );
+			gui.Increment10Button = vt.Component.Button.Increment( gui.FrameIncrementControls, '>>', 10 );
 % 			this.reducer.registerActionListener( gui.DecrementButton );
 % 			this.reducer.registerActionListener( gui.Decrement10Button );
 % 			this.reducer.registerActionListener( gui.IncrementButton );

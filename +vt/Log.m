@@ -18,21 +18,23 @@ classdef Log < handle
 			p.addRequired('exception', @(exception) isa(exception, 'MException'));
 			p.parse(this, exception);
 			
+			rethrow(exception);
+			
 			% Since the error is being caught, it probably won't get displayed
 			% in the diary. Put it there explicitly?
 			
 			% Dispatch error event to be shown in GUI
 			% But watch out for loops caused when that thread fails...
-			this.triggerNotificationBarUpdate(exception);
+% 			this.triggerNotificationBarUpdate(exception);
 		end
 		
 		function [] = warning(this, warning)
-			
+			rethrow(warning);
 		end
 		
 		function [] = triggerNotificationBarUpdate(this, exception)
-			string = ''; % get user-friendly string from Exception
-			this.dispatchAction(); % send the string and a corresponding color to the notification bar via an event
+% 			string = ''; % get user-friendly string from Exception
+% 			this.dispatchAction(); % send the string and a corresponding color to the notification bar via an event
 		end
 	end
 	

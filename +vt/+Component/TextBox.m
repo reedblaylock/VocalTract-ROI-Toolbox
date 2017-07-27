@@ -3,11 +3,11 @@ classdef TextBox < vt.Component
 	end
 	
 	methods
-		function this = TextBox(parent, string)
+		function this = TextBox(parent, varargin)
 			p = vt.InputParser;
 			p.addParent();
 			p.addOptional('string', '', @ischar);
-			p.parse(parent, string);
+			p.parse(parent, varargin{:});
 			
 			this.handle = uicontrol( ...
 				p.Results.parent.handle, ...

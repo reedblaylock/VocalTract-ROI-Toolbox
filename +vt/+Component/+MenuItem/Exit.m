@@ -1,6 +1,6 @@
 classdef Exit < vt.Component.MenuItem & vt.Action.Dispatcher
 	properties
-		actionType = @vt.Action.CloseGuiAction
+		actionType = @vt.Action.CloseGui
 	end
 	
 	methods

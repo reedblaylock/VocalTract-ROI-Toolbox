@@ -1,4 +1,4 @@
-classdef Frame < vt.Component.Container & vt.State.Listener
+classdef Frame < vt.Component.Wrapper & vt.State.Listener
 	properties
 		frame
 	end

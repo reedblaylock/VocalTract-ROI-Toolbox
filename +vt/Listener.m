@@ -1,11 +1,11 @@
 classdef (Abstract) Listener < vt.Root
 	methods
-		function method = action2method(~, underscoreAction)
+		function method = action2method(this, underscore_action)
 			p = inputParser;
 			p.addRequired('underscoreAction', @ischar);
-			p.parse(underscoreAction);
+			p.parse(underscore_action);
 			
-			method = this.underscore2camelCase(this, lower(underscore_action));
+			method = this.underscore2camelCase(lower(underscore_action));
 		end
 		
 		function ccStr = underscore2camelCase(~, us_str)
@@ -14,7 +14,7 @@ classdef (Abstract) Listener < vt.Root
 		
 		function [] = register(this, action)
 			p = inputParser;
-			p.addRequired('this', @(this) isa(this, 'vt.Action.Listener'));
+			p.addRequired('this', @(this) isa(this, 'vt.Listener'));
 			p.addRequired('action', @(action) isa(action, 'vt.Action'));
 			p.parse(this, action);
 			

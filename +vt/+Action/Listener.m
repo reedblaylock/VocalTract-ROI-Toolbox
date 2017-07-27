@@ -10,8 +10,12 @@ classdef Listener < vt.Listener
 	end
 	
 	methods
-		function this = Listener()
-			this.reducer = vt.Reducer();
+		function this = Listener(reducer)
+			p = inputParser;
+			p.addRequired('reducer', @(reducer) isa(reducer, 'vt.Reducer'));
+			parse(p, reducer);
+			
+			this.reducer = p.Results.reducer;
 		end
 		
 		function [] = registerAction(this, action)
@@ -21,9 +25,10 @@ classdef Listener < vt.Listener
 			p.parse(this, action);
 			
 			actionName = p.Results.action.getName();
+			methodName = this.action2method(actionName);
 			
 			% Does this Action have a corresponding method in ActionListener?
-			if(this.isMethod(actionName))
+			if(this.isMethod(methodName))
 				% Yes -- do that method
 				this.register(action);
 			else
@@ -44,9 +49,13 @@ classdef Listener < vt.Listener
 			disp('Loading video data...');
 			
 			videoLoader = vt.Video.Loader();
+			this.reducer.register(videoLoader.action);
 			try
 				assert(videoLoader.loadVideo(eventData.data));
 				% Increment the frame here? Or, do it from the VideoLoader?
+				action = vt.Action.SetCurrentFrameNo;
+				this.reducer.register(action);
+				action.dispatch(1);
 			catch excp
 				this.log.exception(excp);
 				% TODO: Do something about this
