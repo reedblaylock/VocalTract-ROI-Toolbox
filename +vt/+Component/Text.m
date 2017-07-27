@@ -12,6 +12,12 @@ classdef Text < vt.Component
 				p.Results.parent.handle, ...
 				'Style', 'text' ...
 			);
+		
+			addlistener(this.handle, 'ObjectBeingDestroyed', @(s, e) showDeletion(this, s, e));
+		end
+		
+		function [] = showDeletion(this, s, e)
+			disp('NotificationBar handle is being deleted');
 		end
 	end
 	

@@ -1,6 +1,6 @@
 classdef (Abstract) Root < handle
 	properties
-		log = vt.Log();
+		log = vt.Log(true);
 	end	
 end
 

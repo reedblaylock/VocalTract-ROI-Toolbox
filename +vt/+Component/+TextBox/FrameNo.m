@@ -10,11 +10,12 @@ classdef FrameNo < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listen
 			p.parse(parent);
 			
 			this@vt.Component.TextBox(parent);
+			this.setParameters('Enable', 'off');
 			
 			this.setCallback();
 		end
 		
-		function [] = dispatchAction(this, source, evtdata)
+		function [] = dispatchAction(this, source, ~)
 			str = get(source, 'String');
 			num = str2double(str);
 			if (isempty(num) || isnan(num))
@@ -32,6 +33,10 @@ classdef FrameNo < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listen
 			str = num2str(state.currentFrameNo);
 			this.data = str;
 			this.setParameters('String', str);
+		end
+		
+		function [] = onVideoChange(this, ~)
+			this.setParameters('Enable', 'on');
 		end
 	end
 	

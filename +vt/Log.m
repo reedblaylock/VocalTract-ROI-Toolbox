@@ -1,9 +1,22 @@
 classdef Log < handle
-	properties (Constant = true)
+	properties
 		filename = 'error.log'
+		debugMode
+	end
+	
+	events
+		NOTIFY_ERROR
 	end
 	
 	methods
+		function this = Log(varargin)
+			p = inputParser;
+			p.addOptional('debugMode', false, @islogical);
+			parse(p, varargin{:});
+			
+			this.debugMode = p.Results.debugMode;
+		end
+		
 		function [] = on(this)
 			diary(this.filename);
 		end
@@ -12,29 +25,30 @@ classdef Log < handle
 			diary off;
 		end
 		
+		function [] = notifyError(this, exception)
+			eventdata = vt.EventData(exception);
+			notify(this, 'NOTIFY_ERROR', eventdata);
+		end
+		
 		function [] = exception(this, exception)
 			p = inputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Log'));
 			p.addRequired('exception', @(exception) isa(exception, 'MException'));
 			p.parse(this, exception);
 			
-			rethrow(exception);
+			this.notifyError(exception);
 			
-			% Since the error is being caught, it probably won't get displayed
-			% in the diary. Put it there explicitly?
-			
-			% Dispatch error event to be shown in GUI
-			% But watch out for loops caused when that thread fails...
-% 			this.triggerNotificationBarUpdate(exception);
+			if(this.debugMode)
+				rethrow(exception);
+			end
 		end
 		
 		function [] = warning(this, warning)
-			rethrow(warning);
-		end
-		
-		function [] = triggerNotificationBarUpdate(this, exception)
-% 			string = ''; % get user-friendly string from Exception
-% 			this.dispatchAction(); % send the string and a corresponding color to the notification bar via an event
+			this.notifyError(warning);
+			
+			if(this.debugMode)
+% 				rethrow(warning);
+			end
 		end
 	end
 	
