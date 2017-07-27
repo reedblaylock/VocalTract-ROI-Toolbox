@@ -1,10 +1,10 @@
-classdef IncrementButton < vt.Button & vt.ActionDispatcherWithData
-	events
-		INCREMENT
+classdef Increment < vt.Button & vt.Action.Dispatcher
+	properties
+		actionType = @vt.Action.Increment
 	end
 	
 	methods
-		function this = IncrementButton(parent, label, incrementValue)
+		function this = Increment(parent, label, incrementValue)
 			p = vt.InputParser;
 			p.addParent();
 			p.addRequired('label', @ischar);
@@ -12,8 +12,7 @@ classdef IncrementButton < vt.Button & vt.ActionDispatcherWithData
 			p.parse(parent, label, incrementValue);
 			
 			this@vt.Button(parent, label);
-		
-			this.setData(incrementValue);
+			this@vt.Action.Dispatcher(data);
 		
 			this.setCallback();
 		end

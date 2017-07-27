@@ -1,4 +1,4 @@
-classdef Window < vt.Component & vt.StateListener
+classdef Window < vt.Component & vt.State.Listener
 	% This class has a default callback. Closing figures is often more trouble
 	% than it's worth, so avoid doing a custom job. If you want to see an
 	% example of a custom window callback, see the Exit button and
@@ -24,7 +24,7 @@ classdef Window < vt.Component & vt.StateListener
 			);
 		end
 		
-		function [] = updateVideo(this, state)
+		function [] = onVideoChange(this, state)
 			this.setParameters('Name', [this.baseName ' - ' state.video.fullpath]);
 		end
 		

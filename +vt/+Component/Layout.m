@@ -1,10 +1,10 @@
-classdef (Abstract) LayoutComponent < vt.Component
+classdef (Abstract) Layout < vt.Component
 	
 	properties
 	end
 	
 	methods
-		function this = LayoutComponent(parent, varargin)
+		function this = Layout(parent, varargin)
 			p = vt.InputParser;
 			p.KeepUnmatched = true;
 			p.addParent();

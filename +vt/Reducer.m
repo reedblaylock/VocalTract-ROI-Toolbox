@@ -1,4 +1,4 @@
-classdef Reducer < vt.Listener & vt.StateSetter
+classdef Reducer < vt.Listener & vt.State.Setter
 	% This is where all your reducers go.
 	% Actions are dispatched by emitting events from various classes. Those
 	% action-events are registered here in the Reducer. Each action-event
@@ -21,25 +21,25 @@ classdef Reducer < vt.Listener & vt.StateSetter
 			this.state = p.Results.state;
 		end
 		
-		function [] = registerEventListener(this, obj)
-			p = inputParser;
-			p.addRequired('this', @(this) isa(this, 'vt.Reducer'));
-			p.addRequired('obj', @(obj) isa(obj, 'vt.ActionDispatcher'));
-			p.parse(this, obj);
-			
-			action = p.Results.obj.getAction();
-			method = this.action2method(action);
-			
-			addlistener( ...
-				p.Results.obj, ...
-				action, ...
-				@(source, eventdata) method(this, source, eventdata)...
-			);
-		end
-		
-		function [] = registerActionListener(this, obj)
-			this.registerEventListener(obj);
-		end
+% 		function [] = registerEventListener(this, obj)
+% 			p = inputParser;
+% 			p.addRequired('this', @(this) isa(this, 'vt.Reducer'));
+% 			p.addRequired('obj', @(obj) isa(obj, 'vt.ActionDispatcher'));
+% 			p.parse(this, obj);
+% 			
+% 			action = p.Results.obj.getAction();
+% 			method = this.action2method(action);
+% 			
+% 			addlistener( ...
+% 				p.Results.obj, ...
+% 				action, ...
+% 				@(source, eventdata) method(this, source, eventdata)...
+% 			);
+% 		end
+% 		
+% 		function [] = registerActionListener(this, obj)
+% 			this.registerEventListener(obj);
+% 		end
 	end
 	
 	% Method names are found using the camelCase function.
@@ -59,29 +59,23 @@ classdef Reducer < vt.Listener & vt.StateSetter
 			this.state.currentFrameNo = newFrameNo;
 		end
 		
-		function [] = closeGui(~, ~, ~)
-			closereq();
+		function [] = setCurrentFrameNo(this, ~, eventData)
+			newFrameNo = eventData.data;
+			if(newFrameNo > this.state.video.nFrames), newFrameNo = this.state.video.nFrames; end
+			if(newFrameNo < 1), newFrameNo = 1; end
+			this.state.currentFrameNo = newFrameNo;
 		end
 		
-		function [] = load(this, ~, eventData)
-			disp('Loading video data...');
-			
-			% TODO: This currently breaks if a video fails to load (see
-			% vt.VideoLoader)
-			% TODO: How much of this implementation logic should the Reducer
-			% have? All? None?
-			videoLoader = vt.VideoLoader();
-			video = videoLoader.loadVideo(eventData.data);
+		function [] = setVideo(this, ~, eventData)
+			% TODO: Should the reducer also change the current frame number, or
+			% should that come from a separate event triggered when a component
+			% gets a video update? (The latter, I think)
 			if(isempty(this.state.video))
-				this.state.video = video;
+				this.state.video = eventData.data;
 				this.state.currentFrameNo = 1;
 			else
-				this.state.video = video;
+				this.state.video = eventData.data;
 			end
-		end
-		
-		function [] = help(~, ~, ~)
-			disp('Showing Help...');
 		end
 	end
 	

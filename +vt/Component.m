@@ -18,6 +18,21 @@ classdef (Abstract) Component < vt.Root
 			end
 		end
 	end
+		
+	methods (Access = ?vt.Action.Dispatcher)
+		function [] = setCallback(this, varargin)
+			p = inputParser;
+			p.addRequired('this', @(this) isa(this, 'vt.Action.Dispatcher'));
+			p.addOptional('callbackName', 'Callback', @ischar);
+			p.parse(this, varargin{:});
+
+			set( ...
+				this.handle, ...
+				p.Results.callbackName, ...
+				@(source, eventdata) dispatchAction(this, source, eventdata) ...
+			);
+		end
+	end
 	
 end
 

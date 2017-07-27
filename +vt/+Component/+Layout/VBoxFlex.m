@@ -1,7 +1,7 @@
-classdef VBoxFlex < vt.LayoutComponent
+classdef VBoxFlex < vt.Component.Layout
 	methods
 		function this = VBoxFlex(parent, varargin)
-			this@vt.LayoutComponent(parent, varargin{:});
+			this@vt.Component.Layout(parent, varargin{:});
 		end
 	end
 	

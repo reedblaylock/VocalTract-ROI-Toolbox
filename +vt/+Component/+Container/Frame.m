@@ -1,12 +1,12 @@
-classdef FrameContainer < vt.StateListener
+classdef Frame < vt.Component.Container & vt.State.Listener
 	properties
 		frame
 	end
 	
 	methods
-		function this = FrameContainer(frame)
+		function this = Frame(frame)
 			p = inputParser;
-			p.addRequired('frame', @(frame) isa(frame, 'vt.Frame'));
+			p.addRequired('frame', @(frame) isa(frame, 'vt.Component.Frame'));
 			parse(p, frame);
 			
 			this.frame = p.Results.frame;
@@ -17,11 +17,11 @@ classdef FrameContainer < vt.StateListener
 		end
 		
 		% State update methods
-		function [] = updateCurrentFrameNo(this, state)
+		function [] = onCurrentFrameNoChange(this, state)
 			this.showFrame(state.video, state.currentFrameNo);
 		end
 		
-		function [] = updateVideo(this, state)
+		function [] = onVideoChange(this, state)
 			this.showFrame(state.video, 1);
 		end
 		

@@ -1,13 +1,9 @@
-classdef StateListener < vt.Listener
-	properties
-	end
-	
+classdef Listener < vt.Listener
 	methods
-		% For registering individual state listeners; this will probably be
-		% replaced by registerStateListenerObject
+		% Right now, the propertyNames still have to be set expliclty in vt.Gui
 		function [] = registerStateListener(this, state, propertyName)
 			p = inputParser;
-			p.addRequired('this',  @(this) isa(this, 'vt.StateListener'));
+			p.addRequired('this',  @(this) isa(this, 'vt.State.Listener'));
 			p.addRequired('state', @(state) isa(state, 'vt.State'));
 			p.addRequired('propertyName', @(propertyName) isCharOrCellStr(this, propertyName));
 			parse(p, this, state, propertyName);
@@ -21,33 +17,33 @@ classdef StateListener < vt.Listener
 			);
 		end
 		
-% 		function [] = registerStateListenerObject(this, state)
-% 			p = inputParser;
-% 			p.addRequired('this',  @(this) isa(this, 'vt.StateListener'));
-% 			p.addRequired('state', @(state) isa(state, 'vt.State'));
-% 			p.parse(this, state);
-% 			
-% 			m = methods(p.Results.this);
-% 			
-% 			for iMethod = 1:numel(m)
-% 				method = m{iMethod};
-% 				
-% 			end
-% 		end
-		
 		function [] = update(this, propertyName, state)
 			p = inputParser;
-			p.addRequired('this',  @(this) isa(this, 'vt.StateListener'));
+			p.addRequired('this',  @(this) isa(this, 'vt.State.Listener'));
 			p.addRequired('propertyName', @ischar);
 			p.addRequired('state', @(state) isa(state, 'vt.State'));
 			parse(p, this, propertyName, state);
 			
 			method = this.property2method(propertyName);
-			method(this, state);
+			try
+				assert(this.isMethod(method));
+				this.(method)(state);
+			catch excp
+				this.log.exception(excp);
+			end
 		end
 		
 		function b = isCharOrCellStr(~, propertyName)
 			b = (ischar(propertyName) || iscellstr(propertyName));
+		end
+		
+		function method = property2method(~, propertyName)
+			p = inputParser;
+			p.addRequired('propertyName', @ischar);
+			p.parse(propertyName);
+			
+			circumfixed_propertyName = ['on_' p.Results.propertyName '_change'];
+			method = this.underscore2camelCase(circumfixed_propertyName);
 		end
 	end
 	

@@ -1,4 +1,4 @@
-classdef Video < handle
+classdef Video < vt.Root
 	properties (SetAccess = immutable)
 		filename
 		fullpath

@@ -1,7 +1,7 @@
-classdef HButtonBox < vt.LayoutComponent
+classdef HButtonBox < vt.Component.Layout
 	methods
 		function this = HButtonBox(parent, varargin)
-			this@vt.LayoutComponent(parent, varargin{:});
+			this@vt.Component.Layout(parent, varargin{:});
 		end
 	end
 	

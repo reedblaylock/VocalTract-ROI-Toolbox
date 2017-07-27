@@ -12,7 +12,7 @@ classdef (Sealed) State < handle
 	% When a property is an object, changes to that object will not trigger a
 	% PostSet event. In this case, a PostSet event is only triggered when a new
 	% object (either a new instance or a new class) is assigned to the property.
-	properties (SetObservable = true, AbortSet = true, SetAccess = ?vt.StateSetter)
+	properties (SetObservable = true, AbortSet = true, SetAccess = ?vt.State.Setter)
 		currentFrameNo
 		video
 	end

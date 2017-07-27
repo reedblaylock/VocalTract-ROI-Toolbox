@@ -1,7 +1,7 @@
-classdef HBoxFlex < vt.LayoutComponent
+classdef HBoxFlex < vt.Component.Layout
 	methods
 		function this = HBoxFlex(parent, varargin)
-			this@vt.LayoutComponent(parent, varargin{:});
+			this@vt.Component.Layout(parent, varargin{:});
 		end
 	end
 	

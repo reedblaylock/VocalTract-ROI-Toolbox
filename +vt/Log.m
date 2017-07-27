@@ -26,6 +26,10 @@ classdef Log < handle
 			this.triggerNotificationBarUpdate(exception);
 		end
 		
+		function [] = warning(this, warning)
+			
+		end
+		
 		function [] = triggerNotificationBarUpdate(this, exception)
 			string = ''; % get user-friendly string from Exception
 			this.dispatchAction(); % send the string and a corresponding color to the notification bar via an event

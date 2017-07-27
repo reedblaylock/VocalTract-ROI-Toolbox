@@ -9,9 +9,9 @@
 % vt.LoadMenuItems in the menu bar, then put your implementation logic in
 % vt.Reducer (and any classes it might need to work with).
 	
-classdef LoadMenuItem < vt.MenuItem & vt.ActionDispatcherWithData
-	events
-		LOAD
+classdef Load < vt.Component.MenuItem & vt.Action.Dispatcher
+	properties
+		actionType = @vt.Action.Load
 	end
 	
 	methods
@@ -25,16 +25,16 @@ classdef LoadMenuItem < vt.MenuItem & vt.ActionDispatcherWithData
 		% ...
 		%
 		% I guess you can just pass all the paramters to the parsing function?
-		function this = LoadMenuItem(parent, label, data)
+		function this = Load(parent, label, data)
 			p = vt.InputParser;
 			p.addParent();
 			p.addRequired('label', @ischar);
 			p.addRequired('data',  @ischar);
 			parse(p, parent, label, data);
 			
-			this@vt.MenuItem(p.Results.parent, p.Results.label);
+			this@vt.Component.MenuItem(p.Results.parent, p.Results.label);
 			
-			this.setData(p.Results.data);
+			this@vt.Action.Dispatcher(p.Results.data);
 			
 			this.setCallback();
 		end

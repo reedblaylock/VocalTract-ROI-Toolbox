@@ -64,6 +64,9 @@ program crashing or becoming unresponsive.
 - Interface reverts to a previous state (there's a big risk of accidentally 
   reverting too far back, but it would be a nice way to keep the program running
   smoothly after errors)
+  (http://redux.js.org/docs/recipes/ImplementingUndoHistory.html)
+- Ask user what they want to do
+
 **********************************ACTION PLAN***********************************
 Every action is a vt.Action object
 == vt.Action ==

@@ -1,10 +1,10 @@
-classdef NotificationBar < vt.Text
+classdef NotificationBar < vt.Component.Text
 	properties
 	end
 	
 	methods
 		function this = NotificationBar(parent)
-			this@vt.Text(parent);
+			this@vt.Component.Text(parent);
 			
 			this.setParameters( ...
 				'String', 'Welcome to the VocalTract ROI Toolbox!', ...
