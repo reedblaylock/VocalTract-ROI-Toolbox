@@ -14,14 +14,16 @@ classdef FrameNo < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listen
 			this.setCallback();
 		end
 		
-		function [] = dispatchAction(this, source, ~)
+		function [] = dispatchAction(this, source, evtdata)
 			str = get(source, 'String');
 			num = str2double(str);
-			if isempty(num)
+			if (isempty(num) || isnan(num))
 				this.setParameters('String', this.data);
 				this.log.warning('Frame number must be numerical.');
 			else
 				this.data = str;
+% 				this.action.data = num;
+% 				dispatchAction@vt.Action.Dispatcher(this, source, evtdata);
 				this.action.dispatch(num);
 			end
 		end
