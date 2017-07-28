@@ -7,6 +7,9 @@ classdef Loader < vt.Root & vt.Action.Dispatcher
 		function tf = loadVideo(this, loadType)
 			tf = false;
 			[filename, pathname] = uigetfile(['*.' loadType], ['Select ' loadType ' file to load']);
+			if isequal(filename,0) || isequal(pathname,0)
+				return
+			end
 			fullpath = fullfile(pathname, filename);
 			
 			% Check that the file exists

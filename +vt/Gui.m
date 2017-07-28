@@ -60,27 +60,12 @@ classdef Gui < vt.Root
 			% structure of handles for global use.
 			gui = struct();
 			
-			% Open a window and add some menus
+			% Open a window
 			gui.Window = vt.Component.Window( 'VocalTract ROI Toolbox' );
-% 			gui.Window.registerStateListener( this.state, 'video' );
 			
-			% + File menu
-			gui.FileMenu = vt.Component.MenuItem( gui.Window,   'File' );
-			gui.LoadMenu = vt.Component.MenuItem( gui.FileMenu, 'Load...' );
-			gui.ExitMenu = vt.Component.MenuItem.Exit( gui.FileMenu, 'Exit' );
-			gui.LoadAvi  = vt.Component.MenuItem.Load( gui.LoadMenu, 'AVI', 'avi' );
-% 			gui.LoadVocalTract = vt.LoadMenuItem( gui.LoadMenu, 'VocalTract', 'VocalTract' );
+			% + Menu
+			gui = this.addMenu(gui);
 			
-% 			this.reducer.registerActionListener( gui.ExitMenu );
-% 			this.reducer.registerActionListener( gui.LoadAvi );
-% 			this.reducer.registerActionListener( gui.LoadVocalTract );
-
-			% + Help menu
-			gui.HelpMenu = vt.Component.MenuItem( gui.Window, 'Help' );
-			gui.DocumentationMenu = vt.Component.MenuItem.Help( gui.HelpMenu, 'Documentation' );
-			
-% 			this.reducer.registerActionListener( gui.DocumentationMenu );
-
 			% Arrange the main interface
 			gui.MainLayoutWrapper = vt.Component.Layout.VBoxFlex( ...
 				gui.Window, ...
@@ -90,13 +75,15 @@ classdef Gui < vt.Root
 				gui.MainLayoutWrapper, ...
 				'Spacing', this.styles.Spacing ...
 			);
-			gui.NotificationBar = vt.Component.Text.NotificationBar( ...
-				gui.MainLayoutWrapper ...
-			);
-			gui.NotificationBarWrapper = vt.Component.Wrapper.NotificationBar( ...
-				gui.NotificationBar ...
-			);
+			
+			% + Notification bar
+			gui = this.addNotificationBar(gui);
+			
+			% Set the relative sizing between the notification bar and the rest
+			% of the interface
 			gui.MainLayoutWrapper.setParameters('Heights', [-15, -1]);
+			
+			% + Image
 			gui.LeftBox = vt.Component.Layout.VBox( ...
 				gui.MainLayout, ...
 				'Padding', this.styles.Padding, ...
@@ -105,40 +92,73 @@ classdef Gui < vt.Root
 			gui.LeftBoxImageContainer = vt.Component.Container( ...
 				gui.LeftBox ...
 				);
-			gui.LeftBoxImageControls  = vt.Component.Layout.HBox( ...
-				gui.LeftBox ...
-				);
-			gui.FrameDecrementControls = vt.Component.Layout.HButtonBox( ...
-				gui.LeftBoxImageControls, ...
-				'HorizontalAlignment', 'left' ...
-				);
-			gui.SetCurrentFrameNoControl = vt.Component.TextBox.FrameNo( ...
-				gui.LeftBoxImageControls ...
+			
+			% + Image controls
+			gui = this.addImageControls(gui);
+			
+			% + Right panels
+		end
+		
+		function gui = addMenu(~, gui)
+			% + File menu
+			gui.FileMenu = vt.Component.MenuItem( gui.Window,   'File' );
+			gui.LoadMenu = vt.Component.MenuItem( gui.FileMenu, 'Load...' );
+			gui.ExitMenu = vt.Component.MenuItem.Exit( gui.FileMenu, 'Exit' );
+			gui.LoadAvi  = vt.Component.MenuItem.Load( gui.LoadMenu, 'AVI', 'avi' );
+
+			% + Help menu
+			gui.HelpMenu = vt.Component.MenuItem( gui.Window, 'Help' );
+			gui.DocumentationMenu = vt.Component.MenuItem.Help( gui.HelpMenu, 'Documentation' );
+		end
+		
+		function gui = addNotificationBar(~, gui)
+			gui.NotificationBar = vt.Component.Text.NotificationBar( ...
+				gui.MainLayoutWrapper ...
 			);
-			gui.FrameIncrementControls = vt.Component.Layout.HButtonBox( ...
-				gui.LeftBoxImageControls, ...
-				'HorizontalAlignment', 'right' ...
+			gui.NotificationBarWrapper = vt.Component.Wrapper.NotificationBar( ...
+				gui.NotificationBar ...
+			);
+		end
+		
+		function gui = addImageControls(this, gui)
+			gui.LeftBoxFrameControls = vt.Component.Layout.VBox( ...
+				gui.LeftBox ...
+			);
+			gui.LeftBoxFrameNoControls  = vt.Component.Layout.HBox( ...
+				gui.LeftBoxFrameControls ...
 				);
+% 			gui.FrameDecrementControls = vt.Component.Layout.HButtonBox( ...
+% 				gui.LeftBoxFrameNoControls, ...
+% 				'HorizontalAlignment', 'left' ...
+% 				);
+			gui.SetCurrentFrameNoControl = vt.Component.TextBox.FrameNo( ...
+				gui.LeftBoxFrameNoControls ...
+			);
+			gui.Slider = vt.Component.Slider.FrameNo( ...
+				gui.LeftBoxFrameNoControls ...
+			);
+% 			gui.FrameIncrementControls = vt.Component.Layout.HButtonBox( ...
+% 				gui.LeftBoxFrameNoControls, ...
+% 				'HorizontalAlignment', 'right' ...
+% 				);
+			gui.FrameTypeControls = vt.Component.ButtonGroup.FrameType( ...
+				gui.LeftBoxFrameControls ...
+			);
 
 			% Can this be done when you're creating the object?
-			gui.LeftBox.setParameters( 'Heights', [-1, 35] );
+			gui.LeftBox.setParameters( 'Heights', [-1, 35], 'Padding', this.styles.Padding );
 
 			gui.Frame = vt.Component.Frame( gui.LeftBoxImageContainer );
 			gui.frameContainer = vt.Component.Wrapper.Frame( gui.Frame );
-% 			frameContainer.registerStateListener( this.state, {'currentFrameNo', 'video'} );
 			
-			gui.Decrement10Button = vt.Component.Button.Increment( gui.FrameDecrementControls, '<<', -10 );
-			gui.DecrementButton = vt.Component.Button.Increment( gui.FrameDecrementControls, '<', -1 );
-			gui.IncrementButton = vt.Component.Button.Increment( gui.FrameIncrementControls, '>', 1 );
-			gui.Increment10Button = vt.Component.Button.Increment( gui.FrameIncrementControls, '>>', 10 );
-% 			this.reducer.registerActionListener( gui.DecrementButton );
-% 			this.reducer.registerActionListener( gui.Decrement10Button );
-% 			this.reducer.registerActionListener( gui.IncrementButton );
-% 			this.reducer.registerActionListener( gui.Increment10Button );
+% 			gui.Decrement10Button = vt.Component.Button.Increment( gui.FrameDecrementControls, '<<', -10 );
+% 			gui.DecrementButton = vt.Component.Button.Increment( gui.FrameDecrementControls, '<', -1 );
+% 			gui.IncrementButton = vt.Component.Button.Increment( gui.FrameIncrementControls, '>', 1 );
+% 			gui.Increment10Button = vt.Component.Button.Increment( gui.FrameIncrementControls, '>>', 10 );
 
-			% Can this be done when you're creating the object?
-			gui.FrameDecrementControls.setParameters( 'ButtonSize', [70 35], 'Spacing', this.styles.Spacing + 2 );
-			gui.FrameIncrementControls.setParameters( 'ButtonSize', [70 35], 'Spacing', this.styles.Spacing + 2 );
+% 			% Can this be done when you're creating the object?
+% 			gui.FrameDecrementControls.setParameters( 'ButtonSize', [70 35], 'Spacing', this.styles.Spacing + 2 );
+% 			gui.FrameIncrementControls.setParameters( 'ButtonSize', [70 35], 'Spacing', this.styles.Spacing + 2 );
 		end
 		
 		function [] = delete(~)

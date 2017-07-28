@@ -18,11 +18,42 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener
 		
 		% State update methods
 		function [] = onCurrentFrameNoChange(this, state)
-			this.showFrame(state.video, state.currentFrameNo);
+			switch(state.frameType)
+				case 'frame'
+					this.showFrame(state.video, state.currentFrameNo);
+				case 'mean'
+					this.showMeanImage(state.video);
+				case 'std'
+					this.showStandardDeviationImage(state.video);
+				otherwise
+					% TODO: throw error?
+			end
 		end
 		
 		function [] = onVideoChange(this, state)
-			this.showFrame(state.video, 1);
+			switch(state.frameType)
+				case 'frame'
+					this.showFrame(state.video, 1);
+				case 'mean'
+					this.showMeanImage(state.video);
+				case 'std'
+					this.showStandardDeviationImage(state.video);
+				otherwise
+					% TODO: throw error?
+			end
+		end
+		
+		function [] = onFrameTypeChange(this, state)
+			switch(state.frameType)
+				case 'frame'
+					this.showFrame(state.video, state.currentFrameNo);
+				case 'mean'
+					this.showMeanImage(state.video);
+				case 'std'
+					this.showStandardDeviationImage(state.video);
+				otherwise
+					% TODO: throw error?
+			end
 		end
 		
 		% Action methods %
@@ -31,8 +62,8 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener
 			this.triggerFrameUpdate(img);
 		end
 		
-		function [] = showMean(this, video)
-			img = this.getMeanImaage(video);
+		function [] = showMeanImage(this, video)
+			img = this.getMeanImage(video);
 			this.triggerFrameUpdate(img);
 		end
 		

@@ -1,6 +1,7 @@
 classdef FrameNo < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listener
 	properties
 		actionType = @vt.Action.SetCurrentFrameNo;
+		maxFrame
 	end
 	
 	methods
@@ -20,8 +21,19 @@ classdef FrameNo < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listen
 			num = str2double(str);
 			try
 				assert(~isempty(num) && ~isnan(num));
+% 				validatedNum = [];
+				if(num < 1)
+					validatedNum = 1;
+				elseif(num > this.maxFrame)
+					validatedNum = this.maxFrame;
+				else
+					validatedNum = num;
+				end
+				if(validatedNum ~= num)
+					this.setParameters('String', num2str(validatedNum));
+				end
 				this.data = str;
-				this.action.dispatch(num);
+				this.action.dispatch(validatedNum);
 			catch
 				this.setParameters('String', this.data);
 				excp = MException('InvalidInput:FrameNo', 'Frame number must be numerical.');
@@ -35,60 +47,28 @@ classdef FrameNo < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listen
 			this.setParameters('String', str);
 		end
 		
-		function [] = onVideoChange(this, ~)
-			this.setParameters('Enable', 'on');
+		function [] = onVideoChange(this, state)
+			this.maxFrame = state.video.nFrames;
+			switch(state.frameType)
+				case 'frame'
+					this.setParameters('Enable', 'on');
+				case {'mean', 'std'}
+					this.setParameters('Enable', 'off');
+				otherwise
+					% TODO: throw error?
+			end
+		end
+		
+		function [] = onFrameTypeChange(this, state)
+			switch(state.frameType)
+				case 'frame'
+					this.setParameters('Enable', 'on');
+				case {'mean', 'std'}
+					this.setParameters('Enable', 'off');
+				otherwise
+					% TODO: throw error?
+			end
 		end
 	end
 	
 end
-
-
-
-
-%%% TODO
-%%%
-%%% Right now, you're trying to decide whether you really need
-%%% vt.Action.Factory, or even vt.Action.Dispatcher. There are a few reasons:
-%%%
-%%% 1. Since you can store objects or object handles in properties, you don't
-%%%    need a Factory to convert strings into objects for you
-%%% 2. If you *do* use objects/object handles in properties instead of strings,
-%%%    then it's more transparent to future plug-in-makers how to give something
-%%%    an action
-%%% 3. It turns out you need a lot of flexibility with the data parameters
-%%%    you're sending with your actions. Sometimes, data is changed long after
-%%%    the handle was created. It's OK to make your action early, but
-%%%    - you don't have to--you can make it on the fly whenever you need it
-%%%    - even if you do, you'll still have to pass it a data argument right
-%%%      before it fires
-%%%
-%%% On the other hand, you do have to register actions to vt.Action.Listener,
-%%% which can be done when you're getting the action from a factory.
-%%%
-%%% You *could* merge the two.
-%%% 1. Store the class handle in a property actionType
-%%% 2. On class load, this.action = this.factory.createAndRegisterAction(...)
-%%% 3. Set your data anytime--in the constructor, in the callback function,
-%%%    wherever.
-%%% 4. Dispatch the action in vt.Component.dispatchAction
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

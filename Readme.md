@@ -57,4 +57,10 @@ Users are invited to write their own plug-ins for this application by
 extending the vt.State, vt.Reducer, and vt.Component classes to suit their own 
 needs.
 
---Reed Blaylock, July 22 2017
+## Acknowledgements
+
+The layout of this tool was made possible by
+- <a href="https://www.mathworks.com/matlabcentral/fileexchange/47982-gui-layout-toolbox" target="_blank">GUI Layout Toolbox</a>
+- <a href="https://www.mathworks.com/matlabcentral/fileexchange/52965-buttongroup-for-hg2" target="_blank">ButtonGroup for HG2</a>
+
+--Reed Blaylock

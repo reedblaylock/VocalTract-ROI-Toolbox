@@ -1,25 +1,15 @@
 classdef Listener < vt.Listener
 	methods
-% 		function this = Listener()
-% 			this.registerAllMethodsToState();
-% 		end
-		
-		% Right now, the propertyNames still have to be set expliclty in vt.Gui
-% 		function [] = registerStateListener(this, state, propertyName)
-% 			p = inputParser;
-% 			p.addRequired('this',  @(this) isa(this, 'vt.State.Listener'));
-% 			p.addRequired('state', @(state) isa(state, 'vt.State'));
-% 			p.addRequired('propertyName', @(propertyName) isCharOrCellStr(this, propertyName));
-% 			parse(p, this, state, propertyName);
-% 			
-% 			% eventdata.AffectedObject = the vt.State object
-% 			addlistener( ...
-% 				p.Results.state, ...
-% 				p.Results.propertyName, ...
-% 				'PostSet', ...
-% 				@(source, eventdata) update(p.Results.this, source.Name, eventdata.AffectedObject) ...
-% 			);
-% 		end
+		function [] = registerAllMethodsToState(this, state)
+			propertyList = this.getProperties(state);
+			
+			addlistener( ...
+				state, ...
+				propertyList, ...
+				'PostSet', ...
+				@(source, eventdata) update(this, source.Name, eventdata.AffectedObject) ...
+			);
+		end
 		
 		function [] = update(this, propertyName, state)
 			p = inputParser;
@@ -48,19 +38,6 @@ classdef Listener < vt.Listener
 			
 			circumfixed_propertyName = ['on_' p.Results.propertyName '_change'];
 			method = this.underscore2camelCase(circumfixed_propertyName);
-		end
-		
-		function [] = registerAllMethodsToState(this, state)
-% 			stateGetter = vt.State.Getter;
-% 			state = stateGetter.getState();
-			propertyList = this.getProperties(state);
-			
-			addlistener( ...
-				state, ...
-				propertyList, ...
-				'PostSet', ...
-				@(source, eventdata) update(this, source.Name, eventdata.AffectedObject) ...
-			);
 		end
 		
 		function propertyList = getProperties(this, state)

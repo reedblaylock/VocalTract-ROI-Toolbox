@@ -51,6 +51,10 @@ classdef Reducer < vt.Listener & vt.State.Setter
 % 			end
 		end
 		
+		function [] = setFrameType(this, ~, eventData)
+			this.state.frameType = eventData.data;
+		end
+		
 		function [] = delete(~)
 			disp('Reducer is being destroyed');
 		end

@@ -54,14 +54,20 @@ classdef Listener < vt.Listener
 			end
 			this.reducer.register(videoLoader.action);
 			try
-				videoLoader.loadVideo(eventData.data);
-				% Increment the frame here? Or, do it from the VideoLoader?
+				tf = videoLoader.loadVideo(eventData.data);
+				if(~tf), return, end
 			catch excp
 				this.log.exception(excp);
 				return
 				% TODO: Do something about this
 			end
 			
+% 			% set frameType to 'frame'
+% 			action = vt.Action.SetFrameType;
+% 			this.reducer.register(action);
+% 			action.dispatch('frame');
+			
+			% Set currentFrameNo to 1
 			action = vt.Action.SetCurrentFrameNo;
 			this.reducer.register(action);
 			action.dispatch(1);

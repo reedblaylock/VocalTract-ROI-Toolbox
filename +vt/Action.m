@@ -15,7 +15,7 @@ classdef Action < vt.Root
 		function [] = dispatch(this, varargin)
 			p = inputParser;
 % 			p.addRequired('this', @(this) isa(this, 'vt.Action'));
-			p.addOptional('data', '');
+			p.addOptional('data', '', @(data) validate(this, data));
 			parse(p, varargin{:});
 % 			parse(p, this, varargin{:});
 			
@@ -27,6 +27,10 @@ classdef Action < vt.Root
 				actionData = vt.EventData(p.Results.data);
 			end
 			notify(this, actionName, actionData);
+		end
+		
+		function tf = validate(this, data)
+			tf = 1;
 		end
 		
 		function actionName = getName(this)

@@ -15,6 +15,7 @@ classdef (Sealed) State < handle
 	properties (SetObservable = true, AbortSet = true, SetAccess = ?vt.State.Setter)
 		currentFrameNo
 		video
+		frameType = 'frame'
 	end
 end
 
