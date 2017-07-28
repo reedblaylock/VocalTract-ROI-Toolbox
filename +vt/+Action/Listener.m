@@ -49,17 +49,22 @@ classdef Listener < vt.Listener
 			disp('Loading video data...');
 			
 			videoLoader = vt.Video.Loader();
+			if(isa(videoLoader, 'vt.Root'))
+				videoLoader.log = this.log;
+			end
 			this.reducer.register(videoLoader.action);
 			try
 				assert(videoLoader.loadVideo(eventData.data));
 				% Increment the frame here? Or, do it from the VideoLoader?
-				action = vt.Action.SetCurrentFrameNo;
-				this.reducer.register(action);
-				action.dispatch(1);
 			catch excp
-				this.log.exception(excp);
+% 				this.log.exception(excp);
+				return
 				% TODO: Do something about this
 			end
+			
+			action = vt.Action.SetCurrentFrameNo;
+			this.reducer.register(action);
+			action.dispatch(1);
 		end
 	end
 	

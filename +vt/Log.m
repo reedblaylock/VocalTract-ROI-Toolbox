@@ -2,11 +2,13 @@ classdef Log < handle
 	properties
 		filename = 'error.log'
 		debugMode
+		action
+		isOn
 	end
 	
-	events
-		NOTIFY_ERROR
-	end
+% 	events
+% 		NOTIFY_ERROR
+% 	end
 	
 	methods
 		function this = Log(varargin)
@@ -15,19 +17,24 @@ classdef Log < handle
 			parse(p, varargin{:});
 			
 			this.debugMode = p.Results.debugMode;
+			this.action = vt.Action.NotifyError();
+			this.isOn = false;
 		end
 		
 		function [] = on(this)
 			diary(this.filename);
+			this.isOn = true;
 		end
 		
 		function [] = off(~)
 			diary off;
+			this.isOn = false;
 		end
 		
 		function [] = notifyError(this, exception)
-			eventdata = vt.EventData(exception);
-			notify(this, 'NOTIFY_ERROR', eventdata);
+			if(this.isOn)
+				this.action.dispatch(exception);
+			end
 		end
 		
 		function [] = exception(this, exception)
@@ -44,10 +51,11 @@ classdef Log < handle
 		end
 		
 		function [] = warning(this, warning)
-			this.notifyError(warning);
+			exception = MException('customExceptionID', warning);
+			this.notifyError(exception);
 			
 			if(this.debugMode)
-% 				rethrow(warning);
+				rethrow(warning);
 			end
 		end
 	end

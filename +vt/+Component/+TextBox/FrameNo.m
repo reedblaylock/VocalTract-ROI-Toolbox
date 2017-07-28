@@ -18,14 +18,14 @@ classdef FrameNo < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listen
 		function [] = dispatchAction(this, source, ~)
 			str = get(source, 'String');
 			num = str2double(str);
-			if (isempty(num) || isnan(num))
-				this.setParameters('String', this.data);
-				this.log.warning('Frame number must be numerical.');
-			else
+			try
+				assert(~isempty(num) && ~isnan(num));
 				this.data = str;
-% 				this.action.data = num;
-% 				dispatchAction@vt.Action.Dispatcher(this, source, evtdata);
 				this.action.dispatch(num);
+			catch
+				this.setParameters('String', this.data);
+				excp = MException('InvalidInput:FrameNo', 'Frame number must be numerical.');
+				this.log.exception(excp);
 			end
 		end
 		

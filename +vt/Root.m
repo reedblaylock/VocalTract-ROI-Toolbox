@@ -1,6 +1,7 @@
 classdef (Abstract) Root < handle
-	properties
-		log = vt.Log(true);
+	properties (SetObservable)
+% 		log = vt.Log(true);
+		log
 	end	
 end
 

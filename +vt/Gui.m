@@ -8,9 +8,12 @@ classdef Gui < vt.Root
 	end
 	
 	methods
-		function [] = run(this)
+		function this = Gui()
+			this.log = vt.Log(true);
 			this.log.on();
-			
+		end
+		
+		function [] = run(this)
 			this.state = vt.State();
 			this.reducer = vt.Reducer(this.state);
 			this.actionListener = vt.Action.Listener(this.reducer);
@@ -25,11 +28,22 @@ classdef Gui < vt.Root
 			fields = fieldnames(this.gui);
 			for iField = 1:numel(fields)
 				obj = this.gui.(fields{iField});
+				if(isa(obj, 'vt.Root'))
+					obj.log = this.log;
+				end
 				if(isa(obj, 'vt.State.Listener'))
 					obj.registerAllMethodsToState(this.state);
 				end
 				if(isa(obj, 'vt.Action.Dispatcher'))
 					this.actionListener.registerAction(obj.action);
+				end
+			end
+			
+			propertyList = properties(this);
+			for iProp = 1:numel(properties(this))
+				prop = propertyList{iProp};
+				if(isa(this.(prop), 'vt.Root'))
+					this.(prop).log = this.log;
 				end
 			end
 		end

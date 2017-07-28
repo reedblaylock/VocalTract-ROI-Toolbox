@@ -14,9 +14,10 @@ classdef Action < vt.Root
 		
 		function [] = dispatch(this, varargin)
 			p = inputParser;
-			p.addRequired('this', @(this) isa(this, 'vt.Action'));
-			p.addOptional('data', []);
-			parse(p, this, varargin{:});
+% 			p.addRequired('this', @(this) isa(this, 'vt.Action'));
+			p.addOptional('data', '');
+			parse(p, varargin{:});
+% 			parse(p, this, varargin{:});
 			
 			actionName = this.getName();
 			if(isempty(p.Results.data))
