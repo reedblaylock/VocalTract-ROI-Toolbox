@@ -13,10 +13,13 @@ classdef Log < handle
 	methods
 		function this = Log(varargin)
 			p = inputParser;
-			p.addOptional('debugMode', false, @islogical);
+			p.addOptional('debugMode', 0, @isnumeric);
 			parse(p, varargin{:});
 			
 			this.debugMode = p.Results.debugMode;
+			if(this.debugMode == 2)
+				dbstop if error
+			end
 			this.action = vt.Action.NotifyError();
 			this.isOn = false;
 		end
@@ -26,7 +29,11 @@ classdef Log < handle
 			this.isOn = true;
 		end
 		
-		function [] = off(~)
+		function [] = off(this)
+			disp('Turning log off...');
+			if(this.debugMode == 2)
+				dbclear if error;
+			end
 			diary off;
 			this.isOn = false;
 		end
@@ -46,7 +53,7 @@ classdef Log < handle
 			this.notifyError(exception);
 			
 			if(this.debugMode)
-				rethrow(exception);
+				throwAsCaller(exception);
 			end
 		end
 		
@@ -55,7 +62,7 @@ classdef Log < handle
 			this.notifyError(exception);
 			
 			if(this.debugMode)
-				rethrow(warning);
+				throwAsCaller(warning);
 			end
 		end
 	end

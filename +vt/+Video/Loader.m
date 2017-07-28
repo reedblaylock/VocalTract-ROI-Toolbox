@@ -12,8 +12,9 @@ classdef Loader < vt.Root & vt.Action.Dispatcher
 			% Check that the file exists
 			if(exist(fullpath, 'file') ~= 2)
 				excp = MException('VTToolbox:FileNotFound', 'The file you selected could not be found.');
-				this.log.exception(excp);
-				return
+% 				this.log.exception(excp);
+				throw(excp);
+% 				return
 			end
 			
 			% Check that the file really has extension loadType
@@ -21,8 +22,9 @@ classdef Loader < vt.Root & vt.Action.Dispatcher
 			if(~strcmp(ext, ['.' loadType]))
 				% Error: file is incorrect type
 				excp = MException('VTToolbox:WrongExtension', ['The file you selected is not of type ' loadType '.']);
-				this.log.exception(excp);
-				return
+% 				this.log.exception(excp);
+				throw(excp);
+% 				return
 				% But maybe a user thought they wanted an AVI but actually
 				% wanted a VT. Is it worth making them start again, or should
 				% you load the VT but issue a notification that the target file
@@ -36,8 +38,9 @@ classdef Loader < vt.Root & vt.Action.Dispatcher
 				otherwise
 					% Error: unknown request type
 					excp = MException('VTToolbox:InvalidExtension', ['File type ' ext ' is unknown.']);
-					this.log.exception(excp);
-					return
+					throw(excp);
+% 					this.log.exception(excp);
+% 					return
 			end
 			
 			video = vt.Video( ...

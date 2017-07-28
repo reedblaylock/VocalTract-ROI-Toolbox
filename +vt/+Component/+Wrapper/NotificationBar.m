@@ -30,7 +30,8 @@ classdef NotificationBar < vt.Root & vt.Component.Wrapper
 				if(ischar(error))
 					this.notificationBar.update(error, 'yellow');
 				else
-					message = getReport(error, 'basic');
+% 					message = getReport(error, 'basic');
+					message = error.message;
 					this.notificationBar.update(message, 'red');
 				end
 			catch

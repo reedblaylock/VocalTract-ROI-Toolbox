@@ -54,10 +54,10 @@ classdef Listener < vt.Listener
 			end
 			this.reducer.register(videoLoader.action);
 			try
-				assert(videoLoader.loadVideo(eventData.data));
+				videoLoader.loadVideo(eventData.data);
 				% Increment the frame here? Or, do it from the VideoLoader?
 			catch excp
-% 				this.log.exception(excp);
+				this.log.exception(excp);
 				return
 				% TODO: Do something about this
 			end
