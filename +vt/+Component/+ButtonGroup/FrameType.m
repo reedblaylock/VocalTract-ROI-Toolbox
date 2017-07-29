@@ -8,7 +8,7 @@ classdef FrameType < vt.Component.Layout.HButtonGroup & vt.Action.Dispatcher & v
 			this@vt.Component.Layout.HButtonGroup(parent, varargin{:});
 			
 			this.setParameters('ButtonStyle', 'radio', 'Enable', 'off');
-			this.handle.Buttons = {'frame', 'mean', 'std'};
+			this.handle.Buttons = {'frame', 'mean', 'std dev'};
 			this.handle.SelectionChangeFcn = {@(source, event) changeButton(this, source, event)};
 		end
 		

@@ -16,6 +16,9 @@ classdef (Sealed) State < handle
 		currentFrameNo
 		video
 		frameType = 'frame'
+		
+		regions
+		currentRegion
 	end
 end
 
