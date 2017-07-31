@@ -1,10 +1,10 @@
-classdef RegionName < vt.Component.TextBox
+classdef Tau < vt.Component.TextBox
 	properties
-		actionType = @vt.Action.ChangeRegionName;
+		actionType = @vt.Action.ChangeTau;
 	end
 	
 	methods
-		function this = RegionName(parent)
+		function this = Tau(parent)
 			p = vt.InputParser();
 			p.addParent();
 			p.parse(parent);

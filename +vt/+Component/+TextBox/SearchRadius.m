@@ -1,10 +1,10 @@
-classdef RegionName < vt.Component.TextBox
+classdef SearchRadius < vt.Component.TextBox
 	properties
-		actionType = @vt.Action.ChangeRegionName;
+		actionType = @vt.Action.ChangeSearchRadius;
 	end
 	
 	methods
-		function this = RegionName(parent)
+		function this = SearchRadius(parent)
 			p = vt.InputParser();
 			p.addParent();
 			p.parse(parent);

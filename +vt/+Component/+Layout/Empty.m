@@ -1,6 +1,6 @@
-classdef Panel < vt.Component.Layout
+classdef Empty < vt.Component.Layout
 	methods
-		function this = Panel(parent, varargin)
+		function this = Empty(parent, varargin)
 			this@vt.Component.Layout(parent, varargin{:});
 		end
 	end
@@ -11,7 +11,7 @@ classdef Panel < vt.Component.Layout
 			p.addParent();
 			parse(p, parent);
 			
-			this.handle = uix.Panel( ...
+			this.handle = uix.Empty( ...
 				'Parent', p.Results.parent.handle ...
 			);
 		end

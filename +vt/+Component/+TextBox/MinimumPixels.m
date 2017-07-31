@@ -1,10 +1,10 @@
-classdef RegionName < vt.Component.TextBox
+classdef MinimumPixels < vt.Component.TextBox
 	properties
-		actionType = @vt.Action.ChangeRegionName;
+		actionType = @vt.Action.ChangeMinimumPixels;
 	end
 	
 	methods
-		function this = RegionName(parent)
+		function this = MinimumPixels(parent)
 			p = vt.InputParser();
 			p.addParent();
 			p.parse(parent);

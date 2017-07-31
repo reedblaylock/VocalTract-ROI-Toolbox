@@ -4,8 +4,8 @@ classdef RegionColor < vt.Component.Button
 	end
 	
 	methods
-		function this = RegionColor(parent)
-			this@vt.Component.Button(parent);
+		function this = RegionColor(parent, label)
+			this@vt.Component.Button(parent, label);
 			
 % 			this.setCallback();
 		end
