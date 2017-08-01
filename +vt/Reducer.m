@@ -38,21 +38,16 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		end
 		
 		function [] = setVideo(this, ~, eventData)
-			% TODO: Should the reducer also change the current frame number, or
-			% should that come from a separate event triggered when a component
-			% gets a video update? (The latter, I think)
 			disp('Reducer: setVideo()');
 			this.state.video = eventData.data;
-% 			if(isempty(this.state.video))
-% 				this.state.video = eventData.data;
-% 				this.state.currentFrameNo = 1;
-% 			else
-% 				this.state.video = eventData.data;
-% 			end
 		end
 		
 		function [] = setFrameType(this, ~, eventData)
 			this.state.frameType = eventData.data;
+		end
+		
+		function [] = newRegion(this, ~, ~)
+			this.state.isEditing = 'region';
 		end
 		
 		function [] = delete(~)

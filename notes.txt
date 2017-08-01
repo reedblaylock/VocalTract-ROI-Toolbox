@@ -121,3 +121,32 @@ Unresolved issues:
   specified in the component anymore
 - Registering the event listeners can't be avoided. How do you register all the 
   actions without calling their registration from the class? Do you need to?
+
+
+
+
+
+
+
+
+
+It looks like some of the GUI components--at the very least, the frame--need to 
+know what settings are currently active. For instance, when a point is clicked 
+while editing/adding regions, the frame needs to know whether to add an origin 
+rectangle and/or border lines based on whether two different checkboxes are 
+checked. It has to calculate the placement of borders based on a radius/size 
+setting, and may even have to get its color from a different button.
+
+1. Each of these parameters could be abstracted to a class, where all the 
+   information is shared
+2. The frame doesn't have to be responsible for drawing, though it seems like
+   maybe it should?
+3. Should the changes be passed through Action.Listener, or a new listener, or 
+   no listener?
+
+
+
+
+
+
+

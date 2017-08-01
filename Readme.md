@@ -62,5 +62,6 @@ needs.
 The layout of this tool was made possible by
 - <a href="https://www.mathworks.com/matlabcentral/fileexchange/47982-gui-layout-toolbox" target="_blank">GUI Layout Toolbox</a>
 - <a href="https://www.mathworks.com/matlabcentral/fileexchange/52965-buttongroup-for-hg2" target="_blank">ButtonGroup for HG2</a>
+%- <a href="https://www.mathworks.com/matlabcentral/fileexchange/49551-trace-perimeter-of-binary-image-with-line-segments--bwperimtrace-" target="_blank">bwperimtrace</a>
 
 --Reed Blaylock

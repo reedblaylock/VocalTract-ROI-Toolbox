@@ -56,6 +56,10 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener
 			end
 		end
 		
+		function [] = onIsEditingChange(this, state)
+			this.frame.isEditing = state.isEditing;
+		end
+		
 		% Action methods %
 		function [] = showFrame(this, video, frameNo)
 			img = this.getFrame(video, frameNo);

@@ -40,6 +40,8 @@ classdef Action < vt.Root
 				assert(~strcmp(actionName, 'ObjectBeingDestroyed'))
 				% Error: this class does not have an action specified
 			catch excp
+				% TODO: this will probably throw an error, because this.log does
+				% not exist
 				this.log.exception(excp);
 			end
 		end

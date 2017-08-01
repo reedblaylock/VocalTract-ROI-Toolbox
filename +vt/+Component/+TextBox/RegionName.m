@@ -1,4 +1,4 @@
-classdef RegionName < vt.Component.TextBox
+classdef RegionName < vt.Component.TextBox & vt.State.Listener
 	properties
 		actionType = @vt.Action.ChangeRegionName;
 	end
@@ -13,6 +13,12 @@ classdef RegionName < vt.Component.TextBox
 			this.setParameters('Enable', 'off');
 			
 % 			this.setCallback();
+		end
+		
+		function this = onIsEditingChange(this, state)
+			if(strcmp(state.isEditing, 'region'))
+				this.setParameters('Enable', 'on');
+			end
 		end
 	end
 	

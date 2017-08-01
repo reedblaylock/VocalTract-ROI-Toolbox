@@ -19,6 +19,7 @@ classdef (Sealed) State < handle
 		
 		regions
 		currentRegion
+		isEditing
 	end
 end
 
