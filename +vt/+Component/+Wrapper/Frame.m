@@ -65,18 +65,21 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			this.isEditing = state.isEditing;
 			switch(state.isEditing)
 				case 'region'
-					this.setCurrentRegionDefaults();
+					% TODO: This should be getting the current region settings from
+					% state, to avoid code duplication
+					this.setCurrentRegionDefaults(state);
 				otherwise
-					this.frame.deleteOrigin(state.currentRegion.name);
-					this.frame.deleteOutline(state.currentRegion.name);
+					this.frame.deleteOrigin(state.currentRegion.id);
+					this.frame.deleteOutline(state.currentRegion.id);
 			end
 		end
 		
-		function [] = setCurrentRegionDefaults(this)
-			% All these defaults should be loaded in from a preferences file
+		function [] = setCurrentRegionDefaults(this, state)
+			% TODO: All of this should be given by vt.State
 			region = struct();
-			region.name = '__tempregion';
-			region.isSaved = false; % is the region part of vt.State.regions
+			region.id = state.regionIdCounter + 1; % In Reducer, the id value is set after the isEditing change. Since this is triggered by onIsEditingChange, you have to increment it explicitly here
+			region.name = '';
+% 			region.isSaved = false; % is the region part of vt.State.regions
 			region.origin = []; % origin pixel of the region
 			region.type = 'average'; % what kind of timeseries do you want?
 			
@@ -104,39 +107,61 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			% you're editing a region. If you want to edit a different region,
 			% you have to save or cancel your current edits first (clearing
 			% state.currentRegion).
-			color = state.currentRegion.color;
-			name = state.currentRegion.name;
-			mask = this.getMask(state);
+			region = state.currentRegion;
+			mask = this.getMask(region, state);
 			
-			if(~strcmp(this.currentRegion.name, state.currentRegion.name))
-				this.frame.renameAll(this.currentRegion.name, state.currentRegion.name);
-			end
+% 			if(~strcmp(this.currentRegion.name, state.currentRegion.name))
+% 				this.frame.renameAll(this.currentRegion.name, state.currentRegion.name);
+% 			end
 			
 			% This will handle changes in color, radius ...
 			if(~isempty(mask))
-				this.frame.deleteOrigin(name);
-				this.frame.deleteOutline(name);
-				if(state.currentRegion.showOrigin)
-					this.frame.drawOrigin(name, state.currentRegion.origin, color);
+				this.frame.deleteOrigin(region.id);
+				this.frame.deleteOutline(region.id);
+				if(region.showOrigin)
+					this.frame.drawOrigin(region.id, region.origin, region.color);
 				end
-				if(state.currentRegion.showOutline)
-					this.frame.drawOutline(name, mask, color);
+				if(region.showOutline)
+					this.frame.drawOutline(region.id, mask, region.color);
 				end
 			end
 			
 			this.currentRegion = state.currentRegion;
 		end
 		
-		function mask = getMask(this, state)
+		function [] = onRegionsChange(this, state)
+			if(isempty(fieldnames(state.regions)) || ~numel(state.regions))
+				% There are no regions saved right now
+			end
+			
+			nRegions = numel(state.regions);
+			for iRegion = 1:nRegions
+				region = state.regions(iRegion);
+				mask = this.getMask(region, state);
+				
+				if(~isempty(mask))
+					this.frame.deleteOrigin(region.id);
+					this.frame.deleteOutline(region.id);
+					if(region.showOrigin)
+						this.frame.drawOrigin(region.id, region.origin, region.color);
+					end
+					if(region.showOutline)
+						this.frame.drawOutline(region.id, mask, region.color);
+					end
+				end
+			end
+		end
+		
+		function mask = getMask(this, region, state)
 			mask = [];
-			if(isempty(state.currentRegion.origin))
+			if(isempty(region.origin))
 				return;
 			end
 			
-			switch(state.currentRegion.shape)
+			switch(region.shape)
 				case 'circle'
 					% Find the code that calculates the pixels
-					mask = this.find_region(state.video.matrix, state.currentRegion.origin, state.currentRegion.radius);
+					mask = this.find_region(state.video.matrix, region.origin, region.radius);
 				otherwise
 					% TODO: error, this shape has not been programmed
 			end
@@ -162,14 +187,14 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 % 			Adam Lammert (2010)
 
 			%Parameters
-			fheight = siz(1);
-			fwidth = siz(2);
+% 			fheight = siz(1);
+% 			fwidth = siz(2);
 			
 			j = pixloc(1);
 			i = pixloc(2);
 
 			%Build Distance Map
-			D = zeros(fheight,fwidth);
+% 			D = zeros(fheight,fwidth);
 			D1 = repmat((1:siz(1))',1,siz(2));
 			D2 = repmat((1:siz(2)),siz(2),1);
 			E1 = repmat(i,siz(2),siz(1));
@@ -229,7 +254,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			d = struct();
 			d.isEditing = this.isEditing;
 			coordinates = this.frame.getParameter('CurrentPoint');
-			d.coordinates = round(coordinates(1, 1:2)) - .5;
+			d.coordinates = round(coordinates(1, 1:2));
 			
 			this.action.dispatch(d);
 		end

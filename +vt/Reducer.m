@@ -49,10 +49,15 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		function [] = newRegion(this, ~, ~)
 			this.state.isEditing = 'region';
 			
-			% All these defaults should be loaded in from a preferences file
+			% TODO: This assignment should be caused by a separate event
+			this.state.regionIdCounter = this.state.regionIdCounter + 1;
+			
 			region = struct();
-			region.name = '__tempregion';
-			region.isSaved = false; % is the region part of vt.State.regions
+			region.id = this.state.regionIdCounter;
+			
+			% TODO: All these defaults should be loaded in from a preferences file
+			region.name = '';
+% 			region.isSaved = false; % is the region part of vt.State.regions
 			region.origin = []; % origin pixel of the region
 			region.type = 'average'; % what kind of timeseries do you want?
 			
@@ -72,6 +77,7 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			region.showOutline = 1; % connected to the "Show outline" checkbox
 			region.showFill = 0; % connected to the "Show fill" checkbox
 			
+			% TODO: This assignment should be caused by a separate event
 			this.state.currentRegion = region;
 		end
 		
@@ -97,6 +103,50 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		
 		function [] = cancelRegionChange(this, ~, ~)
 			this.state.isEditing = '';
+		end
+		
+		function [] = saveRegion(this, ~, ~)
+% 			idx = strcmp([this.state.regions.name], this.state.currentRegion.name) && ...
+% 				[this.state.regions.origin] == this.state.currentRegion.origin; %#ok<BDSCA>
+			
+			% TODO: This should be caused by a different action
+			this.state.isEditing = '';
+
+			if(isempty(fieldnames(this.state.regions)) || ~numel(this.state.regions))
+				% There are no regions saved right now
+				this.state.regions = this.state.currentRegion;
+			else
+				% There are regions saved right now. See if any of them have the
+				% currentRegion's id
+				idx = find([this.state.regions.id] == this.state.currentRegion.id);
+				
+				if(isempty(idx))
+					% None of the saved regions have this region's id. Add
+					% currentRegion to the end of the structure
+					idx = numel(this.state.regions) + 1;
+				end
+				this.state.regions(idx) = this.state.currentRegion;
+			end
+		end
+		
+		function [] = deleteRegion(this, ~, ~)
+% 			idx = strcmp([this.state.regions.name], eventData.data.name) && ...
+% 				[this.state.regions.origin] == eventData.data.origin; %#ok<BDSCA>
+			
+			% TODO: This should come from a separate action
+			this.isEditing = '';
+
+			if(isempty(fieldnames(this.state.regions)) || ~numel(this.state.regions))
+				% There are no regions saved right now, so there's nothing to
+				% delete
+				return;
+			end
+			
+% 			idx = find([this.state.regions.id] == eventData.data);
+			idx = find([this.state.regions.id] == this.state.currentRegion.id);
+			if(~isempty(idx))
+				this.state.regions(idx) = [];
+			end
 		end
 		
 		function [] = delete(~)

@@ -15,61 +15,38 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 			this.imageHandle = imagesc([], 'Parent', this.handle);
 			axis image;
 			colormap gray;
-			
-% 			this.setCallback('ButtonDownFcn');
-% 			set( ...
-% 				this.imageHandle, ...
-% 				'ButtonDownFcn', ...
-% 				@(source, eventdata) processClick(this, source, eventdata) ...
-% 			);
 		end
 		
 		function [] = update(this, frame)
 			% Use imshow?
 			this.imageHandle.CData = frame;
-% 			imagesc(frame, 'Parent', this.handle);
-% 			axis image;
-% 			colormap gray;
 		end
 		
-% 		function [] = processClick(this, ~, ~)
-% 			disp('Processing click!');
-% 			coordinates = get(this.handle, 'CurrentPoint');
-% 			coordinates = round(coordinates(1, 1:2)) - .5;
-% 			
-% 			if(this.showOrigin)
-% 				this.drawOrigin(coordinates);
-% 			end
-% 			if(this.showOutline)
-% 				this.drawOutline(coordinates);
-% 			end
-% 			if(this.showFill)
-% 				this.drawFill(coordinates);
-% 			end
-% 		end
-		
-		function [] = drawOrigin(this, regionName, coordinates, color)
+		function [] = drawOrigin(this, regionId, coordinates, color)
 			p = inputParser;
-			p.addRequired('regionName', @ischar);
+			p.addRequired('regionId', @isnumeric);
 			p.addRequired('coordinates', @isnumeric);
 			p.addRequired('color', @(color) (isnumeric(color) || ischar(color)));
-			parse(p, regionName, coordinates, color);
+			parse(p, regionId, coordinates, color);
 			
-% 			this.deleteOrigin(regionName);
-			rectangle('Parent', this.handle, 'Position', [coordinates(:)', 1, 1], 'EdgeColor', 'black', 'FaceColor', color, 'Tag', regionName);
+			regionId = num2str(p.Results.regionId);
+			coordinates = p.Results.coordinates - .5;
+			rectangle('Parent', this.handle, 'Position', [coordinates(:)', 1, 1], 'EdgeColor', 'black', 'FaceColor', p.Results.color, 'Tag', regionId);
 			
-			disp(['Drawing ' regionName '...']);
+			disp(['Drawing ' regionId '...']);
 		end
 		
-		function [] = deleteOrigin(this, regionName)
-			oldOrigin = findobj('Type', 'rectangle', 'Tag', regionName, 'Parent', this.handle);
+		function [] = deleteOrigin(this, regionId)
+			regionId = num2str(regionId);
+			oldOrigin = findobj('Type', 'rectangle', 'Tag', regionId, 'Parent', this.handle);
 			delete(oldOrigin);
 			
-			disp(['Deleting ' regionName '...']);
+			disp(['Deleting ' regionId '...']);
 		end
 		
-		function [] = drawOutline(this, regionName, mask, color)
-% 			this.deleteOutline(regionName);
+		function [] = drawOutline(this, regionId, mask, color)
+			regionId = num2str(regionId);
+			
 			% horizontal lines
 			idxs = find(any(mask));
 			for a = 1:length(idxs)
@@ -79,8 +56,8 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 				y1 = [min_c - .5, min_c - .5];
 				y2 = [max_c + .5, max_c + .5];
 % 				line([x x], [y1 y2], 'Color', color, 'Parent', this.handle, 'Tag', regionName);
-				line(x,y1,'Color',color, 'Tag', regionName);
-				line(x,y2,'Color',color, 'Tag', regionName);
+				line(x,y1,'Color',color, 'Tag', regionId);
+				line(x,y2,'Color',color, 'Tag', regionId);
 			end
 			% vertical lines
 			idxs = find(any(mask,2));
@@ -91,26 +68,21 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 				x1 = [min_r - .5, min_r - .5];
 				x2 = [max_r + .5, max_r + .5];
 % 				line([x1 x2], [y y], 'Color', 'red', 'Parent', this.handle);
-				line(x1,y,'Color',color, 'Tag', regionName, 'Parent', this.handle);
-				line(x2,y,'Color',color, 'Tag', regionName, 'Parent', this.handle);
+				line(x1,y,'Color',color, 'Tag', regionId, 'Parent', this.handle);
+				line(x2,y,'Color',color, 'Tag', regionId, 'Parent', this.handle);
 			end
 		end
 		
-		function [] = deleteOutline(this, regionName)
-			oldOutline = findobj('Type', 'line', 'Tag', regionName, 'Parent', this.handle);
+		function [] = deleteOutline(this, regionId)
+			regionId = num2str(regionId);
+			
+			oldOutline = findobj('Type', 'line', 'Tag', regionId, 'Parent', this.handle);
 			delete(oldOutline);
 		end
 		
-		function [] = renameAll(this, oldName, newName)
-			objs = findobj('Parent', this.handle, 'Tag', oldName);
-			set(objs, 'Tag', newName);
-		end
-		
-% 		function [] = dispatchAction(this, ~, ~)
-% 			coordinates = get(this.handle, 'CurrentPoint');
-% 			data.coordinates = coordinates(1, 1:2);
-% 			data.isEditing = this.isEditing;
-% 			this.action.dispatch(data);
+% 		function [] = renameAll(this, oldName, newName)
+% 			objs = findobj('Parent', this.handle, 'Tag', oldName);
+% 			set(objs, 'Tag', newName);
 % 		end
 	end
 	

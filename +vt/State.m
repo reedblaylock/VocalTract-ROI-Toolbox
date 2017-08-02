@@ -17,9 +17,10 @@ classdef (Sealed) State < handle
 		video % vt.Video
 		frameType = 'frame'
 		
-		regions
-		currentRegion % struct
-		isEditing % character arry
+		regions = struct()
+		currentRegion  = struct()
+		regionIdCounter = 0
+		isEditing % character array
 	end
 end
 
