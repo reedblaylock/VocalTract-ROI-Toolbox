@@ -93,6 +93,10 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			this.state.currentRegion.color = eventData.data;
 		end
 		
+		function [] = changeRegionRadius(this, ~, eventData)
+			this.state.currentRegion.radius = eventData.data;
+		end
+		
 		function [] = toggleShowOrigin(this, ~, eventData)
 			this.state.currentRegion.showOrigin = eventData.data;
 		end

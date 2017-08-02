@@ -1,4 +1,4 @@
-classdef Gui < vt.Root
+classdef Gui < vt.Root & vt.State.Listener
 	properties
 		state
 		styles
@@ -25,6 +25,8 @@ classdef Gui < vt.Root
 		end
 		
 		function [] = initializeListeners(this)
+			% Initialize all the gui elements with a log, register their state
+			% listeners, and get them registered with the action listener
 			fields = fieldnames(this.gui);
 			for iField = 1:numel(fields)
 				obj = this.gui.(fields{iField});
@@ -39,12 +41,28 @@ classdef Gui < vt.Root
 				end
 			end
 			
+			% Give all the properties of this vt.Gui a log as well
 			propertyList = properties(this);
 			for iProp = 1:numel(properties(this))
 				prop = propertyList{iProp};
 				if(isa(this.(prop), 'vt.Root'))
 					this.(prop).log = this.log;
 				end
+			end
+			
+			% Register vt.Gui as a state listener
+			this.registerAllMethodsToState(this.state);
+		end
+		
+		function [] = initializeComponent(this, obj)
+			if(isa(obj, 'vt.Root'))
+				obj.log = this.log;
+			end
+			if(isa(obj, 'vt.State.Listener'))
+				obj.registerAllMethodsToState(this.state);
+			end
+			if(isa(obj, 'vt.Action.Dispatcher'))
+				this.actionListener.registerAction(obj.action);
 			end
 		end
 		
@@ -198,7 +216,7 @@ classdef Gui < vt.Root
 				'Snap to midline' ...
 			);
 			% 5-1 + Empty area (for spacing purposes)
-			gui.Empty1 = vt.Component.Layout.Empty( ...
+			gui.Empty5 = vt.Component.Layout.Empty( ...
 				gui.RightBoxGrid ...
 			);
 			% 6-1 + Change color button
@@ -222,28 +240,28 @@ classdef Gui < vt.Root
 				'Show fill' ...
 			);
 			% 1-2 + Minimum # pixels textbox
-			gui.MinimumPixelsPanel = vt.Component.Layout.Panel( ...
+			gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
 				gui.RightBoxGrid, ...
 				'Title', 'Minimum number of pixels' ...
 			);
 			gui.MinimumPixels = vt.Component.TextBox.MinimumPixels( ...
-				gui.MinimumPixelsPanel ...
+				gui.RegionSettings1_2 ...
 			);
 			% 2-2 + Search radius textbox
-			gui.SearchRadiusPanel = vt.Component.Layout.Panel( ...
+			gui.RegionSettings2_2 = vt.Component.Layout.Panel( ...
 				gui.RightBoxGrid, ...
 				'Title', 'Search radius' ...
 			);
 			gui.SearchRadius = vt.Component.TextBox.SearchRadius( ...
-				gui.SearchRadiusPanel ...
+				gui.RegionSettings2_2 ...
 			);
 			% 3-2 + Tau textbox
-			gui.TauPanel = vt.Component.Layout.Panel( ...
+			gui.RegionSettings3_2 = vt.Component.Layout.Panel( ...
 				gui.RightBoxGrid, ...
 				'Title', 'Tau' ...
 			);
 			gui.Tau = vt.Component.TextBox.Tau( ...
-				gui.TauPanel ...
+				gui.RegionSettings3_2 ...
 			);
 			% 4-2 + Allow multiple origins checkbox
 			gui.MultipleOriginsCheckbox = vt.Component.Checkbox.MultipleOrigins( ...
@@ -251,7 +269,7 @@ classdef Gui < vt.Root
 				'Allow multiple origins' ...
 			);
 			% 5-2 + Empty area (for spacing purposes)
-			gui.Empty2 = vt.Component.Layout.Empty( ...
+			gui.RegionSettings5_2 = vt.Component.Layout.Empty( ...
 				gui.RightBoxGrid ...
 			);
 			% 6-2 + Save button
@@ -274,8 +292,50 @@ classdef Gui < vt.Root
 				gui.RightBoxGrid, ...
 				'Cancel region changes' ...
 			);
+		
+% 			gui.RightBoxGrid.handle.Contents
 			
 			gui.RightBoxGrid.setParameters('Widths', [-1 -1], 'Heights', -1.*ones(1, 9));
+		end
+		
+		function [] = onCurrentRegionChange(this, state)
+			switch(state.currentRegion.shape)
+				case 'circle'
+					% delete elements 10:12
+					delete(this.gui.RightBoxGrid.handle.Contents(10:12));
+					
+					% add the radius box and two empty elements
+					% + Radius
+					this.gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
+						this.gui.RightBoxGrid, ...
+						'Title', 'Radius' ...
+					);
+					this.gui.RegionRadius = vt.Component.TextBox.Radius( ...
+						this.gui.RegionSettings1_2 ...
+					);
+					this.initializeComponent(this.gui.RegionSettings1_2);
+					this.initializeComponent(this.gui.RegionRadius);
+					% + Empty space
+					this.gui.RegionSettings2_2 = vt.Component.Layout.Empty( ...
+						this.gui.RightBoxGrid ...
+					);
+					this.initializeComponent(this.gui.RegionSettings2_2);
+					% + Empty space
+					this.gui.RegionSettings3_2 = vt.Component.Layout.Empty( ...
+						this.gui.RightBoxGrid ...
+					);
+					this.initializeComponent(this.gui.RegionSettings3_2);
+					
+					% re-order the elements so that elements 16:18 are 10:12
+					newOrder = [1:9 16:18 10:15];
+
+% 					% replace elements 10:12 with elements 19:21
+% 					newOrder = [1:9 19:21 13:18];
+					
+					this.gui.RightBoxGrid.handle.Contents = this.gui.RightBoxGrid.handle.Contents(newOrder);
+				otherwise
+					% TODO: add the rest
+			end
 		end
 		
 		function [] = delete(~)
