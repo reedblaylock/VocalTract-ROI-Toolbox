@@ -72,6 +72,20 @@ classdef Listener < vt.Listener
 			this.reducer.register(action);
 			action.dispatch(1);
 		end
+		
+		function [] = notifyFrameClick(this, ~, eventData)
+			isEditing = eventData.data.isEditing;
+			switch(isEditing)
+				case 'region'
+					action = vt.Action.ChangeCurrentRegionOrigin();
+					coordinates = eventData.data.coordinates;
+					this.reducer.register(action);
+					action.dispatch(coordinates);
+				otherwise
+					% TODO: error, this editing type has not been established
+					% yet
+			end
+		end
 	end
 	
 end

@@ -149,4 +149,7 @@ setting, and may even have to get its color from a different button.
 
 
 
-
+NEXT
+- Check your circular region mask-making (size/shape looks off)
+- Test color changes (buuuut I'm pretty sure it works, just from messing around)
+- Save currentRegion to state.regions

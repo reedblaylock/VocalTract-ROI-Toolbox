@@ -1,4 +1,4 @@
-classdef RegionType < vt.Component.Popup
+classdef RegionType < vt.Component.Popup & vt.State.Listener
 	properties
 		actionType = @vt.Action.ChangeRegionType
 	end
@@ -12,6 +12,15 @@ classdef RegionType < vt.Component.Popup
 			);
 		
 % 			this.setCallback();
+		end
+		
+		function [] = onIsEditingChange(this, state)
+			switch(state.isEditing)
+				case 'region'
+					this.setParameters('Enable', 'on');
+				otherwise
+					this.setParameters('Enable', 'off');
+			end
 		end
 	end
 end

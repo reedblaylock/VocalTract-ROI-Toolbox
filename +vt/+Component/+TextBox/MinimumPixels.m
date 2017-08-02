@@ -15,9 +15,12 @@ classdef MinimumPixels < vt.Component.TextBox & vt.State.Listener
 % 			this.setCallback();
 		end
 		
-		function this = onIsEditingChange(this, state)
-			if(strcmp(state.isEditing, 'region'))
-				this.setParameters('Enable', 'on');
+		function [] = onIsEditingChange(this, state)
+			switch(state.isEditing)
+				case 'region'
+					this.setParameters('Enable', 'on');
+				otherwise
+					this.setParameters('Enable', 'off');
 			end
 		end
 	end

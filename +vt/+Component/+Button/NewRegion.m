@@ -10,12 +10,14 @@ classdef NewRegion < vt.Component.Button & vt.Action.Dispatcher & vt.State.Liste
 			this.setCallback();
 		end
 		
+		function [] = onVideoChange(this, ~)
+			this.setParameters('Enable', 'on');
+		end
+		
 		function [] = onIsEditingChange(this, state)
 			switch(state.isEditing)
 				case 'region'
 					this.setParameters('Enable', 'off');
-				case ''
-					this.setParameters('Enable', 'on');
 				otherwise
 					this.setParameters('Enable', 'on');
 			end

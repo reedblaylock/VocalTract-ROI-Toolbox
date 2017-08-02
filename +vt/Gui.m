@@ -9,7 +9,7 @@ classdef Gui < vt.Root
 	
 	methods
 		function this = Gui()
-			this.log = vt.Log(1);
+			this.log = vt.Log(2);
 			this.log.on();
 		end
 		

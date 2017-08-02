@@ -17,6 +17,14 @@ classdef (Abstract) Component < vt.Root
 				set(this.handle, params{i}, p.Unmatched.(params{i}));
 			end
 		end
+		
+		function value = getParameter(this, param)
+			p = inputParser;
+			p.addRequired('param', @ischar);
+			parse(p, param);
+			
+			value = get(this.handle, param);
+		end
 	end
 		
 	methods (Access = ?vt.Action.Dispatcher)

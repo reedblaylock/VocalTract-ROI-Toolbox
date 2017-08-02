@@ -1,4 +1,4 @@
-classdef RegionColor < vt.Component.Button
+classdef RegionColor < vt.Component.Button & vt.Action.Dispatcher & vt.State.Listener
 	properties
 		actionType = @vt.Action.ChangeRegionColor
 	end
@@ -7,7 +7,7 @@ classdef RegionColor < vt.Component.Button
 		function this = RegionColor(parent, label)
 			this@vt.Component.Button(parent, label);
 			
-% 			this.setCallback();
+			this.setCallback();
 		end
 		
 		function [] = dispatchAction(this, ~, ~)
@@ -17,6 +17,15 @@ classdef RegionColor < vt.Component.Button
 			end
 			
 			this.action.dispatch(color);
+		end
+		
+		function [] = onIsEditingChange(this, state)
+			switch(state.isEditing)
+				case 'region'
+					this.setParameters('Enable', 'on');
+				otherwise
+					this.setParameters('Enable', 'off');
+			end
 		end
 	end
 	
