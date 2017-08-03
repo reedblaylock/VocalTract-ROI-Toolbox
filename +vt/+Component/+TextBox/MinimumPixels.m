@@ -10,7 +10,6 @@ classdef MinimumPixels < vt.Component.TextBox %& vt.State.Listener
 			p.parse(parent);
 			
 			this@vt.Component.TextBox(parent);
-			this.setParameters('Enable', 'off');
 			
 % 			this.setCallback();
 		end

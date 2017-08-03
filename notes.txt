@@ -161,11 +161,11 @@ NEXT
 - Display region timeseries in the next panel
 - Update notification bar when user puts in a frame/radius value that's too high or too low
 - Extend the number-based textboxes from a Range class that validates the range and emits notifications to the user
+- When switching back and forth between circles and rectangles, the text box values return to default, but the state.currentFrame parameters stay as they were
 
 SOON
-- Disable/enable the radio buttons (they start off disabled now, but you'll have problems when you load new videos)
-- The value for RegionShape should determine which parameters are available to edit
 - Make sure garbage collection is doing its job. You've been getting a lot of crashes and no-space messages
 - Set up a preferences system so that all the defaults are uniform
 - Enable notification bar
 - Add color to flexbox borders
+- Make all sets/gets into setParameters/getParameter

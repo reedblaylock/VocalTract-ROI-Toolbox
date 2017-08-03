@@ -84,7 +84,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			region.type = 'average'; % what kind of timeseries do you want?
 			
 			% Region shapes and shape parameters
-			region.shape = 'circle'; % region shape
+			region.shape = 'Circle'; % region shape
 			region.radius = 3; % radius of the region; type='circle'
 			region.height = 3; % height of the region; type='rectangle'
 			region.width = 3; % width of the region; type='rectangle'
@@ -159,15 +159,16 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			end
 			
 			switch(region.shape)
-				case 'circle'
-					% Find the code that calculates the pixels
+				case 'Circle'
 					mask = this.find_region(state.video.matrix, region.origin, region.radius);
+				case 'Rectangle'
+					mask = this.find_rectangle_region(state.video.matrix, region.origin, region.width, region.height);
 				otherwise
 					% TODO: error, this shape has not been programmed
 			end
 		end
 		
-		function [mask] = find_region(this, vidMatrix, pixloc, radius)		
+		function mask = find_region(this, vidMatrix, pixloc, radius)		
 % 			Adam Lammert (2010)
 
 			fheight = sqrt(size(vidMatrix,2));
@@ -183,7 +184,30 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			end
 		end
 		
-		function [N] = pixelneighbors(~, siz, pixloc, radius)
+		function mask = find_rectangle_region(~, vidMatrix, origin, width, height)
+			c = origin(1);
+			r = origin(2);
+			num_rows = height;
+			num_columns = width;
+			
+			r1 = r + 1 - ceil(num_rows/2);
+			r2 = r1 + num_rows - 1;
+			c1 = c + 1 - ceil(num_columns/2);
+			c2 = c1 + num_columns - 1;
+			
+			fheight = sqrt(size(vidMatrix,2));
+			fwidth = sqrt(size(vidMatrix,2));
+			
+			% iteratively determine the region
+			mask = zeros(fwidth,fheight);
+			for i = r1:r2
+				for j = c1:c2
+					mask(i, j) = 1;
+				end
+			end
+		end
+		
+		function N = pixelneighbors(~, siz, pixloc, radius)
 % 			Adam Lammert (2010)
 
 			%Parameters

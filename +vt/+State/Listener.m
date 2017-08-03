@@ -28,6 +28,12 @@ classdef Listener < vt.Listener
 			p.addRequired('state', @(state) isa(state, 'vt.State'));
 			parse(p, this, propertyName, state);
 			
+			% Prevent trying to call handles that have been deleted
+			if(isa(this, 'vt.Component') && ~(isvalid(this.handle) && ishandle(this.handle)))
+				disp('Avoiding deleted handle');
+				return;
+			end
+			
 			method = this.property2method(propertyName);
 			try
 				assert(this.isMethod(method));
@@ -74,6 +80,8 @@ classdef Listener < vt.Listener
 		end
 		
 		function [] = delete(this)
+			disp('Deleting a vt.State.Listener');
+			this.listenerHandle.Enabled = false;
 			delete(this.listenerHandle);
 		end
 		

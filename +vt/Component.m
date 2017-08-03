@@ -16,6 +16,13 @@ classdef (Abstract) Component < vt.Root
 			for i = 1:numel(params)
 				set(this.handle, params{i}, p.Unmatched.(params{i}));
 			end
+			
+% 			addlistener( ...
+% 				this.handle, ...
+% 				'BeingDeleted', ...
+% 				'PostSet', ...
+% 				@(source, eventdata) showDeletion(this) ...
+% 			);
 		end
 		
 		function value = getParameter(this, param)
@@ -24,6 +31,10 @@ classdef (Abstract) Component < vt.Root
 			parse(p, param);
 			
 			value = get(this.handle, param);
+		end
+		
+		function [] = showDeletion(this)
+			disp('Deleting handle!');
 		end
 	end
 		

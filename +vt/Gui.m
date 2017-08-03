@@ -6,7 +6,8 @@ classdef Gui < vt.Root & vt.State.Listener
 		gui
 		actionListener
 		
-		currentRegion = struct()
+		% TODO: get this from user-specified preferences
+		currentRegion = struct('shape', 'Circle')
 	end
 	
 	methods
@@ -243,29 +244,21 @@ classdef Gui < vt.Root & vt.State.Listener
 				gui.RightBoxGrid, ...
 				'Show fill' ...
 			);
-			% 1-2 + Minimum # pixels textbox
+			% 1-2 + Radius
 			gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
 				gui.RightBoxGrid, ...
-				'Title', 'Minimum number of pixels' ...
+				'Title', 'Radius' ...
 			);
-			gui.MinimumPixels = vt.Component.TextBox.MinimumPixels( ...
+			gui.RegionRadius = vt.Component.TextBox.Radius( ...
 				gui.RegionSettings1_2 ...
 			);
-			% 2-2 + Search radius textbox
-			gui.RegionSettings2_2 = vt.Component.Layout.Panel( ...
-				gui.RightBoxGrid, ...
-				'Title', 'Search radius' ...
+			% 2-2 + Empty space
+			gui.RegionSettings2_2 = vt.Component.Layout.Empty( ...
+				gui.RightBoxGrid ...
 			);
-			gui.SearchRadius = vt.Component.TextBox.SearchRadius( ...
-				gui.RegionSettings2_2 ...
-			);
-			% 3-2 + Tau textbox
-			gui.RegionSettings3_2 = vt.Component.Layout.Panel( ...
-				gui.RightBoxGrid, ...
-				'Title', 'Tau' ...
-			);
-			gui.Tau = vt.Component.TextBox.Tau( ...
-				gui.RegionSettings3_2 ...
+			% 3-2 + Empty space
+			gui.RegionSettings3_2 = vt.Component.Layout.Empty( ...
+				gui.RightBoxGrid ...
 			);
 			% 4-2 + Allow multiple origins checkbox
 			gui.MultipleOriginsCheckbox = vt.Component.Checkbox.MultipleOrigins( ...
@@ -303,17 +296,64 @@ classdef Gui < vt.Root & vt.State.Listener
 		end
 		
 		function [] = onCurrentRegionChange(this, state)
-			if(isfield(this.currentRegion, 'shape') && strcmp(this.currentRegion.shape, state.currentRegion.shape))
+			% Prevent re-drawing when other changes than shape changes are made
+			if(strcmp(this.currentRegion.shape, state.currentRegion.shape))
 				return;
 			end
 			
+			% Delete whatever parameter fields are currently present. The calls
+			% to delete() are the most important
+			% 1. Delete seems to be the only thing that works
+			% 2. When vt.State.Listeners are deleted, they first delete their
+			%    own listener handles
+			delete(this.gui.RightBoxGrid.handle.Contents(10:12));
+			switch(this.currentRegion.shape)
+				case 'Circle'
+					delete(this.gui.RegionRadius);
+					this.gui.RegionSettings1_2 = [];
+					this.gui.RegionSettings2_2 = [];
+					this.gui.RegionSettings3_2 = [];
+					this.gui.RegionRadius = [];
+					this.gui = rmfield(this.gui, 'RegionSettings1_2');
+					this.gui = rmfield(this.gui, 'RegionSettings2_2');
+					this.gui = rmfield(this.gui, 'RegionSettings3_2');
+					this.gui = rmfield(this.gui, 'RegionRadius');
+				case 'Rectangle'
+					delete(this.gui.RegionWidth);
+					delete(this.gui.RegionHeight);
+					this.gui.RegionSettings1_2 = [];
+					this.gui.RegionSettings2_2 = [];
+					this.gui.RegionSettings3_2 = [];
+					this.gui.RegionWidth = [];
+					this.gui.RegionHeight = [];
+					this.gui = rmfield(this.gui, 'RegionSettings1_2');
+					this.gui = rmfield(this.gui, 'RegionSettings2_2');
+					this.gui = rmfield(this.gui, 'RegionSettings3_2');
+					this.gui = rmfield(this.gui, 'RegionWidth');
+					this.gui = rmfield(this.gui, 'RegionHeight');
+				case 'Statistically-generated'
+					delete(this.gui.MinimumPixels);
+					delete(this.gui.SearchRadius);
+					delete(this.gui.Tau);
+					this.gui.RegionSettings1_2 = [];
+					this.gui.RegionSettings2_2 = [];
+					this.gui.RegionSettings3_2 = [];
+					this.gui.MinimumPixels = [];
+					this.gui.SearchRadius = [];
+					this.gui.Tau = [];
+					this.gui = rmfield(this.gui, 'RegionSettings1_2');
+					this.gui = rmfield(this.gui, 'RegionSettings2_2');
+					this.gui = rmfield(this.gui, 'RegionSettings3_2');
+					this.gui = rmfield(this.gui, 'MinimumPixels');
+					this.gui = rmfield(this.gui, 'SearchRadius');
+					this.gui = rmfield(this.gui, 'Tau');
+				otherwise
+					% TODO: something here
+			end
+			
 			switch(state.currentRegion.shape)
-				case 'circle'
-					% delete elements 10:12
-					delete(this.gui.RightBoxGrid.handle.Contents(10:12));
-					
-					% add the radius box and two empty elements
-					% + Radius
+				case 'Circle'
+					% 1-2 + Radius
 					this.gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
 						this.gui.RightBoxGrid, ...
 						'Title', 'Radius' ...
@@ -323,66 +363,82 @@ classdef Gui < vt.Root & vt.State.Listener
 					);
 					this.initializeComponent(this.gui.RegionSettings1_2);
 					this.initializeComponent(this.gui.RegionRadius);
-					% + Empty space
+					% 2-2 + Empty space
 					this.gui.RegionSettings2_2 = vt.Component.Layout.Empty( ...
 						this.gui.RightBoxGrid ...
 					);
 					this.initializeComponent(this.gui.RegionSettings2_2);
-					% + Empty space
+					% 3-2 + Empty space
 					this.gui.RegionSettings3_2 = vt.Component.Layout.Empty( ...
 						this.gui.RightBoxGrid ...
 					);
 					this.initializeComponent(this.gui.RegionSettings3_2);
-					
-					% re-order the elements so that elements 16:18 are 10:12
-					newOrder = [1:9 16:18 10:15];
-
-% 					% replace elements 10:12 with elements 19:21
-% 					newOrder = [1:9 19:21 13:18];
-					
-					this.gui.RightBoxGrid.handle.Contents = this.gui.RightBoxGrid.handle.Contents(newOrder);
-				case 'rectangle'
-					% delete elements 10:12
-					delete(this.gui.RightBoxGrid.handle.Contents(10:12));
-					
-					% add the radius box and two empty elements
-					% + Width
+				case 'Rectangle'
+					% 1-2 + Width
 					this.gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
 						this.gui.RightBoxGrid, ...
 						'Title', 'Width' ...
 					);
-					this.gui.RegionRadius = vt.Component.TextBox.Width( ...
+					this.gui.RegionWidth = vt.Component.TextBox.Width( ...
 						this.gui.RegionSettings1_2 ...
 					);
 					this.initializeComponent(this.gui.RegionSettings1_2);
-					this.initializeComponent(this.gui.RegionRadius);
-					% + Width
+					this.initializeComponent(this.gui.RegionWidth);
+					% 2-2 + Height
 					this.gui.RegionSettings2_2 = vt.Component.Layout.Panel( ...
 						this.gui.RightBoxGrid, ...
 						'Title', 'Height' ...
 					);
-					this.gui.RegionRadius = vt.Component.TextBox.Height( ...
+					this.gui.RegionHeight = vt.Component.TextBox.Height( ...
 						this.gui.RegionSettings2_2 ...
 					);
 					this.initializeComponent(this.gui.RegionSettings2_2);
-					this.initializeComponent(this.gui.RegionRadius);
-					% + Empty space
+					this.initializeComponent(this.gui.RegionHeight);
+					% 3-2 + Empty space
 					this.gui.RegionSettings3_2 = vt.Component.Layout.Empty( ...
 						this.gui.RightBoxGrid ...
 					);
 					this.initializeComponent(this.gui.RegionSettings3_2);
-					
-					% re-order the elements so that elements 16:18 are 10:12
-					newOrder = [1:9 16:18 10:15];
-
-% 					% replace elements 10:12 with elements 19:21
-% 					newOrder = [1:9 19:21 13:18];
-					
-					this.gui.RightBoxGrid.handle.Contents = this.gui.RightBoxGrid.handle.Contents(newOrder);
+				case 'Statistically-generated'
+					% 1-2 + Minimum # pixels textbox
+					this.gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
+						this.gui.RightBoxGrid, ...
+						'Title', 'Minimum number of pixels' ...
+					);
+					this.gui.MinimumPixels = vt.Component.TextBox.MinimumPixels( ...
+						this.gui.RegionSettings1_2 ...
+					);
+					this.initializeComponent(this.gui.RegionSettings1_2);
+					this.initializeComponent(this.gui.MinimumPixels);
+					% 2-2 + Search radius textbox
+					this.gui.RegionSettings2_2 = vt.Component.Layout.Panel( ...
+						this.gui.RightBoxGrid, ...
+						'Title', 'Search radius' ...
+					);
+					this.gui.SearchRadius = vt.Component.TextBox.SearchRadius( ...
+						this.gui.RegionSettings2_2 ...
+					);
+					this.initializeComponent(this.gui.RegionSettings2_2);
+					this.initializeComponent(this.gui.SearchRadius);
+					% 3-2 + Tau textbox
+					this.gui.RegionSettings3_2 = vt.Component.Layout.Panel( ...
+						this.gui.RightBoxGrid, ...
+						'Title', 'Tau' ...
+					);
+					this.gui.Tau = vt.Component.TextBox.Tau( ...
+						this.gui.RegionSettings3_2 ...
+					);
+					this.initializeComponent(this.gui.RegionSettings3_2);
+					this.initializeComponent(this.gui.Tau);
 				otherwise
 					% TODO: add the rest
 			end
 			
+			% re-order the elements so that elements 16:18 are 10:12
+			newOrder = [1:9 16:18 10:15];
+			this.gui.RightBoxGrid.handle.Contents = this.gui.RightBoxGrid.handle.Contents(newOrder);
+			
+			% Update the local copy of currentRegion
 			this.currentRegion = state.currentRegion;
 		end
 	end

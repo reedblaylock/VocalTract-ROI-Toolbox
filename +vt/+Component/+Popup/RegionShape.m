@@ -25,8 +25,8 @@ classdef RegionShape < vt.Component.Popup & vt.State.Listener & vt.Action.Dispat
 		end
 		
 		function [] = dispatchAction(this, ~, ~)
-			value = this.getParameter('Value');
-			this.action.dispatch(value);
+			str = this.getCurrentPopupString();
+			this.action.dispatch(str);
 		end
 	end
 end

@@ -62,7 +62,7 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			region.type = 'average'; % what kind of timeseries do you want?
 			
 			% Region shapes and shape parameters
-			region.shape = 'circle'; % region shape
+			region.shape = 'Circle'; % region shape
 			region.radius = 3; % radius of the region; type='circle'
 			region.height = 3; % height of the region; type='rectangle'
 			region.width = 3; % width of the region; type='rectangle'
