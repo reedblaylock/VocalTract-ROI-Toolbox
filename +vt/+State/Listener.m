@@ -1,4 +1,8 @@
 classdef Listener < vt.Listener
+	properties
+		listenerHandle
+	end
+	
 	methods
 		function [] = registerAllMethodsToState(this, state)
 			propertyList = this.getProperties(state);
@@ -9,7 +13,7 @@ classdef Listener < vt.Listener
 % 				'PostSet', ...
 % 				@(source, eventdata) update(this, source.Name, eventdata.AffectedObject) ...
 % 			);
-			addlistener( ...
+			this.listenerHandle = addlistener( ...
 				state, ...
 				propertyList, ...
 				'PostSet', ...
@@ -67,6 +71,10 @@ classdef Listener < vt.Listener
 		
 		function tf = isStateProperty(~, propertyName, state)
 			tf = ismember(propertyName, properties(state));
+		end
+		
+		function [] = delete(this)
+			delete(this.listenerHandle);
 		end
 		
 	end

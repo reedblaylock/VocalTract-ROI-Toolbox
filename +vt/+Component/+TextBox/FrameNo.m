@@ -11,13 +11,13 @@ classdef FrameNo < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listen
 			p.parse(parent);
 			
 			this@vt.Component.TextBox(parent);
-			this.setParameters('Enable', 'off');
+% 			this.setParameters('Enable', 'off');
 			
 			this.setCallback();
 		end
 		
-		function [] = dispatchAction(this, source, ~)
-			str = get(source, 'String');
+		function [] = dispatchAction(this, ~, ~)
+			str = this.getParameter('String');
 			num = str2double(str);
 			try
 				assert(~isempty(num) && ~isnan(num));

@@ -1,4 +1,4 @@
-classdef RegionShape < vt.Component.Popup & vt.State.Listener
+classdef RegionShape < vt.Component.Popup & vt.State.Listener & vt.Action.Dispatcher
 	properties
 		actionType = @vt.Action.ChangeRegionShape
 	end
@@ -12,7 +12,7 @@ classdef RegionShape < vt.Component.Popup & vt.State.Listener
 				'Enable', 'off' ...
 			);
 		
-% 			this.setCallback();
+			this.setCallback();
 		end
 		
 		function [] = onIsEditingChange(this, state)
@@ -22,6 +22,11 @@ classdef RegionShape < vt.Component.Popup & vt.State.Listener
 				otherwise
 					this.setParameters('Enable', 'off');
 			end
+		end
+		
+		function [] = dispatchAction(this, ~, ~)
+			value = this.getParameter('Value');
+			this.action.dispatch(value);
 		end
 	end
 end

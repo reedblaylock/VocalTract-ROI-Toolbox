@@ -5,6 +5,8 @@ classdef Gui < vt.Root & vt.State.Listener
 		reducer
 		gui
 		actionListener
+		
+		currentRegion = struct()
 	end
 	
 	methods
@@ -301,6 +303,10 @@ classdef Gui < vt.Root & vt.State.Listener
 		end
 		
 		function [] = onCurrentRegionChange(this, state)
+			if(isfield(this.currentRegion, 'shape') && strcmp(this.currentRegion.shape, state.currentRegion.shape))
+				return;
+			end
+			
 			switch(state.currentRegion.shape)
 				case 'circle'
 					% delete elements 10:12
@@ -335,13 +341,49 @@ classdef Gui < vt.Root & vt.State.Listener
 % 					newOrder = [1:9 19:21 13:18];
 					
 					this.gui.RightBoxGrid.handle.Contents = this.gui.RightBoxGrid.handle.Contents(newOrder);
+				case 'rectangle'
+					% delete elements 10:12
+					delete(this.gui.RightBoxGrid.handle.Contents(10:12));
+					
+					% add the radius box and two empty elements
+					% + Width
+					this.gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
+						this.gui.RightBoxGrid, ...
+						'Title', 'Width' ...
+					);
+					this.gui.RegionRadius = vt.Component.TextBox.Width( ...
+						this.gui.RegionSettings1_2 ...
+					);
+					this.initializeComponent(this.gui.RegionSettings1_2);
+					this.initializeComponent(this.gui.RegionRadius);
+					% + Width
+					this.gui.RegionSettings2_2 = vt.Component.Layout.Panel( ...
+						this.gui.RightBoxGrid, ...
+						'Title', 'Height' ...
+					);
+					this.gui.RegionRadius = vt.Component.TextBox.Height( ...
+						this.gui.RegionSettings2_2 ...
+					);
+					this.initializeComponent(this.gui.RegionSettings2_2);
+					this.initializeComponent(this.gui.RegionRadius);
+					% + Empty space
+					this.gui.RegionSettings3_2 = vt.Component.Layout.Empty( ...
+						this.gui.RightBoxGrid ...
+					);
+					this.initializeComponent(this.gui.RegionSettings3_2);
+					
+					% re-order the elements so that elements 16:18 are 10:12
+					newOrder = [1:9 16:18 10:15];
+
+% 					% replace elements 10:12 with elements 19:21
+% 					newOrder = [1:9 19:21 13:18];
+					
+					this.gui.RightBoxGrid.handle.Contents = this.gui.RightBoxGrid.handle.Contents(newOrder);
 				otherwise
 					% TODO: add the rest
 			end
-		end
-		
-		function [] = delete(~)
-			disp('GUI is being deleted');
+			
+			this.currentRegion = state.currentRegion;
 		end
 	end
 end

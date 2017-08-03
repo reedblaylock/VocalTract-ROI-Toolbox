@@ -93,8 +93,20 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			this.state.currentRegion.color = eventData.data;
 		end
 		
+		function [] = changeRegionShape(this, ~, eventData)
+			this.state.currentRegion.shape = eventData.data;
+		end
+		
 		function [] = changeRegionRadius(this, ~, eventData)
 			this.state.currentRegion.radius = eventData.data;
+		end
+		
+		function [] = changeRegionWidth(this, ~, eventData)
+			this.state.currentRegion.width = eventData.data;
+		end
+		
+		function [] = changeRegionHeight(this, ~, eventData)
+			this.state.currentRegion.height = eventData.data;
 		end
 		
 		function [] = toggleShowOrigin(this, ~, eventData)
@@ -151,10 +163,6 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			if(~isempty(idx))
 				this.state.regions(idx) = [];
 			end
-		end
-		
-		function [] = delete(~)
-			disp('Reducer is being destroyed');
 		end
 	end
 	

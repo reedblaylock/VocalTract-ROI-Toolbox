@@ -33,7 +33,7 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 			coordinates = p.Results.coordinates - .5;
 			rectangle('Parent', this.handle, 'Position', [coordinates(:)', 1, 1], 'EdgeColor', 'black', 'FaceColor', p.Results.color, 'Tag', regionId);
 			
-			disp(['Drawing ' regionId '...']);
+% 			disp(['Drawing ' regionId '...']);
 		end
 		
 		function [] = deleteOrigin(this, regionId)
@@ -41,7 +41,7 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 			oldOrigin = findobj('Type', 'rectangle', 'Tag', regionId, 'Parent', this.handle);
 			delete(oldOrigin);
 			
-			disp(['Deleting ' regionId '...']);
+% 			disp(['Deleting ' regionId '...']);
 		end
 		
 		function [] = drawOutline(this, regionId, mask, color)

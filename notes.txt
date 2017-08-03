@@ -152,17 +152,20 @@ There seems to be a bug with State.Listener when you change the region value fro
 The most likely suspect is event listeners whose handles have been deleted even though the events have not.
 1. Delete listeners when the object is destroyed (which sounds good, and maybe even easy if you remember to get rid of the rest of your destructors)
 2. Use event.listener instead of addlistener (which seems like a better way to control for this stuff, but apparently the arguments aren't the same?)
+DONE! The real answer was that vt.Gui was re-drawing those fields every time the region changed. The clue should have been when you saw that
+      the radius value went back to its default without you having programmed that behavior.
 
 NEXT
 - Click on a saved region -> populate its data and make 'save region' say 'edit region'
 - Add delete region functionality
 - Display region timeseries in the next panel
-- Test: what happens when the user specifies a radius of 1, 0, or -1?
-- Update notification bar when user puts in a frame value that's too high or too low
+- Update notification bar when user puts in a frame/radius value that's too high or too low
 - Extend the number-based textboxes from a Range class that validates the range and emits notifications to the user
 
 SOON
-- Disable/enable the radio buttons
+- Disable/enable the radio buttons (they start off disabled now, but you'll have problems when you load new videos)
 - The value for RegionShape should determine which parameters are available to edit
 - Make sure garbage collection is doing its job. You've been getting a lot of crashes and no-space messages
 - Set up a preferences system so that all the defaults are uniform
+- Enable notification bar
+- Add color to flexbox borders

@@ -29,7 +29,7 @@ classdef Window < vt.Component & vt.State.Listener
 		end
 		
 		function [] = delete(this)
-			disp('Window is being deleted');
+			delete@vt.State.Listener(this);
 			this.log.off();
 % 			delete(this.log)
 % 			clear vt.Log;

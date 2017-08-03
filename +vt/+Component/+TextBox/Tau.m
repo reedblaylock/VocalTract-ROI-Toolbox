@@ -1,4 +1,4 @@
-classdef Tau < vt.Component.TextBox & vt.State.Listener
+classdef Tau < vt.Component.TextBox %& vt.State.Listener
 	properties
 		actionType = @vt.Action.ChangeTau;
 	end

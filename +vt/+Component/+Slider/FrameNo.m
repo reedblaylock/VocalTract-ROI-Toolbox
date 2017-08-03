@@ -1,25 +1,20 @@
 classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listener
 	properties
 		actionType = @vt.Action.SetCurrentFrameNo
-		listenerHandle
+% 		listenerHandle
 	end
 	
 	methods
 		function this = FrameNo(parent)
 			this@vt.Component.Slider(parent);
-			this@vt.Action.Dispatcher();
+% 			this@vt.Action.Dispatcher();
 			
-			this.listenerHandle = addlistener( ...
-				this.handle, ...
-				'Value', ...
-				'PostSet', ...
-				@(source, eventdata) emitAction(this, source.Name, eventdata.AffectedObject) ...
-			);
-% 			this.setCallback();
+			this.setCallback();
 		end
 		
-		function [] = emitAction(this, ~, theSlider)
-			frameNo = get(theSlider, 'Value');
+		function [] = dispatchAction(this, ~, ~)
+% 			frameNo = get(theSlider, 'Value');
+			frameNo = this.getParameter('Value');
 			frameNo = round(frameNo);
 			this.action.dispatch(frameNo);
 		end
@@ -44,9 +39,9 @@ classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listene
 		function [] = onCurrentFrameNoChange(this, state)
 			frameNo = get(this.handle, 'Value');
 			if(round(frameNo) ~= state.currentFrameNo)
-				this.listenerHandle.Enabled = false;
+% 				this.listenerHandle.Enabled = false;
 				this.setParameters('Value', state.currentFrameNo);
-				this.listenerHandle.Enabled = true;
+% 				this.listenerHandle.Enabled = true;
 			end
 		end
 		
@@ -59,6 +54,22 @@ classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listene
 				otherwise
 					% TODO: throw error?
 			end
+		end
+	end
+		
+	methods (Access = ?vt.Action.Dispatcher)
+		function [] = setCallback(this, varargin)
+			p = inputParser;
+			p.addRequired('this', @(this) isa(this, 'vt.Action.Dispatcher'));
+			p.addOptional('callbackName', 'Callback', @ischar);
+			p.parse(this, varargin{:});
+
+			addlistener( ...
+				this.handle, ...
+				'Value', ...
+				'PostSet', ...
+				@(source, eventdata) dispatchAction(this, source.Name, eventdata.AffectedObject) ...
+			);
 		end
 	end
 	

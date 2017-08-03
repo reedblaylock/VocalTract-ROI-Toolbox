@@ -1,4 +1,4 @@
-classdef SearchRadius < vt.Component.TextBox & vt.State.Listener
+classdef SearchRadius < vt.Component.TextBox %& vt.State.Listener
 	properties
 		actionType = @vt.Action.ChangeSearchRadius;
 	end

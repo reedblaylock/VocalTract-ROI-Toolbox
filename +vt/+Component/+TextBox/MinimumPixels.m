@@ -1,4 +1,4 @@
-classdef MinimumPixels < vt.Component.TextBox & vt.State.Listener
+classdef MinimumPixels < vt.Component.TextBox %& vt.State.Listener
 	properties
 		actionType = @vt.Action.ChangeMinimumPixels;
 	end
