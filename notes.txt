@@ -147,15 +147,16 @@ setting, and may even have to get its color from a different button.
 
 
 
-
+RIGHT NOW
+There seems to be a bug with State.Listener when you change the region value from 3-4 in the GUI.
+The most likely suspect is event listeners whose handles have been deleted even though the events have not.
+1. Delete listeners when the object is destroyed (which sounds good, and maybe even easy if you remember to get rid of the rest of your destructors)
+2. Use event.listener instead of addlistener (which seems like a better way to control for this stuff, but apparently the arguments aren't the same?)
 
 NEXT
 - Click on a saved region -> populate its data and make 'save region' say 'edit region'
 - Add delete region functionality
 - Display region timeseries in the next panel
-- Set all controls to 'Enable' = 'off' when the gui has loaded; don't just do it in the Button, Checkbox, Slider, etc classes.
-  This way, new uicontrols can come on enabled by default
-- Give the region parameters default values explicitly
 - Test: what happens when the user specifies a radius of 1, 0, or -1?
 - Update notification bar when user puts in a frame value that's too high or too low
 - Extend the number-based textboxes from a Range class that validates the range and emits notifications to the user

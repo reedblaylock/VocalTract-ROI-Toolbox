@@ -22,6 +22,8 @@ classdef Gui < vt.Root & vt.State.Listener
 			this.gui = this.createInterface();
 			
 			this.initializeListeners();
+			
+			set(findall(this.gui.Window.handle, 'Type', 'uicontrol'), 'Enable', 'off');
 		end
 		
 		function [] = initializeListeners(this)

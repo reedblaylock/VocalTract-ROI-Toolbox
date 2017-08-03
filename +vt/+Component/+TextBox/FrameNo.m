@@ -63,7 +63,7 @@ classdef FrameNo < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listen
 			switch(state.frameType)
 				case 'frame'
 					this.setParameters('Enable', 'on');
-				case {'mean', 'std'}
+				case {'mean', 'std dev'}
 					this.setParameters('Enable', 'off');
 				otherwise
 					% TODO: throw error?

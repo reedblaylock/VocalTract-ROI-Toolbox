@@ -10,7 +10,7 @@ classdef Radius < vt.Component.TextBox & vt.State.Listener & vt.Action.Dispatche
 			p.parse(parent);
 			
 			this@vt.Component.TextBox(parent);
-			this.setParameters('Enable', 'off');
+			this.setParameters('String', '3');
 			
 			this.setCallback();
 		end
