@@ -76,13 +76,12 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			region.showOutline = 1; % connected to the "Show outline" checkbox
 			region.showFill = 0; % connected to the "Show fill" checkbox
 			
-			% TODO: This assignment should be caused by a separate event
-			this.state.currentRegion = region;
-			
+			% TODO: These assignment should be caused by a separate event
 			timeseries = struct();
 			timeseries.id = this.state.regionIdCounter;
 			timeseries.data = [];
 			this.state.currentTimeseries = timeseries;
+			this.state.currentRegion = region;
 		end
 		
 		function [] = clearCurrentRegion(this, ~, ~)
@@ -111,9 +110,9 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			region.showOutline = 0; % connected to the "Show outline" checkbox
 			region.showFill = 0; % connected to the "Show fill" checkbox
 			
-			% TODO: This assignment should be caused by a separate event
+			% TODO: These assignment should be caused by a separate event
+			this.state.currentTimeseries = struct('id', [], 'data', []);
 			this.state.currentRegion = region;
-			this.timeseries.currentTimeseries = struct('id', [], 'data', []);
 		end
 		
 		function [] = editRegion(this, ~, ~)
@@ -141,10 +140,10 @@ classdef Reducer < vt.Listener & vt.State.Setter
 				otherwise
 					% TODO: error, this shape has not been programmed
 			end
-			this.state.currentRegion.mask = mask;
 			
 			% TODO: get this out of here as well
-			this.state.currentTimeseries.data = mean(this.state.video.matrix(:,this.state.currentRegion.mask>0),2);
+			this.state.currentTimeseries.data = mean(this.state.video.matrix(:,mask>0),2);
+			this.state.currentRegion.mask = mask;
 		end
 		
 		function mask = find_region(this, vidMatrix, pixloc, radius)		
@@ -266,8 +265,8 @@ classdef Reducer < vt.Listener & vt.State.Setter
 
 			if(isempty(fieldnames(this.state.regions)) || ~numel(this.state.regions))
 				% There are no regions saved right now
-				this.state.regions = this.state.currentRegion;
 				this.state.timeseries = this.state.currentTimeseries;
+				this.state.regions = this.state.currentRegion;
 			else
 				% There are regions saved right now. See if any of them have the
 				% currentRegion's id
@@ -278,8 +277,8 @@ classdef Reducer < vt.Listener & vt.State.Setter
 					% currentRegion to the end of the structure
 					idx = numel(this.state.regions) + 1;
 				end
-				this.state.regions(idx) = this.state.currentRegion;
 				this.state.timeseries(idx) = this.state.currentTimeseries;
+				this.state.regions(idx) = this.state.currentRegion;
 			end
 		end
 		
@@ -299,8 +298,8 @@ classdef Reducer < vt.Listener & vt.State.Setter
 % 			idx = find([this.state.regions.id] == eventData.data);
 			idx = find([this.state.regions.id] == this.state.currentRegion.id);
 			if(~isempty(idx))
-				this.state.regions(idx) = [];
 				this.state.timeseries(idx) = [];
+				this.state.regions(idx) = [];
 			end
 			
 			% TODO: This should be a separate action
@@ -321,8 +320,8 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			for iRegion = 1:numel(this.state.regions)
 				mask = this.state.regions(iRegion).mask;
 				if(mask(coordinates(1), coordinates(2)))
-					this.state.currentRegion = this.state.regions(iRegion);
 					this.state.currentTimeseries = this.state.timeseries(iRegion);
+					this.state.currentRegion = this.state.regions(iRegion);
 					return;
 				end
 			end

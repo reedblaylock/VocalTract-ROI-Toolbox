@@ -5,14 +5,19 @@ classdef Container < vt.Component
 	% resize).
 	
 	methods
-		function this = Container(parent)
+		function this = Container(parent, varargin)
 			p = vt.InputParser;
 			p.addParent();
-			p.parse(parent);
+			p.addParameter('Tag', '', @ischar);
+			p.parse(parent, varargin{:});
 			
 			this.handle = uicontainer(...
 				'Parent', p.Results.parent.handle ...
 			);
+		
+			if(isfield(p.Results, 'Tag'))
+				this.setParameters('Tag', p.Results.Tag);
+			end
 		end
 	end
 	

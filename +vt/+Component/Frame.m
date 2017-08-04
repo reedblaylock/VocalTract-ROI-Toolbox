@@ -56,8 +56,8 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 				y1 = [min_c - .5, min_c - .5];
 				y2 = [max_c + .5, max_c + .5];
 % 				line([x x], [y1 y2], 'Color', color, 'Parent', this.handle, 'Tag', regionName);
-				line(x,y1,'Color',color, 'Tag', regionId);
-				line(x,y2,'Color',color, 'Tag', regionId);
+				line(x, y1, 'Color', color, 'Tag', regionId, 'Parent', this.handle);
+				line(x, y2, 'Color', color, 'Tag', regionId, 'Parent', this.handle);
 			end
 			% vertical lines
 			idxs = find(any(mask,2));
@@ -68,8 +68,8 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 				x1 = [min_r - .5, min_r - .5];
 				x2 = [max_r + .5, max_r + .5];
 % 				line([x1 x2], [y y], 'Color', 'red', 'Parent', this.handle);
-				line(x1,y,'Color',color, 'Tag', regionId, 'Parent', this.handle);
-				line(x2,y,'Color',color, 'Tag', regionId, 'Parent', this.handle);
+				line(x1, y, 'Color', color, 'Tag', regionId, 'Parent', this.handle);
+				line(x2, y, 'Color', color, 'Tag', regionId, 'Parent', this.handle);
 			end
 		end
 		

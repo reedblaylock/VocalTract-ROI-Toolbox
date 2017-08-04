@@ -127,8 +127,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			
 			% This will handle changes in color, radius ...
 			if(~isempty(region.mask))
-				this.frame.deleteOrigin(region.id);
-				this.frame.deleteOutline(region.id);
+				this.deleteCurrentRegion(state);
 				if(region.showOrigin)
 					this.frame.drawOrigin(region.id, region.origin, region.color);
 				end

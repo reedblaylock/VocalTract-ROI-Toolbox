@@ -142,6 +142,47 @@ classdef Gui < vt.Root & vt.State.Listener
 			gui = this.addRegionSettingsGrid(gui);
 		end
 		
+		function [] = deleteAllTimeseries(this, ~)
+			nDeletions = numel(this.gui.TimeSeriesTab.handle.Contents);
+			% delete by id
+			for iDeletion = 1:nDeletions
+				child = this.gui.TimeSeriesTab.handle.Contents(iDeletion);
+				label = ['Timeseries' num2str(get(child, 'Tag'))];
+				containerLabel = [label 'Container'];
+				this.guiDelete(containerLabel);
+				this.guiDelete(label);
+			end
+			delete(this.gui.TimeSeriesTab.handle.Contents(:));
+		end
+		
+		function [] = redrawAllTimeseries(this, state)
+			if(isempty(fieldnames(state.regions)) || ~numel(state.regions))
+				% There are no regions to draw
+				return;
+			end
+			
+			for iRegion = 1:numel(state.regions)
+				region = state.regions(iRegion);
+				label = ['Timeseries' num2str(region.id)];
+				containerLabel = [label 'Container'];
+				
+				this.gui.(containerLabel) = vt.Component.Container( ...
+					this.gui.TimeSeriesTab, ...
+					'Tag', num2str(region.id) ...
+				);
+				this.gui.(label) = vt.Component.Timeseries( ...
+					this.gui.(containerLabel), ...
+					state.timeseries(iRegion).data, ...
+					region.color, ...
+					state.currentFrameNo, ...
+					'Title', region.name, ...
+					'Tag', num2str(region.id) ...
+				);
+				this.initializeComponent(this.gui.(containerLabel));
+				this.initializeComponent(this.gui.(label));
+			end
+		end
+		
 		function [] = onRegionsChange(this, state)
 			% You should probably show currentRegion's timeseries too. Maybe you
 			% can color the back panel differently to indicate that it's
@@ -149,29 +190,14 @@ classdef Gui < vt.Root & vt.State.Listener
 			
 			% TODO: order display by (xcoordinate + ycoordinate) increasing
 			
-			% TODO: check regions field is empty
-			if(isempty(fieldnames(state.regions)) || ~numel(state.regions))
-				% There are no regions saved right now
-				return;
-			end
-			
-			% Delete and redraw--same pattern as for regions (which maybe means
-			% you should be abstracting with another class...)
-			
-			for iRegion = 1:numel(state.regions)
-				% delete by id
-				
-				% redraw with id
-				label = ['Timeseries' num2str(iRegion)];
-				region = state.regions(iRegion);
-				this.gui.(label) = vt.Component.Axes.Timeseries( ...
-					this.gui.TimeSeriesTab, ...
-					state.timeseries(iRegion), ...
-					'Color', region.color, ...
-					'Title', region.name, ...
-					'Tag', num2str(region.id) ...
-				);
-			end
+			this.deleteAllTimeseries(state);
+			this.redrawAllTimeseries(state);
+		end
+		
+		function [] = guiDelete(this, fieldname)
+			delete(this.gui.(fieldname));
+			this.gui.(fieldname) = [];
+			this.gui = rmfield(this.gui, fieldname);
 		end
 		
 		function gui = addMenu(~, gui)
@@ -365,6 +391,9 @@ classdef Gui < vt.Root & vt.State.Listener
 					% end
 				otherwise
 					% Not in any editing mode
+					% delete and re-draw all timeseries
+					this.deleteAllTimeseries(state);
+					this.redrawAllTimeseries(state);
 					
 					% delete the last three areas
 					delete(this.gui.RightBoxGrid.handle.Contents(16:18));
@@ -416,6 +445,10 @@ classdef Gui < vt.Root & vt.State.Listener
 		end
 		
 		function [] = onCurrentRegionChange(this, state)
+			% REDRAW TIMESERIES 
+			this.redrawCurrentTimeseries(state);
+			
+			% REDRAW REGION EDITING AREA
 			% Prevent re-drawing when other changes than shape changes are made
 			if(strcmp(this.currentRegion.shape, state.currentRegion.shape))
 				return;
@@ -586,6 +619,58 @@ classdef Gui < vt.Root & vt.State.Listener
 			
 			% Update the local copy of currentRegion
 			this.currentRegion = state.currentRegion;
+		end
+		
+		function [] = redrawCurrentTimeseries(this, state)
+			% If there's no mask, you can't have a timeseries
+			if(isempty(state.currentRegion.mask))
+				return;
+			end
+			
+% 			% If you're not in editing mode, there's no currentTimeseries to
+% 			% worry about (all the timeseries have already been displayed)
+% 			% TODO: Maybe the selected region's timeseries should be moved up?
+% 			% Otherwise, you won't get it in position when editing starts.
+% 			if(~strcmp(state.isEditing, 'region'))
+% 				return;
+% 			end
+			
+			region = state.currentRegion;
+			label = ['Timeseries' num2str(region.id)];
+			if(isfield(this.gui, label))
+				% If the timeseries with this id is already being displayed, just
+				% update its plot
+				this.gui.(label).updateTimeseries( ...
+					state.currentTimeseries.data, ...
+					region.color, ...
+					state.currentFrameNo, ...
+					'Title', region.name ...
+				);
+			else
+				% If there is no currently displayed timeseries with this id, append
+				% it to the tab and move it to first position
+				label = ['Timeseries' num2str(region.id)];
+				containerLabel = [label 'Container'];
+				this.gui.(containerLabel) = vt.Component.Container( ...
+					this.gui.TimeSeriesTab, ...
+					'Tag', num2str(region.id) ...
+				);
+				this.gui.(label) = vt.Component.Timeseries( ...
+					this.gui.(containerLabel), ...
+					state.currentTimeseries.data, ...
+					region.color, ...
+					state.currentFrameNo, ...
+					'Title', region.name, ...
+					'Tag', num2str(region.id) ...
+				);
+				this.initializeComponent(this.gui.(containerLabel));
+				this.initializeComponent(this.gui.(label));
+
+				% Move the current timeseries to first position
+				nTimeseries = numel(this.gui.TimeSeriesTab.handle.Contents);
+				newOrder = [nTimeseries, 1:(nTimeseries-1)];
+				this.gui.TimeSeriesTab.handle.Contents = this.gui.TimeSeriesTab.handle.Contents(newOrder);
+			end
 		end
 	end
 end

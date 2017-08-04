@@ -80,9 +80,12 @@ classdef Listener < vt.Listener
 		end
 		
 		function [] = delete(this)
-			disp('Deleting a vt.State.Listener');
-			this.listenerHandle.Enabled = false;
-			delete(this.listenerHandle);
+			if(isvalid(this.listenerHandle))
+				if(this.listenerHandle.Enabled)
+					this.listenerHandle.Enabled = false;
+				end
+				delete(this.listenerHandle);
+			end
 		end
 		
 	end
