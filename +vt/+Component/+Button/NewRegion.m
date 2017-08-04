@@ -4,8 +4,8 @@ classdef NewRegion < vt.Component.Button & vt.Action.Dispatcher & vt.State.Liste
 	end
 	
 	methods
-		function this = NewRegion(parent, label)
-			this@vt.Component.Button(parent, label);
+		function this = NewRegion(parent, label, varargin)
+			this@vt.Component.Button(parent, label, varargin{:});
 			
 			this.setCallback();
 		end

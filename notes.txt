@@ -147,25 +147,23 @@ setting, and may even have to get its color from a different button.
 
 
 
-RIGHT NOW
-There seems to be a bug with State.Listener when you change the region value from 3-4 in the GUI.
-The most likely suspect is event listeners whose handles have been deleted even though the events have not.
-1. Delete listeners when the object is destroyed (which sounds good, and maybe even easy if you remember to get rid of the rest of your destructors)
-2. Use event.listener instead of addlistener (which seems like a better way to control for this stuff, but apparently the arguments aren't the same?)
-DONE! The real answer was that vt.Gui was re-drawing those fields every time the region changed. The clue should have been when you saw that
-      the radius value went back to its default without you having programmed that behavior.
+
 
 NEXT
-- Click on a saved region -> populate its data and make 'save region' say 'edit region'
-- Add delete region functionality
 - Display region timeseries in the next panel
 - Update notification bar when user puts in a frame/radius value that's too high or too low
 - Extend the number-based textboxes from a Range class that validates the range and emits notifications to the user
-- When switching back and forth between circles and rectangles, the text box values return to default, but the state.currentFrame parameters stay as they were
+- Make lines and rectangles clickable [you can addlistener(handleArray, ...) all the objects you get with handleArray = findall(figure/axes?, 'Tag', region.id)]
 
 SOON
 - Make sure garbage collection is doing its job. You've been getting a lot of crashes and no-space messages
+  UPDATE: From experience, it seems you definitely can be left with a bunch of left-over or half-deleted objects. Explicitly calling delete() seems to do the trick, when you need it.
 - Set up a preferences system so that all the defaults are uniform
 - Enable notification bar
 - Add color to flexbox borders
 - Make all sets/gets into setParameters/getParameter
+- Add color box next to the set color button so you can see the current color
+
+BEFORE DISTRIBUTION TO TESTERS
+- Provide GUI Layout Toolbox support for <=2014a
+- Provide set/get support for <=20214a

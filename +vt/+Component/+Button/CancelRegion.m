@@ -4,8 +4,8 @@ classdef CancelRegion < vt.Component.Button & vt.State.Listener & vt.Action.Disp
 	end
 	
 	methods
-		function this = CancelRegion(parent, label)
-			this@vt.Component.Button(parent, label);
+		function this = CancelRegion(parent, label, varargin)
+			this@vt.Component.Button(parent, label, varargin{:});
 			
 			this.setCallback();
 		end

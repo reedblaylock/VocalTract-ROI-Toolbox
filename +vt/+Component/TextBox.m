@@ -5,6 +5,7 @@ classdef TextBox < vt.Component
 	methods
 		function this = TextBox(parent, varargin)
 			p = vt.InputParser;
+			p.KeepUnmatched = true;
 			p.addParent();
 			p.addOptional('string', '', @ischar);
 			p.parse(parent, varargin{:});
@@ -14,6 +15,10 @@ classdef TextBox < vt.Component
 				'Style', 'edit', ...
 				'String', p.Results.string ...
 			);
+		
+			if(numel(fieldnames(p.Unmatched)))
+				this.setParameters(varargin{:});
+			end
 		end
 	end
 	

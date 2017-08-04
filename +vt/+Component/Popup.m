@@ -21,6 +21,16 @@ classdef Popup < vt.Component
 			   str = list(val,:);
 			end
 		end
+		
+		function [] = setCurrentPopupString(this, str)
+			list = this.getParameter('String');
+			if(iscell(list))
+				val = find(strcmp(list, str));
+			else
+				val = find(list, str);
+			end
+			this.setParameters('Value', val);
+		end
 	end
 end
 

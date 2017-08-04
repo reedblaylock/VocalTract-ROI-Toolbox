@@ -75,15 +75,26 @@ classdef Listener < vt.Listener
 		
 		function [] = notifyFrameClick(this, ~, eventData)
 			isEditing = eventData.data.isEditing;
+			disp('click!');
 			switch(isEditing)
 				case 'region'
+					% We're in region-editing mode, and the frame was clicked.
+					% Put down an origin point.
 					action = vt.Action.ChangeCurrentRegionOrigin();
 					coordinates = eventData.data.coordinates;
 					this.reducer.register(action);
 					action.dispatch(coordinates);
 				otherwise
-					% TODO: error, this editing type has not been established
-					% yet
+					% We're not in editing mode, and the frame was clicked.
+					% 1. The click location is within a region on the frame, so
+					%    set currentRegion = the clicked region
+					% 2. The click location is not within a region, so clear the
+					%    currentRegion (or, do nothing)
+					% TODO: Take the logic out of the reducer somehow
+					action = vt.Action.SetCurrentRegion();
+					coordinates = eventData.data.coordinates;
+					this.reducer.register(action);
+					action.dispatch(coordinates);
 			end
 		end
 	end

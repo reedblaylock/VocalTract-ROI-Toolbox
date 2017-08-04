@@ -12,8 +12,7 @@ classdef (Abstract) Layout < vt.Component
 			
 			this.construct(p.Results.parent);
 			
-			% Could instead call this.setParameters(varargin{:});
-			set(this.handle, varargin{:});
+			this.setParameters(varargin{:});
 		end
 	end
 	

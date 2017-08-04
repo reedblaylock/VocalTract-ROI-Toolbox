@@ -24,6 +24,10 @@ classdef RegionShape < vt.Component.Popup & vt.State.Listener & vt.Action.Dispat
 			end
 		end
 		
+		function [] = onCurrentRegionChange(this, state)
+			this.setCurrentPopupString(state.currentRegion.shape);
+		end
+		
 		function [] = dispatchAction(this, ~, ~)
 			str = this.getCurrentPopupString();
 			this.action.dispatch(str);

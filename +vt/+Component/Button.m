@@ -4,16 +4,21 @@ classdef Button < vt.Component
 	% vt.ActionDispatcher{With|Without}Data.
 	
 	methods
-		function this = Button(parent, label)
+		function this = Button(parent, label, varargin)
 			p = vt.InputParser;
+			p.KeepUnmatched = true;
 			p.addParent();
 			p.addRequired('label', @ischar);
-			p.parse(parent, label);
+			p.parse(parent, label, varargin{:});
 			
 			this.handle = uicontrol(...
 				'Parent', p.Results.parent.handle, ...
 				'String', p.Results.label ...
 			);
+		
+			if(numel(fieldnames(p.Unmatched)))
+				this.setParameters(varargin{:});
+			end
 		end
 	end
 	

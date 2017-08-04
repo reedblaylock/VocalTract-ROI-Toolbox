@@ -4,8 +4,8 @@ classdef RegionColor < vt.Component.Button & vt.Action.Dispatcher & vt.State.Lis
 	end
 	
 	methods
-		function this = RegionColor(parent, label)
-			this@vt.Component.Button(parent, label);
+		function this = RegionColor(parent, label, varargin)
+			this@vt.Component.Button(parent, label, varargin{:});
 			
 			this.setCallback();
 		end

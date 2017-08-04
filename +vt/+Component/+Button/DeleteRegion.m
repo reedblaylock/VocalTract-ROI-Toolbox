@@ -5,10 +5,18 @@ classdef DeleteRegion < vt.Component.Button & vt.State.Listener & vt.Action.Disp
 	end
 	
 	methods
-		function this = DeleteRegion(parent, label)
-			this@vt.Component.Button(parent, label);
+		function this = DeleteRegion(parent, label, varargin)
+			this@vt.Component.Button(parent, label, varargin{:});
 			
 			this.setCallback();
+		end
+		
+		function [] = onCurrentRegionChange(this, state)
+			if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
+				this.setParameters('Enable', 'on');
+			else
+				this.setParameters('Enable', 'off');
+			end
 		end
 		
 		function [] = onIsEditingChange(this, state)

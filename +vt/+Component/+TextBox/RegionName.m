@@ -4,13 +4,14 @@ classdef RegionName < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Lis
 	end
 	
 	methods
-		function this = RegionName(parent)
+		function this = RegionName(parent, varargin)
 			p = vt.InputParser();
+			p.KeepUnmatched = true;
 			p.addParent();
-			p.parse(parent);
+			p.parse(parent, varargin{:});
 			
-			this@vt.Component.TextBox(parent);
-			this.setParameters('Enable', 'off');
+			this@vt.Component.TextBox(parent, '', varargin{:});
+% 			this.setParameters('Enable', 'off');
 			
 			this.setCallback();
 		end

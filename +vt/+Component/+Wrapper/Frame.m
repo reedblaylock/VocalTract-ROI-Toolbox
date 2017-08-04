@@ -69,8 +69,15 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 					% state, to avoid code duplication
 					this.setCurrentRegionDefaults(state);
 				otherwise
-					this.frame.deleteOrigin(state.currentRegion.id);
-					this.frame.deleteOutline(state.currentRegion.id);
+					this.deleteCurrentRegion(state);
+					this.redrawAllRegions(state);
+			end
+		end
+		
+		function [] = deleteCurrentRegion(this, state)
+			if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
+				this.frame.deleteOrigin(state.currentRegion.id);
+				this.frame.deleteOutline(state.currentRegion.id);
 			end
 		end
 		
@@ -81,7 +88,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			region.name = '';
 % 			region.isSaved = false; % is the region part of vt.State.regions
 			region.origin = []; % origin pixel of the region
-			region.type = 'average'; % what kind of timeseries do you want?
+			region.type = 'Average'; % what kind of timeseries do you want?
 			
 			% Region shapes and shape parameters
 			region.shape = 'Circle'; % region shape
@@ -107,22 +114,26 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			% you're editing a region. If you want to edit a different region,
 			% you have to save or cancel your current edits first (clearing
 			% state.currentRegion).
+			if(~strcmp(state.isEditing, 'region'))
+				return;
+			end
+			
 			region = state.currentRegion;
-			mask = this.getMask(region, state);
+% 			mask = this.getMask(region, state);
 			
 % 			if(~strcmp(this.currentRegion.name, state.currentRegion.name))
 % 				this.frame.renameAll(this.currentRegion.name, state.currentRegion.name);
 % 			end
 			
 			% This will handle changes in color, radius ...
-			if(~isempty(mask))
+			if(~isempty(region.mask))
 				this.frame.deleteOrigin(region.id);
 				this.frame.deleteOutline(region.id);
 				if(region.showOrigin)
 					this.frame.drawOrigin(region.id, region.origin, region.color);
 				end
 				if(region.showOutline)
-					this.frame.drawOutline(region.id, mask, region.color);
+					this.frame.drawOutline(region.id, region.mask, region.color);
 				end
 			end
 			
@@ -130,108 +141,114 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		end
 		
 		function [] = onRegionsChange(this, state)
+			this.deleteCurrentRegion(state);
+			this.redrawAllRegions(state);
+		end
+		
+		function [] = redrawAllRegions(this, state)
 			if(isempty(fieldnames(state.regions)) || ~numel(state.regions))
 				% There are no regions saved right now
+				return;
 			end
 			
 			nRegions = numel(state.regions);
 			for iRegion = 1:nRegions
 				region = state.regions(iRegion);
-				mask = this.getMask(region, state);
+% 				mask = this.getMask(region, state);
 				
-				if(~isempty(mask))
+				if(~isempty(region.mask))
 					this.frame.deleteOrigin(region.id);
 					this.frame.deleteOutline(region.id);
 					if(region.showOrigin)
 						this.frame.drawOrigin(region.id, region.origin, region.color);
 					end
 					if(region.showOutline)
-						this.frame.drawOutline(region.id, mask, region.color);
+						this.frame.drawOutline(region.id, region.mask, region.color);
 					end
 				end
 			end
 		end
 		
-		function mask = getMask(this, region, state)
-			mask = [];
-			if(isempty(region.origin))
-				return;
-			end
-			
-			switch(region.shape)
-				case 'Circle'
-					mask = this.find_region(state.video.matrix, region.origin, region.radius);
-				case 'Rectangle'
-					mask = this.find_rectangle_region(state.video.matrix, region.origin, region.width, region.height);
-				otherwise
-					% TODO: error, this shape has not been programmed
-			end
-		end
-		
-		function mask = find_region(this, vidMatrix, pixloc, radius)		
-% 			Adam Lammert (2010)
-
-			fheight = sqrt(size(vidMatrix,2));
-			fwidth = sqrt(size(vidMatrix,2));
-			
-			% Neighbors
-			[N] = this.pixelneighbors([fheight fwidth], pixloc, radius);
-
-			% iteratively determine the region
-			mask = zeros(fwidth,fheight);
-			for itor = 1:size(N,1)
-				mask(N(itor,1),N(itor,2)) = 1;
-			end
-		end
-		
-		function mask = find_rectangle_region(~, vidMatrix, origin, width, height)
-			c = origin(1);
-			r = origin(2);
-			num_rows = height;
-			num_columns = width;
-			
-			r1 = r + 1 - ceil(num_rows/2);
-			r2 = r1 + num_rows - 1;
-			c1 = c + 1 - ceil(num_columns/2);
-			c2 = c1 + num_columns - 1;
-			
-			fheight = sqrt(size(vidMatrix,2));
-			fwidth = sqrt(size(vidMatrix,2));
-			
-			% iteratively determine the region
-			mask = zeros(fwidth,fheight);
-			for i = r1:r2
-				for j = c1:c2
-					mask(i, j) = 1;
-				end
-			end
-		end
-		
-		function N = pixelneighbors(~, siz, pixloc, radius)
-% 			Adam Lammert (2010)
-
-			%Parameters
-% 			fheight = siz(1);
-% 			fwidth = siz(2);
-			
-			j = pixloc(1);
-			i = pixloc(2);
-
-			%Build Distance Map
-% 			D = zeros(fheight,fwidth);
-			D1 = repmat((1:siz(1))',1,siz(2));
-			D2 = repmat((1:siz(2)),siz(2),1);
-			E1 = repmat(i,siz(2),siz(1));
-			E2 = repmat(j,siz(1),siz(2));
-			D = sqrt((D1-E1).^2+(D2-E2).^2);
-
-			%Pixels Less than Maximum Distance
-			ind = find(D <= radius);
-			[y, x] = ind2sub(siz,ind);
-
-			%Build Output
-			N = [y x];
-		end
+% 		function mask = getMask(this, region, state)
+% 			mask = [];
+% 			if(isempty(region.origin))
+% 				return;
+% 			end
+% 			
+% 			switch(region.shape)
+% 				case 'Circle'
+% 					mask = this.find_region(state.video.matrix, region.origin, region.radius);
+% 				case 'Rectangle'
+% 					mask = this.find_rectangle_region(state.video.matrix, region.origin, region.width, region.height);
+% 				otherwise
+% 					% TODO: error, this shape has not been programmed
+% 			end
+% 		end
+% 		
+% 		function mask = find_region(this, vidMatrix, pixloc, radius)		
+% % 			Adam Lammert (2010)
+% 
+% 			fheight = sqrt(size(vidMatrix,2));
+% 			fwidth = sqrt(size(vidMatrix,2));
+% 			
+% 			% Neighbors
+% 			[N] = this.pixelneighbors([fheight fwidth], pixloc, radius);
+% 
+% 			% iteratively determine the region
+% 			mask = zeros(fwidth,fheight);
+% 			for itor = 1:size(N,1)
+% 				mask(N(itor,1),N(itor,2)) = 1;
+% 			end
+% 		end
+% 		
+% 		function mask = find_rectangle_region(~, vidMatrix, origin, width, height)
+% 			c = origin(1);
+% 			r = origin(2);
+% 			num_rows = height;
+% 			num_columns = width;
+% 			
+% 			r1 = r + 1 - ceil(num_rows/2);
+% 			r2 = r1 + num_rows - 1;
+% 			c1 = c + 1 - ceil(num_columns/2);
+% 			c2 = c1 + num_columns - 1;
+% 			
+% 			fheight = sqrt(size(vidMatrix,2));
+% 			fwidth = sqrt(size(vidMatrix,2));
+% 			
+% 			% iteratively determine the region
+% 			mask = zeros(fwidth,fheight);
+% 			for i = r1:r2
+% 				for j = c1:c2
+% 					mask(i, j) = 1;
+% 				end
+% 			end
+% 		end
+% 		
+% 		function N = pixelneighbors(~, siz, pixloc, radius)
+% % 			Adam Lammert (2010)
+% 
+% 			%Parameters
+% % 			fheight = siz(1);
+% % 			fwidth = siz(2);
+% 			
+% 			j = pixloc(1);
+% 			i = pixloc(2);
+% 
+% 			%Build Distance Map
+% % 			D = zeros(fheight,fwidth);
+% 			D1 = repmat((1:siz(1))',1,siz(2));
+% 			D2 = repmat((1:siz(2)),siz(2),1);
+% 			E1 = repmat(i,siz(2),siz(1));
+% 			E2 = repmat(j,siz(1),siz(2));
+% 			D = sqrt((D1-E1).^2+(D2-E2).^2);
+% 
+% 			%Pixels Less than Maximum Distance
+% 			ind = find(D <= radius);
+% 			[y, x] = ind2sub(siz,ind);
+% 
+% 			%Build Output
+% 			N = [y x];
+% 		end
 		
 		% Action methods %
 		function [] = showFrame(this, video, frameNo)

@@ -4,8 +4,8 @@ classdef SaveRegion < vt.Component.Button & vt.State.Listener & vt.Action.Dispat
 	end
 	
 	methods
-		function this = SaveRegion(parent, label)
-			this@vt.Component.Button(parent, label);
+		function this = SaveRegion(parent, label, varargin)
+			this@vt.Component.Button(parent, label, varargin{:});
 			
 			this.setCallback();
 		end

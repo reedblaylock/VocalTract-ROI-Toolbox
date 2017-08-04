@@ -18,9 +18,12 @@ classdef (Sealed) State < handle
 		frameType = 'frame'
 		
 		regions = struct()
-		currentRegion  = struct()
+		currentRegion = struct()
 		regionIdCounter = 0
 		isEditing % character array
+		
+		timeseries = struct()
+		currentTimeseries = struct()
 	end
 end
 

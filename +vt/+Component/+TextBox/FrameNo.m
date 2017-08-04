@@ -5,13 +5,13 @@ classdef FrameNo < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listen
 	end
 	
 	methods
-		function this = FrameNo(parent)
+		function this = FrameNo(parent, varargin)
 			p = vt.InputParser();
+			p.KeepUnmatched = true;
 			p.addParent();
-			p.parse(parent);
+			p.parse(parent, varargin{:});
 			
-			this@vt.Component.TextBox(parent);
-% 			this.setParameters('Enable', 'off');
+			this@vt.Component.TextBox(parent, '', varargin{:});
 			
 			this.setCallback();
 		end

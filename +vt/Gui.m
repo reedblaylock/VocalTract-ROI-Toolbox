@@ -125,6 +125,7 @@ classdef Gui < vt.Root & vt.State.Listener
 				'TabWidth', 100, ...
 				'Padding', this.styles.Padding ...
 			);
+			% TODO: this box might be superfluous
 			gui.RegionSettingsTab = vt.Component.Layout.HBox( ...
 				gui.RightBox, ...
 				'Padding', this.styles.Padding, ...
@@ -137,8 +138,40 @@ classdef Gui < vt.Root & vt.State.Listener
 			);
 			gui.RightBox.setParameters('TabTitles', {'Region settings', 'Timeseries'});
 			
-			%%% Grid way of doing things
+			%%% Region settings panel
 			gui = this.addRegionSettingsGrid(gui);
+		end
+		
+		function [] = onRegionsChange(this, state)
+			% You should probably show currentRegion's timeseries too. Maybe you
+			% can color the back panel differently to indicate that it's
+			% temporary, somehow?
+			
+			% TODO: order display by (xcoordinate + ycoordinate) increasing
+			
+			% TODO: check regions field is empty
+			if(isempty(fieldnames(state.regions)) || ~numel(state.regions))
+				% There are no regions saved right now
+				return;
+			end
+			
+			% Delete and redraw--same pattern as for regions (which maybe means
+			% you should be abstracting with another class...)
+			
+			for iRegion = 1:numel(state.regions)
+				% delete by id
+				
+				% redraw with id
+				label = ['Timeseries' num2str(iRegion)];
+				region = state.regions(iRegion);
+				this.gui.(label) = vt.Component.Axes.Timeseries( ...
+					this.gui.TimeSeriesTab, ...
+					state.timeseries(iRegion), ...
+					'Color', region.color, ...
+					'Title', region.name, ...
+					'Tag', num2str(region.id) ...
+				);
+			end
 		end
 		
 		function gui = addMenu(~, gui)
@@ -269,30 +302,117 @@ classdef Gui < vt.Root & vt.State.Listener
 			gui.RegionSettings5_2 = vt.Component.Layout.Empty( ...
 				gui.RightBoxGrid ...
 			);
-			% 6-2 + Save button
-			gui.RegionNewButton = vt.Component.Button.NewRegion( ...
+			% 6-2 + Empty area
+			gui.RegionSettings6_2 = vt.Component.Layout.Empty( ...
+				gui.RightBoxGrid ...
+			);
+			% 7-2 + New region
+			gui.RegionSettings7_2 = vt.Component.Button.NewRegion( ...
 				gui.RightBoxGrid, ...
 				'New region' ...
 			);
-			% 7-2 + Save button
-			gui.RegionSaveButton = vt.Component.Button.SaveRegion( ...
+			% 8-2 + Edit region
+			gui.RegionSettings8_2 = vt.Component.Button.EditRegion( ...
 				gui.RightBoxGrid, ...
-				'Save region' ...
+				'Edit region' ...
 			);
-			% 8-2 + Delete button
-			gui.RegionDeleteButton = vt.Component.Button.DeleteRegion( ...
+			% 9-2 + Delete region
+			gui.RegionSettings9_2 = vt.Component.Button.DeleteRegion( ...
 				gui.RightBoxGrid, ...
 				'Delete region' ...
 			);
-			% 9-2 + Cancel button
-			gui.RegionCancelButton = vt.Component.Button.CancelRegion( ...
-				gui.RightBoxGrid, ...
-				'Cancel region changes' ...
-			);
-		
-% 			gui.RightBoxGrid.handle.Contents
 			
 			gui.RightBoxGrid.setParameters('Widths', [-1 -1], 'Heights', -1.*ones(1, 9));
+		end
+		
+		function [] = onIsEditingChange(this, state)
+			switch(state.isEditing)
+				case 'region'
+					% delete the last three areas
+					delete(this.gui.RightBoxGrid.handle.Contents(16:18));
+					delete(this.gui.RegionSettings7_2);
+					delete(this.gui.RegionSettings8_2);
+					delete(this.gui.RegionSettings9_2);
+					this.gui.RegionSettings7_2 = [];
+					this.gui.RegionSettings8_2 = [];
+					this.gui.RegionSettings9_2 = [];
+					this.gui = rmfield(this.gui, 'RegionSettings7_2');
+					this.gui = rmfield(this.gui, 'RegionSettings8_2');
+					this.gui = rmfield(this.gui, 'RegionSettings9_2');
+					
+					% add the save, delete, and cancel buttons
+					% 7-2 + Save button
+					this.gui.RegionSettings7_2 = vt.Component.Button.SaveRegion( ...
+						this.gui.RightBoxGrid, ...
+						'Save region' ...
+					);
+					this.initializeComponent(this.gui.RegionSettings7_2);
+					% 8-2 + Delete button
+					this.gui.RegionSettings8_2 = vt.Component.Button.DeleteRegion( ...
+						this.gui.RightBoxGrid, ...
+						'Delete region' ...
+					);
+					this.initializeComponent(this.gui.RegionSettings8_2);
+					% 9-2 + Cancel button
+					this.gui.RegionSettings9_2 = vt.Component.Button.CancelRegion( ...
+						this.gui.RightBoxGrid, ...
+						'Cancel region changes' ...
+					);
+					this.initializeComponent(this.gui.RegionSettings9_2);
+				
+					% re-order
+					% Not necessary at the moment, because these items go on the
+					% end
+				otherwise
+					% Not in any editing mode
+					
+					% delete the last three areas
+					delete(this.gui.RightBoxGrid.handle.Contents(16:18));
+					delete(this.gui.RegionSettings7_2);
+					delete(this.gui.RegionSettings8_2);
+					delete(this.gui.RegionSettings9_2);
+					this.gui.RegionSettings7_2 = [];
+					this.gui.RegionSettings8_2 = [];
+					this.gui.RegionSettings9_2 = [];
+					this.gui = rmfield(this.gui, 'RegionSettings7_2');
+					this.gui = rmfield(this.gui, 'RegionSettings8_2');
+					this.gui = rmfield(this.gui, 'RegionSettings9_2');
+					
+					% 7-2 + New region
+					this.gui.RegionSettings7_2 = vt.Component.Button.NewRegion( ...
+						this.gui.RightBoxGrid, ...
+						'New region' ...
+					);
+					this.initializeComponent(this.gui.RegionSettings7_2);
+					% 8-2 + Edit region
+					this.gui.RegionSettings8_2 = vt.Component.Button.EditRegion( ...
+						this.gui.RightBoxGrid, ...
+						'Edit region' ...
+					);
+					% If there is a current region, keep the button on
+					if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
+						this.gui.RegionSettings8_2.setParameters('Enable', 'on');
+					else
+						this.gui.RegionSettings8_2.setParameters('Enable', 'off');
+					end
+					this.initializeComponent(this.gui.RegionSettings8_2);
+					% 9-2 + Delete region
+					this.gui.RegionSettings9_2 = vt.Component.Button.DeleteRegion( ...
+						this.gui.RightBoxGrid, ...
+						'Delete region' ...
+					);
+					% If there is a current region, keep the button on
+					if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
+						this.gui.RegionSettings9_2.setParameters('Enable', 'on');
+					else
+						this.gui.RegionSettings9_2.setParameters('Enable', 'off');
+					end
+					this.initializeComponent(this.gui.RegionSettings9_2);
+					
+					% re-order
+					% Not necessary, since these elements are getting appended
+					% to the end anyway
+			end
 		end
 		
 		function [] = onCurrentRegionChange(this, state)
@@ -351,6 +471,8 @@ classdef Gui < vt.Root & vt.State.Listener
 					% TODO: something here
 			end
 			
+			% TODO: If isEditing='region', 'Enable'='on'; otherwise,
+			% 'Enable'='off'
 			switch(state.currentRegion.shape)
 				case 'Circle'
 					% 1-2 + Radius
@@ -359,8 +481,12 @@ classdef Gui < vt.Root & vt.State.Listener
 						'Title', 'Radius' ...
 					);
 					this.gui.RegionRadius = vt.Component.TextBox.Radius( ...
-						this.gui.RegionSettings1_2 ...
+						this.gui.RegionSettings1_2, ...
+						'String', num2str(state.currentRegion.radius) ...
 					);
+					if(~strcmp(state.isEditing, 'region'))
+						this.gui.RegionRadius.setParameters('Enable', 'off');
+					end
 					this.initializeComponent(this.gui.RegionSettings1_2);
 					this.initializeComponent(this.gui.RegionRadius);
 					% 2-2 + Empty space
@@ -380,8 +506,12 @@ classdef Gui < vt.Root & vt.State.Listener
 						'Title', 'Width' ...
 					);
 					this.gui.RegionWidth = vt.Component.TextBox.Width( ...
-						this.gui.RegionSettings1_2 ...
+						this.gui.RegionSettings1_2, ...
+						'String', num2str(state.currentRegion.width) ...
 					);
+					if(~strcmp(state.isEditing, 'region'))
+						this.gui.RegionWidth.setParameters('Enable', 'off');
+					end
 					this.initializeComponent(this.gui.RegionSettings1_2);
 					this.initializeComponent(this.gui.RegionWidth);
 					% 2-2 + Height
@@ -390,8 +520,12 @@ classdef Gui < vt.Root & vt.State.Listener
 						'Title', 'Height' ...
 					);
 					this.gui.RegionHeight = vt.Component.TextBox.Height( ...
-						this.gui.RegionSettings2_2 ...
+						this.gui.RegionSettings2_2, ...
+						'String', num2str(state.currentRegion.height) ...
 					);
+					if(~strcmp(state.isEditing, 'region'))
+						this.gui.RegionHeight.setParameters('Enable', 'off');
+					end
 					this.initializeComponent(this.gui.RegionSettings2_2);
 					this.initializeComponent(this.gui.RegionHeight);
 					% 3-2 + Empty space
@@ -406,8 +540,12 @@ classdef Gui < vt.Root & vt.State.Listener
 						'Title', 'Minimum number of pixels' ...
 					);
 					this.gui.MinimumPixels = vt.Component.TextBox.MinimumPixels( ...
-						this.gui.RegionSettings1_2 ...
+						this.gui.RegionSettings1_2, ...
+						'String', num2str(state.currentRegion.minimumPixels) ...
 					);
+					if(~strcmp(state.isEditing, 'region'))
+						this.gui.MinimumPixels.setParameters('Enable', 'off');
+					end
 					this.initializeComponent(this.gui.RegionSettings1_2);
 					this.initializeComponent(this.gui.MinimumPixels);
 					% 2-2 + Search radius textbox
@@ -416,8 +554,12 @@ classdef Gui < vt.Root & vt.State.Listener
 						'Title', 'Search radius' ...
 					);
 					this.gui.SearchRadius = vt.Component.TextBox.SearchRadius( ...
-						this.gui.RegionSettings2_2 ...
+						this.gui.RegionSettings2_2, ...
+						'String', num2str(state.currentRegion.searchRadius) ...
 					);
+					if(~strcmp(state.isEditing, 'region'))
+						this.gui.SearchRadius.setParameters('Enable', 'off');
+					end
 					this.initializeComponent(this.gui.RegionSettings2_2);
 					this.initializeComponent(this.gui.SearchRadius);
 					% 3-2 + Tau textbox
@@ -426,8 +568,12 @@ classdef Gui < vt.Root & vt.State.Listener
 						'Title', 'Tau' ...
 					);
 					this.gui.Tau = vt.Component.TextBox.Tau( ...
-						this.gui.RegionSettings3_2 ...
+						this.gui.RegionSettings3_2, ...
+						'String', num2str(state.currentRegion.tau) ...
 					);
+					if(~strcmp(state.isEditing, 'region'))
+						this.gui.Tau.setParameters('Enable', 'off');
+					end
 					this.initializeComponent(this.gui.RegionSettings3_2);
 					this.initializeComponent(this.gui.Tau);
 				otherwise

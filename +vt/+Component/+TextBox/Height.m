@@ -5,14 +5,15 @@ classdef Height < vt.Component.TextBox & vt.State.Listener & vt.Action.Dispatche
 	end
 	
 	methods
-		function this = Height(parent)
+		function this = Height(parent, varargin)
 			p = vt.InputParser();
+			p.KeepUnmatched = true;
 			p.addParent();
-			p.parse(parent);
+			p.parse(parent, varargin{:});
 			
-			this@vt.Component.TextBox(parent);
-			this.setParameters('String', '3');
-			this.data = '3';
+			this@vt.Component.TextBox(parent, '', varargin{:});
+% 			this.setParameters('String', '3');
+% 			this.data = '3';
 			
 			this.setCallback();
 		end
@@ -29,6 +30,7 @@ classdef Height < vt.Component.TextBox & vt.State.Listener & vt.Action.Dispatche
 		function [] = onCurrentRegionChange(this, state)
 			this.maxHeight = state.video.height;
 			this.setParameters('String', num2str(state.currentRegion.height));
+			this.data = num2str(state.currentRegion.height);
 		end
 		
 		function [] = dispatchAction(this, ~, ~)
