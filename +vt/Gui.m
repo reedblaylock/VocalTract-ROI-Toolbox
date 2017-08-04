@@ -12,7 +12,7 @@ classdef Gui < vt.Root & vt.State.Listener
 	
 	methods
 		function this = Gui()
-			this.log = vt.Log(2);
+			this.log = vt.Log(0);
 			this.log.on();
 		end
 		

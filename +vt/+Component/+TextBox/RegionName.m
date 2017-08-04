@@ -10,7 +10,7 @@ classdef RegionName < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Lis
 			p.addParent();
 			p.parse(parent, varargin{:});
 			
-			this@vt.Component.TextBox(parent, '', varargin{:});
+			this@vt.Component.TextBox(parent, varargin{:});
 % 			this.setParameters('Enable', 'off');
 			
 			this.setCallback();
