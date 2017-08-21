@@ -42,13 +42,13 @@ classdef FrameNo < vt.Component.TextBox.RangeBox & vt.State.Listener
 		% dynamically from State.Listener when the current video changes.
 		function [] = onVideoChange(this, state)
 			this.maxValue = state.video.nFrames;
-			this.switchFrameType(this, state.frameType);
+			this.switchFrameType(state.frameType);
 		end
 		
 		% Disable or enable the checkbox when switching to a new frame type.
 		% Called dynamically from State.Listener when the frame type changes.
 		function [] = onFrameTypeChange(this, state)
-			this.switchFrameType(this, state.frameType);
+			this.switchFrameType(state.frameType);
 		end
 		
 		%%%%% OTHER %%%%%

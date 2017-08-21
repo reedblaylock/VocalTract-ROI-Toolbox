@@ -29,9 +29,13 @@ classdef Listener < vt.Listener
 			parse(p, this, propertyName, state);
 			
 			% Prevent trying to call handles that have been deleted
-			if(isa(this, 'vt.Component') && ~(isvalid(this.handle) && ishandle(this.handle)))
-				disp('Avoiding deleted handle');
-				return;
+			try
+				if(isa(this, 'vt.Component') && ~(isvalid(this.handle) && ishandle(this.handle)))
+					disp(['Avoiding deleted handle ' class(this)]);
+					return;
+				end
+			catch excp
+				this.log.exception(excp);
 			end
 			
 			method = this.property2method(propertyName);
