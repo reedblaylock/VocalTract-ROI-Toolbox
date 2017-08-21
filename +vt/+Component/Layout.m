@@ -18,6 +18,12 @@ classdef (Abstract) Layout < vt.Component
 	
 	methods (Access = protected)
 		[] = construct(this, parent);
+		
+		function b = isOldMatlabVersion(~)
+			newVersionDate = '08-Sep-2014';
+			matlabVersion = ver( 'MATLAB' );
+			b = datenum( matlabVersion.Date ) < datenum( newVersionDate );
+		end
 	end
 	
 end

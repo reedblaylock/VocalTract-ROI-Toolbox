@@ -11,16 +11,14 @@ classdef Empty < vt.Component.Layout
 			p.addParent();
 			parse(p, parent);
 			
-			minVersionDate = '08-Sep-2014';
-			matlabVersion = ver( 'MATLAB' );
-			if datenum( matlabVersion.Date ) < datenum( minVersionDate )
+			if ( this.isOldMatlabVersion() )
 				% Use the old version of the GUI Layout Toolbox
-				this.handle = guilayouttoolbox.old.uiextras.Empty( ...
+				this.handle = guilayouttoolbox.old.layout.uiextras.Empty( ...
 					'Parent', p.Results.parent.handle ...
 				);
 			else
 				% Use the new version of the GUI Layout Toolbox
-				this.handle = guilayouttoolbox.new.uix.Empty( ...
+				this.handle = guilayouttoolbox.new.layout.uix.Empty( ...
 					'Parent', p.Results.parent.handle ...
 				);
 			end
