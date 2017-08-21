@@ -1,8 +1,11 @@
+% This is the notification bar at the bottom of the GUI.
 classdef NotificationBar < vt.Component.Text
-	properties
-	end
-	
 	methods
+		
+		%%%%% CONSTRUCTOR %%%%%
+		
+		% Call the parent constructor (a text object), and apply certain
+		% parameters.
 		function this = NotificationBar(parent)
 			this@vt.Component.Text(parent);
 			
@@ -13,6 +16,10 @@ classdef NotificationBar < vt.Component.Text
 			);
 		end
 		
+		%%%%% OTHER %%%%%
+		
+		% Update the text and color of the notification bar. Called exclusively
+		% by Wrapper.NotificationBar.
 		function [] = update(this, string, color)
 			this.setParameters( ...
 				'String', string, ...

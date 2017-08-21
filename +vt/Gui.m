@@ -1,3 +1,8 @@
+% This class is initialized in runGui.m. The constructor function creates a Log
+% object and initializes it; the run function creates a set of pseudo-global
+% objects, creates the GUI components, sets up the connections between the GUI
+% components and their functionality, and disables most interface capabilities
+% until a video is loaded.
 classdef Gui < vt.Root & vt.State.Listener
 	properties
 		state
@@ -27,6 +32,7 @@ classdef Gui < vt.Root & vt.State.Listener
 			this.initializeListeners();
 			
 			set(findall(this.gui.Window.handle, 'Type', 'uicontrol'), 'Enable', 'off');
+			set(this.gui.NotificationBar.handle, 'Enable', 'on');
 		end
 		
 		function [] = initializeListeners(this)
@@ -78,6 +84,7 @@ classdef Gui < vt.Root & vt.State.Listener
 			);
 		end
 		
+		% Create the GUI.
 		function gui = createInterface(this)
 			% Create the user interface for the application and return a
 			% structure of handles for global use.
@@ -206,6 +213,7 @@ classdef Gui < vt.Root & vt.State.Listener
 			gui.LoadMenu = vt.Component.MenuItem( gui.FileMenu, 'Load...' );
 			gui.ExitMenu = vt.Component.MenuItem.Exit( gui.FileMenu, 'Exit' );
 			gui.LoadAvi  = vt.Component.MenuItem.Load( gui.LoadMenu, 'AVI', 'avi' );
+			gui.Export   = vt.Component.MenuItem.Export( gui.FileMenu, 'Export timeseries' );
 
 			% + Help menu
 			gui.HelpMenu = vt.Component.MenuItem( gui.Window, 'Help' );
@@ -444,6 +452,7 @@ classdef Gui < vt.Root & vt.State.Listener
 			end
 		end
 		
+		% Dynamically called by State.Listener
 		function [] = onCurrentRegionChange(this, state)
 			% REDRAW TIMESERIES 
 			this.redrawCurrentTimeseries(state);

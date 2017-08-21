@@ -1,24 +1,28 @@
+% This is the slider that controls the current frame number shown.
 classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listener
 	properties
+		% This object dispatches an action that changes the current frame
+		% number.
 		actionType = @vt.Action.SetCurrentFrameNo
-% 		listenerHandle
 	end
 	
 	methods
+		
+		%%%%% CONSTRUCTOR %%%%%
+		
+		% Create a slider object, and set its callback (see
+		% vt.Action.Dispatcher).
 		function this = FrameNo(parent)
 			this@vt.Component.Slider(parent);
-% 			this@vt.Action.Dispatcher();
 			
 			this.setCallback();
 		end
 		
-		function [] = dispatchAction(this, ~, ~)
-% 			frameNo = get(theSlider, 'Value');
-			frameNo = this.getParameter('Value');
-			frameNo = round(frameNo);
-			this.action.dispatch(frameNo);
-		end
+		%%%%% STATE LISTENER %%%%%
 		
+		% Update the range and current value of this slider based on the length
+		% of the new video. This function is called by State.Listener when the
+		% video changes in State.
 		function [] = onVideoChange(this, state)
 			this.setParameters( ...
 				'Min', 1, ...
@@ -26,38 +30,53 @@ classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listene
 				'Value', 1, ...
 				'SliderStep', [1/state.video.nFrames, 10/state.video.nFrames] ...
 			);
-			switch(state.frameType)
-				case 'frame'
-					this.setParameters('Enable', 'on');
-				case {'mean', 'std'}
-					this.setParameters('Enable', 'off');
-				otherwise
-					% TODO: throw error?
-			end
+			
+			this.switchFrameType(state.frameType);
 		end
 		
+		% Update the current frame number of the slider. This function is called
+		% by State.Listener when the current frame number changes in State.
 		function [] = onCurrentFrameNoChange(this, state)
 			frameNo = get(this.handle, 'Value');
 			if(round(frameNo) ~= state.currentFrameNo)
-% 				this.listenerHandle.Enabled = false;
 				this.setParameters('Value', state.currentFrameNo);
-% 				this.listenerHandle.Enabled = true;
 			end
 		end
 		
+		% Enable or disable the slider based on changes in frame type. This
+		% function is called by State.Listener when the frame type changes in
+		% State.
 		function [] = onFrameTypeChange(this, state)
-			switch(state.frameType)
+			this.switchFrameType(state.frameType);
+		end
+		
+		%%%%% ACTION DISPATCHER %%%%%
+		
+		function [] = dispatchAction(this, ~, ~)
+			frameNo = this.getParameter('Value');
+			frameNo = round(frameNo);
+			this.action.dispatch(frameNo);
+		end
+		
+		%%%%% OTHER %%%%%
+		
+		% The slider is enabled when single frames are shown, and disabled
+		% otherwise.
+		function [] = switchFrameType(this, frameType)
+			switch(frameType)
 				case 'frame'
 					this.setParameters('Enable', 'on');
-				case {'mean', 'std dev'}
-					this.setParameters('Enable', 'off');
 				otherwise
-					% TODO: throw error?
+					this.setParameters('Enable', 'off');
 			end
 		end
 	end
 		
+	%%%%% ACTION DISPATCHER %%%%%
 	methods (Access = ?vt.Action.Dispatcher)
+		
+		% Overwrite the vt.Component function setCallback. Dispatch an action
+		% whenever the Value value of ths slider changes.
 		function [] = setCallback(this, varargin)
 			p = inputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Action.Dispatcher'));

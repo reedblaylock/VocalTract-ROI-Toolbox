@@ -1,12 +1,27 @@
+% This class is a wrapper for vt.Component.Frame, providing the logic required
+% to make appropriate updates to the frame's visualization.
 classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 	properties
+		% This object dispatches an action with information about where the
+		% frame was clicked.
 		actionType = @vt.Action.NotifyFrameClick
+		
+		% An object of type vt.Component.Frame
 		frame
+		
+		% The current value for isEditing, given by State.
 		isEditing = ''
+		
+		% The parameters of the current region.
 		currentRegion
 	end
 	
 	methods
+		
+		%%%%% CONSTRUCTOR %%%%%
+		
+		% Store a vt.Component.Frame object, and register a callback function
+		% (see vt.Component and vt.Action.Dispatcher).
 		function this = Frame(frame)
 			p = inputParser;
 			p.addRequired('frame', @(frame) isa(frame, 'vt.Component.Frame'));
@@ -17,56 +32,35 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			this.setCallback();
 		end
 		
-		function [] = triggerFrameUpdate(this, img)
-			this.frame.update(img);
-		end
+		%%%%% STATE LISTENER %%%%%
 		
-		% State update methods
+		% Update the current frame shown. This function is called by
+		% vt.State.Listener when the current frame number changes in State.
 		function [] = onCurrentFrameNoChange(this, state)
-			switch(state.frameType)
-				case 'frame'
-					this.showFrame(state.video, state.currentFrameNo);
-				case 'mean'
-					this.showMeanImage(state.video);
-				case 'std dev'
-					this.showStandardDeviationImage(state.video);
-				otherwise
-					% TODO: throw error?
-			end
+			this.switchFrameType(state.frameType, state.video, state.currentFrameNo);
 		end
 		
+		% Update the current frame shown. This function is called by
+		% vt.State.Listener when the current video changes in State.
 		function [] = onVideoChange(this, state)
-			switch(state.frameType)
-				case 'frame'
-					this.showFrame(state.video, 1);
-				case 'mean'
-					this.showMeanImage(state.video);
-				case 'std dev'
-					this.showStandardDeviationImage(state.video);
-				otherwise
-					% TODO: throw error?
-			end
+			this.switchFrameType(state.frameType, state.video, 1);
 		end
 		
+		% Update the current frame shown. This function is called by
+		% vt.State.Listener when the current frame type changes in State.
 		function [] = onFrameTypeChange(this, state)
-			switch(state.frameType)
-				case 'frame'
-					this.showFrame(state.video, state.currentFrameNo);
-				case 'mean'
-					this.showMeanImage(state.video);
-				case 'std dev'
-					this.showStandardDeviationImage(state.video);
-				otherwise
-					% TODO: throw error?
-			end
+			this.switchFrameType(state.frameType, state.video, state.currentFrameNo);
 		end
 		
+		% Prepare to add/edit a region, or redraw all regions. This function is 
+		% called by vt.State.Listener when the current value for isEditing 
+		% changes in State.
 		function [] = onIsEditingChange(this, state)
 			this.isEditing = state.isEditing;
 			switch(state.isEditing)
 				case 'region'
 					% TODO: This should be getting the current region settings from
-					% state, to avoid code duplication
+					% state, or default preferences, to avoid code duplication
 					this.setCurrentRegionDefaults(state);
 				otherwise
 					this.deleteCurrentRegion(state);
@@ -74,6 +68,116 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			end
 		end
 		
+		% Update the visual display of the current region. Update the
+		% currentRegion property. This function is called by State.Listener
+		% whenever a value of the current region changes in State.
+		function [] = onCurrentRegionChange(this, state)
+			if(~strcmp(state.isEditing, 'region'))
+				return;
+			end
+			
+			region = state.currentRegion;
+			
+			if(~isempty(region.mask))
+				this.deleteCurrentRegion(state);
+				if(region.showOrigin)
+					this.frame.drawOrigin(region.id, region.origin, region.color);
+				end
+				if(region.showOutline)
+					this.frame.drawOutline(region.id, region.mask, region.color);
+				end
+			end
+			
+			this.currentRegion = state.currentRegion;
+		end
+		
+		% Redraw all saved regions. This function is called by State.Listener
+		% whenever a saved region is changed in State (i.e. added or deleted).
+		function [] = onRegionsChange(this, state)
+			this.deleteCurrentRegion(state);
+			this.redrawAllRegions(state);
+		end
+		
+		%%%%% ACTION DISPATCHER %%%%%
+		
+		% Overwrite the vt.Action.Dispatcher function dispatchAction to include
+		% the current isEditing state and the coordinates that were clicked.
+		function [] = dispatchAction(this, ~, ~)
+			d = struct();
+			d.isEditing = this.isEditing;
+			coordinates = this.frame.getParameter('CurrentPoint');
+			d.coordinates = round(coordinates(1, 1:2));
+			
+			this.action.dispatch(d);
+		end
+		
+		%%%%% OTHER %%%%%
+		
+		% Control which frame type will be displayed.
+		function [] = switchFrameType(this, frameType, video, currentFrameNo)
+			switch(frameType)
+				case 'frame'
+					this.showFrame(video, currentFrameNo);
+				case 'mean'
+					this.showMeanImage(video);
+				case 'std dev'
+					this.showStandardDeviationImage(video);
+				otherwise
+					% TODO: throw error?
+			end
+		end
+		
+		% Force the stored Frame object to render an update.
+		function [] = triggerFrameUpdate(this, img)
+			this.frame.update(img);
+		end
+		
+		% Display the specified frame of the video.
+		function [] = showFrame(this, video, frameNo)
+			img = this.getFrame(video, frameNo);
+			this.triggerFrameUpdate(img);
+		end
+		
+		% Display the mean image of the video.
+		function [] = showMeanImage(this, video)
+			img = this.getMeanImage(video);
+			this.triggerFrameUpdate(img);
+		end
+		
+		% Display the standard deviation image of the video.
+		function [] = showStandardDeviationImage(this, video)
+			img = this.getStandardDeviationImage(video);
+			this.triggerFrameUpdate(img);
+		end
+		
+		% Find the specified frame of the video.
+		function frame = getFrame(~, video, frameNo)
+			frame = reshape( ...
+				video.matrix(frameNo,:), ...
+				video.width, ...
+				video.height ...
+			);
+		end
+		
+		% Find the mean of the video.
+		function meanimage = getMeanImage(~, video)
+			meanimage = reshape( ...
+				mean(video.matrix, 1), ...
+				video.width, ...
+				video.height ...
+			);
+		end
+		
+		% Find the standard deviation of the video.
+		function stdimage = getStandardDeviationImage(~, video)
+			stdimage = reshape( ...
+				std(video.matrix, 1), ...
+				video.width, ...
+				video.height ...
+			);
+		end
+		
+		% Delete any visualization of the current region.
 		function [] = deleteCurrentRegion(this, state)
 			if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
 				this.frame.deleteOrigin(state.currentRegion.id);
@@ -81,6 +185,32 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			end
 		end
 		
+		% Redraw all regions stored in State.regions.
+		function [] = redrawAllRegions(this, state)
+			if(isempty(fieldnames(state.regions)) || ~numel(state.regions))
+				% There are no regions saved right now
+				return;
+			end
+			
+			nRegions = numel(state.regions);
+			for iRegion = 1:nRegions
+				region = state.regions(iRegion);
+				
+				if(~isempty(region.mask))
+					this.frame.deleteOrigin(region.id);
+					this.frame.deleteOutline(region.id);
+					if(region.showOrigin)
+						this.frame.drawOrigin(region.id, region.origin, region.color);
+					end
+					if(region.showOutline)
+						this.frame.drawOutline(region.id, region.mask, region.color);
+					end
+				end
+			end
+		end
+		
+		% Fill this object's currentRegion property with the same defaults found
+		% in State.
 		function [] = setCurrentRegionDefaults(this, state)
 			% TODO: All of this should be given by vt.State
 			region = struct();
@@ -108,199 +238,12 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			
 			this.currentRegion = region;
 		end
-		
-		function [] = onCurrentRegionChange(this, state)
-			% Assumption: you cannot change which region you're editing while
-			% you're editing a region. If you want to edit a different region,
-			% you have to save or cancel your current edits first (clearing
-			% state.currentRegion).
-			if(~strcmp(state.isEditing, 'region'))
-				return;
-			end
-			
-			region = state.currentRegion;
-% 			mask = this.getMask(region, state);
-			
-% 			if(~strcmp(this.currentRegion.name, state.currentRegion.name))
-% 				this.frame.renameAll(this.currentRegion.name, state.currentRegion.name);
-% 			end
-			
-			% This will handle changes in color, radius ...
-			if(~isempty(region.mask))
-				this.deleteCurrentRegion(state);
-				if(region.showOrigin)
-					this.frame.drawOrigin(region.id, region.origin, region.color);
-				end
-				if(region.showOutline)
-					this.frame.drawOutline(region.id, region.mask, region.color);
-				end
-			end
-			
-			this.currentRegion = state.currentRegion;
-		end
-		
-		function [] = onRegionsChange(this, state)
-			this.deleteCurrentRegion(state);
-			this.redrawAllRegions(state);
-		end
-		
-		function [] = redrawAllRegions(this, state)
-			if(isempty(fieldnames(state.regions)) || ~numel(state.regions))
-				% There are no regions saved right now
-				return;
-			end
-			
-			nRegions = numel(state.regions);
-			for iRegion = 1:nRegions
-				region = state.regions(iRegion);
-% 				mask = this.getMask(region, state);
-				
-				if(~isempty(region.mask))
-					this.frame.deleteOrigin(region.id);
-					this.frame.deleteOutline(region.id);
-					if(region.showOrigin)
-						this.frame.drawOrigin(region.id, region.origin, region.color);
-					end
-					if(region.showOutline)
-						this.frame.drawOutline(region.id, region.mask, region.color);
-					end
-				end
-			end
-		end
-		
-% 		function mask = getMask(this, region, state)
-% 			mask = [];
-% 			if(isempty(region.origin))
-% 				return;
-% 			end
-% 			
-% 			switch(region.shape)
-% 				case 'Circle'
-% 					mask = this.find_region(state.video.matrix, region.origin, region.radius);
-% 				case 'Rectangle'
-% 					mask = this.find_rectangle_region(state.video.matrix, region.origin, region.width, region.height);
-% 				otherwise
-% 					% TODO: error, this shape has not been programmed
-% 			end
-% 		end
-% 		
-% 		function mask = find_region(this, vidMatrix, pixloc, radius)		
-% % 			Adam Lammert (2010)
-% 
-% 			fheight = sqrt(size(vidMatrix,2));
-% 			fwidth = sqrt(size(vidMatrix,2));
-% 			
-% 			% Neighbors
-% 			[N] = this.pixelneighbors([fheight fwidth], pixloc, radius);
-% 
-% 			% iteratively determine the region
-% 			mask = zeros(fwidth,fheight);
-% 			for itor = 1:size(N,1)
-% 				mask(N(itor,1),N(itor,2)) = 1;
-% 			end
-% 		end
-% 		
-% 		function mask = find_rectangle_region(~, vidMatrix, origin, width, height)
-% 			c = origin(1);
-% 			r = origin(2);
-% 			num_rows = height;
-% 			num_columns = width;
-% 			
-% 			r1 = r + 1 - ceil(num_rows/2);
-% 			r2 = r1 + num_rows - 1;
-% 			c1 = c + 1 - ceil(num_columns/2);
-% 			c2 = c1 + num_columns - 1;
-% 			
-% 			fheight = sqrt(size(vidMatrix,2));
-% 			fwidth = sqrt(size(vidMatrix,2));
-% 			
-% 			% iteratively determine the region
-% 			mask = zeros(fwidth,fheight);
-% 			for i = r1:r2
-% 				for j = c1:c2
-% 					mask(i, j) = 1;
-% 				end
-% 			end
-% 		end
-% 		
-% 		function N = pixelneighbors(~, siz, pixloc, radius)
-% % 			Adam Lammert (2010)
-% 
-% 			%Parameters
-% % 			fheight = siz(1);
-% % 			fwidth = siz(2);
-% 			
-% 			j = pixloc(1);
-% 			i = pixloc(2);
-% 
-% 			%Build Distance Map
-% % 			D = zeros(fheight,fwidth);
-% 			D1 = repmat((1:siz(1))',1,siz(2));
-% 			D2 = repmat((1:siz(2)),siz(2),1);
-% 			E1 = repmat(i,siz(2),siz(1));
-% 			E2 = repmat(j,siz(1),siz(2));
-% 			D = sqrt((D1-E1).^2+(D2-E2).^2);
-% 
-% 			%Pixels Less than Maximum Distance
-% 			ind = find(D <= radius);
-% 			[y, x] = ind2sub(siz,ind);
-% 
-% 			%Build Output
-% 			N = [y x];
-% 		end
-		
-		% Action methods %
-		function [] = showFrame(this, video, frameNo)
-			img = this.getFrame(video, frameNo);
-			this.triggerFrameUpdate(img);
-		end
-		
-		function [] = showMeanImage(this, video)
-			img = this.getMeanImage(video);
-			this.triggerFrameUpdate(img);
-		end
-		
-		function [] = showStandardDeviationImage(this, video)
-			img = this.getStandardDeviationImage(video);
-			this.triggerFrameUpdate(img);
-		end
-		
-		% Public helper methods %
-		function frame = getFrame(~, video, frameNo)
-			frame = reshape( ...
-				video.matrix(frameNo,:), ...
-				video.width, ...
-				video.height ...
-			);
-		end
-		
-		function meanimage = getMeanImage(~, video)
-			meanimage = reshape( ...
-				mean(video.matrix, 1), ...
-				video.width, ...
-				video.height ...
-			);
-		end
-		
-		function stdimage = getStandardDeviationImage(~, video)
-			stdimage = reshape( ...
-				std(video.matrix, 1), ...
-				video.width, ...
-				video.height ...
-			);
-		end
-		
-		function [] = dispatchAction(this, ~, ~)
-			d = struct();
-			d.isEditing = this.isEditing;
-			coordinates = this.frame.getParameter('CurrentPoint');
-			d.coordinates = round(coordinates(1, 1:2));
-			
-			this.action.dispatch(d);
-		end
 	end
 	
+	%%%%% ACTION DISPATCHER %%%%%
 	methods (Access = ?vt.Action.Dispatcher)
+		% Overwrite the vt.Component function setCallback to use the frame
+		% property's image handle (rather than the frame handle).
 		function [] = setCallback(this, varargin)
 			set( ...
 				this.frame.imageHandle, ...

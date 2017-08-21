@@ -1,3 +1,5 @@
+% This function runs the VocalTract ROI Toolbox. This is the only function you
+% need to explicitly call in the MATLAB command line.
 function runGui()
 	close all force;
 	clear;

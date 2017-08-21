@@ -1,9 +1,22 @@
+% The textbox that displays the current frame number beneath the video frame.
 classdef FrameNo < vt.Component.TextBox.RangeBox & vt.State.Listener
+	
 	properties
+		% Required by Action.Dispatcher. When the user changes the value in this
+		% textbox, send that value to State as the new frame number.
 		actionType = @vt.Action.SetCurrentFrameNo;
 	end
 	
 	methods
+		
+		%%%%% CONSTRUCTOR %%%%%
+		
+		% Adds this component to its parent, subclassing the RangeBox class 
+		% (which accepts only numbers in a certain range).
+		% Notable superclasses:
+		% - vt.Component.TextBox.RangeBox
+		% - vt.Action.Dispatcher (via RangeBox)
+		% - vt.State.Listener
 		function this = FrameNo(parent, varargin)
 			p = vt.InputParser();
 			p.KeepUnmatched = true;
@@ -11,61 +24,43 @@ classdef FrameNo < vt.Component.TextBox.RangeBox & vt.State.Listener
 			p.parse(parent, varargin{:});
 			
 			this@vt.Component.TextBox.RangeBox(parent, varargin{:});
-			
-% 			this.setCallback();
 		end
 		
-% 		function [] = dispatchAction(this, ~, ~)
-% 			str = this.getParameter('String');
-% 			num = str2double(str);
-% 			try
-% 				assert(~isempty(num) && ~isnan(num));
-% % 				validatedNum = [];
-% 				if(num < 1)
-% 					validatedNum = 1;
-% 				elseif(num > this.maxValue)
-% 					validatedNum = this.maxValue;
-% 				else
-% 					validatedNum = num;
-% 				end
-% 				if(validatedNum ~= num)
-% 					this.setParameters('String', num2str(validatedNum));
-% 				end
-% 				this.data = str;
-% 				this.action.dispatch(validatedNum);
-% 			catch
-% 				this.setParameters('String', this.data);
-% 				excp = MException('InvalidInput:FrameNo', 'Frame number must be numerical.');
-% 				this.log.exception(excp);
-% 			end
-% 		end
+		%%%%% STATE LISTENER %%%%%
 		
+		% Updates the String value of the textbox to the current frame number in
+		% State. Called dynamically from State.Listener when the current frame
+		% number changes.
 		function [] = onCurrentFrameNoChange(this, state)
 			str = num2str(state.currentFrameNo);
 			this.data = str;
 			this.setParameters('String', str);
 		end
 		
+		% Disable or enable the checkbox when switching to a new video. Set the 
+		% maxFrames property equal to the number of frames in the video. Called
+		% dynamically from State.Listener when the current video changes.
 		function [] = onVideoChange(this, state)
 			this.maxValue = state.video.nFrames;
-			switch(state.frameType)
-				case 'frame'
-					this.setParameters('Enable', 'on');
-				case {'mean', 'std'}
-					this.setParameters('Enable', 'off');
-				otherwise
-					% TODO: throw error?
-			end
+			this.switchFrameType(this, state.frameType);
 		end
 		
+		% Disable or enable the checkbox when switching to a new frame type.
+		% Called dynamically from State.Listener when the frame type changes.
 		function [] = onFrameTypeChange(this, state)
-			switch(state.frameType)
+			this.switchFrameType(this, state.frameType);
+		end
+		
+		%%%%% OTHER %%%%%
+		
+		% Enable or disable the textbox depending on which frame type is
+		% currently active.
+		function [] = switchFrameType(this, frameType)
+			switch(frameType)
 				case 'frame'
 					this.setParameters('Enable', 'on');
-				case {'mean', 'std dev'}
-					this.setParameters('Enable', 'off');
 				otherwise
-					% TODO: throw error?
+					this.setParameters('Enable', 'off');
 			end
 		end
 	end

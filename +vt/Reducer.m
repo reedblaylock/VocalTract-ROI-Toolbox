@@ -329,6 +329,70 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			% TODO: This should be a separate action
 			this.clearCurrentRegion(source, eventData);
 		end
+		
+		function [] = export(this, source, eventData)
+			disp('Exporting timeseries...');
+			
+			wav_dir = 'wav';
+			avi_dir = 'avi';
+			velum_upordown = 'down';
+			data.fps = this.state.video.frameRate;
+			
+			frames = 0:(this.state.video.nFrames-1); % 1 gets added in FormatData.m, so subtract it here (assuming the frames are 1-based instead of 0-based, I suppose)
+			times = frames ./ this.state.video.frameRate;
+
+% 			regionNames = {this.state.regions(:).name};	
+			regionIds = [this.state.regions(:).id];
+			
+			for iRegion = 1:length(regionIds)
+				regionId = regionIds(iRegion);
+				regionIdx = find([this.state.regions.id] == regionId);
+				region = this.state.regions(regionIdx);
+				timeseries = this.state.timeseries(regionIdx);
+% 				region = this.state.regions(iRegion);
+				
+				data.gest(iRegion).name = region.name;
+
+% 				p1 = articulator.points(1,:);
+% 				p2 = articulator.points(end,:);
+% 				pmean = mean([p1; p2], 1);
+% 				data.gest(n).location = pmean;
+				data.gest(iRegion).location = region.origin;
+
+				data.gest(iRegion).frames = frames;
+				data.gest(iRegion).times = times;
+
+				% TODO: Put this filtering somewhere else
+				disp(['Smoothing timeseries for region ' region.name '...']);
+				interp = 1; % If you make this value bigger, you can interpolate additional points
+				wwid = .9;
+				X	= 1:size(timeseries.data(:,1));
+				Y	= timeseries.data;
+				D	= linspace(min(X),max(X),(interp*max(X)))';
+				[filtered_timeseries, ~] = lwregress3(X',Y,D,wwid);
+				
+				if (~isempty(strfind(lower(region.name), 'vel')) && strcmp(velum_upordown, 'down'))
+					smooth_ts = filtered_timeseries;
+				else
+					smooth_ts = max(filtered_timeseries) - filtered_timeseries + min(filtered_timeseries);
+				end
+				data.gest(iRegion).Ismoothed = smooth_ts;
+				data.gest(iRegion).stimes = (D-1) ./ this.state.video.frameRate;
+			end
+			
+			filename = this.state.video.filename;
+			[~, filename, ~] = fileparts(filename); % Make sure you're getting only the file name, not the extension
+			data = FormatData2(data, filename, wav_dir, avi_dir);
+% 			if nargin < 2
+% 				data = FormatData2(data, filename);
+% 			else
+% 				data = FormatData2(data, filename, wav_dir, avi_dir); % This function should be with the other MViewRT function
+% 			end
+
+			save(filename, 'data');
+			
+			disp('Finished exporting!');
+		end
 	end
 	
 end

@@ -1,10 +1,22 @@
+% The textbox that displays the radius of the current circular region.
 classdef Radius < vt.Component.TextBox.RangeBox & vt.State.Listener
 	properties
+		% Required by Action.Dispatcher. When the user changes the value in this
+		% textbox, send that value to State as the new radius for the current
+		% region.
 		actionType = @vt.Action.ChangeRegionRadius;
-% 		maxValue
 	end
 	
 	methods
+		
+		%%%%% CONSTRUCTOR %%%%%
+		
+		% Adds this component to its parent, subclassing the RangeBox class 
+		% (which accepts only numbers in a certain range).
+		% Notable superclasses:
+		% - vt.Component.TextBox.RangeBox
+		% - vt.Action.Dispatcher (via RangeBox)
+		% - vt.State.Listener
 		function this = Radius(parent, varargin)
 			p = vt.InputParser();
 			p.KeepUnmatched = true;
@@ -12,12 +24,13 @@ classdef Radius < vt.Component.TextBox.RangeBox & vt.State.Listener
 			p.parse(parent, varargin{:});
 			
 			this@vt.Component.TextBox.RangeBox(parent, varargin{:});
-% 			this.setParameters('String', '3');
-% 			this.data = '3';
-			
-% 			this.setCallback();
 		end
 		
+		%%%%% STATE LISTENER %%%%%
+		
+		% This textbox is enabled when a region is being edited, and disabled 
+		% otherwise. Called dynamically from State.Listener when isEditing
+		% changes.
 		function [] = onIsEditingChange(this, state)
 			switch(state.isEditing)
 				case 'region'
@@ -27,37 +40,13 @@ classdef Radius < vt.Component.TextBox.RangeBox & vt.State.Listener
 			end
 		end
 		
+		% Updates the String value of the textbox to the radius value in State. 
+		% Called dynamically from State.Listener whenever the region changes.
 		function [] = onCurrentRegionChange(this, state)
 			this.maxValue = round(min(state.video.height, state.video.width) / 2);
 			this.setParameters('String', num2str(state.currentRegion.radius));
 			this.data = num2str(state.currentRegion.radius);
 		end
-		
-% 		function [] = dispatchAction(this, ~, ~)
-% 			str = this.getParameter('String');
-% 			num = str2double(str);
-% 			try
-% 				assert(~isempty(num) && ~isnan(num));
-% 			catch
-% 				this.setParameters('String', this.data);
-% 				excp = MException('InvalidInput:RegionRadius', 'Radius must be numerical.');
-% 				this.log.exception(excp);
-% 			end
-% 			
-% % 			validatedNum = [];
-% 			if(num < 1)
-% 				validatedNum = 1;
-% 			elseif(num > this.maxValue)
-% 				validatedNum = this.maxValue;
-% 			else
-% 				validatedNum = num;
-% 			end
-% 			if(validatedNum ~= num)
-% 				this.setParameters('String', num2str(validatedNum));
-% 			end
-% 			this.data = str;
-% 			this.action.dispatch(validatedNum);
-% 		end
 	end
 	
 end

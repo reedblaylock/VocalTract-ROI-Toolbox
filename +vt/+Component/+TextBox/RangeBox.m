@@ -1,10 +1,25 @@
+% An abstract class, inherited by textboxes that enforce their values to fit a
+% numerical range.
 classdef (Abstract) RangeBox < vt.Component.TextBox & vt.Action.Dispatcher
 	properties
+		% Specify a default min and max value. These are usually over-written by
+		% child classes.
 		minValue = 1
 		maxValue = 10
+		
+		% Child classes must specify an actionType (see Action.Dispatcher).
 	end
 	
 	methods
+		
+		%%%%% CONSTRUCTOR %%%%%
+		
+		% Adds this component to its parent, subclassing the TextBox class. Set
+		% the callback function for dispatching an action.
+		% Notable superclasses:
+		% - vt.Component.TextBox
+		% - vt.Action.Dispatcher
+		% - vt.State.Listener
 		function this = RangeBox(parent, varargin)
 			p = vt.InputParser();
 			p.KeepUnmatched = true;
@@ -16,6 +31,8 @@ classdef (Abstract) RangeBox < vt.Component.TextBox & vt.Action.Dispatcher
 			this.setCallback();
 		end
 		
+		% Convert the current String value to a number. If it is within the
+		% appropriate range, dispatch an action.
 		function [] = dispatchAction(this, ~, ~)
 			str = this.getParameter('String');
 			num = str2double(str);
@@ -27,6 +44,7 @@ classdef (Abstract) RangeBox < vt.Component.TextBox & vt.Action.Dispatcher
 			end
 		end
 		
+		% Make sure that the current value is within the specified range.
 		function validatedNum = validateData(this, num)
 			p = inputParser;
 			p.addRequired('num', @isnumeric);
