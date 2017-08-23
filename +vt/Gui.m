@@ -211,9 +211,11 @@ classdef Gui < vt.Root & vt.State.Listener
 			% + File menu
 			gui.FileMenu = vt.Component.MenuItem( gui.Window,   'File' );
 			gui.LoadMenu = vt.Component.MenuItem( gui.FileMenu, 'Load...' );
-			gui.ExitMenu = vt.Component.MenuItem.Exit( gui.FileMenu, 'Exit' );
 			gui.LoadAvi  = vt.Component.MenuItem.Load( gui.LoadMenu, 'AVI', 'avi' );
+			
 			gui.Export   = vt.Component.MenuItem.Export( gui.FileMenu, 'Export timeseries' );
+			
+			gui.ExitMenu = vt.Component.MenuItem.Exit( gui.FileMenu, 'Exit' );
 
 			% + Help menu
 			gui.HelpMenu = vt.Component.MenuItem( gui.Window, 'Help' );
