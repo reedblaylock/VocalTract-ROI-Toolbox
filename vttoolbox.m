@@ -1,6 +1,6 @@
 % This function runs the VocalTract ROI Toolbox. This is the only function you
 % need to explicitly call in the MATLAB command line.
-function runGui()
+function vttoolbox()
 	close all force;
 	clear;
 	

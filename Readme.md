@@ -16,6 +16,14 @@ The GUI was designed to minimize the overhead required to perform data analysis.
 
 ## How to install this toolbox
 
+### What do I need?
+
+You will need MATLAB to run this code after it has been installed.
+
+This toolbox uses the MATLAB class VideoReader; as a result, MATLAB versions earlier than 2010b will be incompatible. Some versions of MATLAB running on OSX may also be incompatible.
+
+### What's the installation process?
+
 You can install this toolbox with a 3-step process:
 
 1. Download this code as a .zip file by clicking the green "Clone or download" button above
@@ -28,10 +36,10 @@ That's it!
 
 ### Opening the toolbox
 
-To get started, type `runGui` into the MATLAB command window, like so:
+To get started, type `vttoolbox` into the MATLAB command window, like so:
 
 ```
->> runGui
+>> vttoolbox
 ```
 
 You should see a new MATLAB figure with some axes, text boxes, and buttons. None of it works yet because there's no video to make regions for.
