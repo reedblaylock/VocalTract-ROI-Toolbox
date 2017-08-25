@@ -8,38 +8,30 @@ classdef Grid < vt.Component.Layout
 		function [] = setParameters(this, varargin)
 			p = vt.InputParser;
 			p.KeepUnmatched = true;
-			p.addRequired('this', @(this) isa(this, 'vt.Component.Layout.Grid'));
+			p.addRequired('this', @(this) isa(this, 'vt.Component.Layout'));
 			parse(p, this, varargin{:});
 			
-			params = fieldnames(p.Unmatched);
+			s = p.Unmatched;
 			
 			if( this.isOldMatlabVersion() )
-				% Change Heights to RowSizes
-				nameToChange = 'Heights';
-				nameReplacement = 'RowSizes';
-				if( find(ismember(params, nameToChange)) )
-					[p.Unmatched.(nameReplacement)] = p.Unmatched.(nameToChange);
-					p.Unmatched = rmfield(p.Unmatched, nameToChange);
-				end
-
-				% Change Widths to ColumnSizes
+				% Change Widths to Sizes
 				nameToChange = 'Widths';
 				nameReplacement = 'ColumnSizes';
-				if( find(ismember(params, nameToChange)) )
-					[p.Unmatched.(nameReplacement)] = p.Unmatched.(nameToChange);
-					p.Unmatched = rmfield(p.Unmatched, nameToChange);
-				end
+				s = this.renameField(s, nameToChange, nameReplacement);
+				
+				% Change MinimumWidths to MinimumSizes
+				nameToChange = 'Heights';
+				nameReplacement = 'RowSizes';
+				s = this.renameField(s, nameToChange, nameReplacement);
 				
 				% Change Contents to Children
 				nameToChange = 'Contents';
 				nameReplacement = 'Children';
-				if( find(ismember(params, nameToChange)) )
-					[p.Unmatched.(nameReplacement)] = p.Unmatched.(nameToChange);
-					p.Unmatched = rmfield(p.Unmatched, nameToChange);
-				end
+				s = this.renameField(s, nameToChange, nameReplacement);
 			end
-
-			setParameters@vt.Component.Layout(this, p.Unmatched(:));
+			
+			c = this.struct2interleavedCell(s);
+			setParameters@vt.Component.Layout(this, c{:});
 		end
 	end
 	
