@@ -4,6 +4,7 @@ classdef Grid < vt.Component.Layout
 			this@vt.Component.Layout(parent, varargin{:});
 		end
 		
+		% perfunctory comment
 		function [] = setParameters(this, varargin)
 			p = vt.InputParser;
 			p.KeepUnmatched = true;
