@@ -331,6 +331,12 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		end
 		
 		function [] = export(this, source, eventData)
+			if(isempty(fieldnames(this.state.regions)) || ~numel(this.state.regions))
+				% There are no regions saved right now, so there's nothing to
+				% delete
+				return;
+			end
+			
 			disp('Exporting timeseries...');
 			
 			wav_dir = 'wav';
@@ -382,7 +388,8 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			
 			filename = this.state.video.filename;
 			[~, filename, ~] = fileparts(filename); % Make sure you're getting only the file name, not the extension
-			data = FormatData2(data, filename, wav_dir, avi_dir);
+			data = this.formatData(data, filename, wav_dir, avi_dir);
+% 			data = FormatData2(data, filename, wav_dir, avi_dir);
 % 			if nargin < 2
 % 				data = FormatData2(data, filename);
 % 			else
@@ -392,6 +399,69 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			save(filename, 'data');
 			
 			disp('Finished exporting!');
+		end
+		
+		% TODO: Move this somewhere else
+		function d = formatData(~, v, fName, wav_dir, avi_dir)
+			%FORMATDATA  - format rtMRI data for use with mviewRT
+			%
+			%	usage:  d = FormatData(v, fName, locNames)
+			%
+			% V is the rtMRI intensity data variable
+			% FNAME maps to the associated WAV and AVI files
+			%
+			% optional LOCNAMES identifies the pixel intensity regions
+			% (drawn from V.gest(n).name by default)
+
+			% mkt 11/12
+			% edited by Reed Blaylock 9/2015, 8/2017
+
+			locNames = {v.gest.name};
+
+			audio_name = [fName '.wav'];
+			if nargin > 2
+				audio_name = fullfile(wav_dir, audio_name);
+			end
+
+			video_name = [fName '.avi'];
+			if nargin > 3
+				video_name = fullfile(avi_dir, video_name);
+			end
+
+			% load audio
+			try
+				if exist('audioread', 'file'), [s,sr] = audioread(audio_name); else [s,sr] = wavread(audio_name); end
+			catch
+				error('unable to load WAV file %s',audio_name);
+			end
+			ht = floor(v.gest(1).times*sr) + 1;
+			s = s(ht(1):ht(end));
+			d = struct('NAME','AUDIO','SRATE',sr,'SIGNAL',s,'LOCATION',[]);
+
+			% load images
+			try
+				h = VideoReader(video_name);
+			catch
+				error('unable to load AVI file %s',video_name);
+			end
+			frames = v.gest(1).frames + 1;		% 0- to 1-based
+			try
+				nfr = get(h,'numberOfFrames');
+				img = read(h,frames([1 end]));
+			catch
+				error('unable to load frames %d:%d in %s (%d frames available)', frames, fn, nfr);
+			end
+			img = squeeze(img(:,:,1,:));
+			d(end+1) = struct('NAME','IMAGE','SRATE',v.fps,'SIGNAL',img,'LOCATION',[]);
+
+			% format output
+			gsr = 1 / mean(diff(v.gest(1).stimes));
+			for k = 1 : length(v.gest),
+				d(end+1) = struct('NAME', locNames{k}, ...
+							'SRATE', gsr, ...
+							'SIGNAL', v.gest(k).Ismoothed, ...
+							'LOCATION',v.gest(k).location);
+			end
 		end
 	end
 	

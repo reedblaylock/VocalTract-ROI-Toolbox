@@ -1,9 +1,9 @@
-classdef VBox < uix.VBox
-    %uiextras.VBox  Arrange elements vertically in a single column
+classdef VBox < uiextras.Box
+    %VBox  Arrange elements vertically in a single column
     %
-    %   obj = uiextras.VBox() creates a new vertical box layout with all
-    %   parameters set to defaults. The output is a new layout object that
-    %   can be used as the parent for other user-interface components.
+    %   obj = uiextras.VBox() creates a new vertical box layout with
+    %   all parameters set to defaults. The output is a new layout object
+    %   that can be used as the parent for other user-interface components.
     %
     %   obj = uiextras.VBox(param,value,...) also sets one or more
     %   parameter values.
@@ -30,85 +30,66 @@ classdef VBox < uix.VBox
     %             uiextras.VBoxFlex
     %             uiextras.Grid
     
-    %  Copyright 2009-2014 The MathWorks, Inc.
-    %  $Revision: 1077 $ $Date: 2015-03-19 16:44:14 +0000 (Thu, 19 Mar 2015) $
+    %  Copyright 2009 The MathWorks, Inc.
+    %  $Revision: 366 $ $Date: 2011-02-10 15:48:11 +0000 (Thu, 10 Feb 2011) $
     
-    properties( Hidden, Access = public, Dependent )
-        Enable % deprecated
-        Sizes
-        MinimumSizes
-    end
-    
+    %% Public methods
     methods
         
         function obj = VBox( varargin )
+            %VBOX  Container with contents in a single vertical row.
             
-            % Call uix constructor
-            obj@uix.VBox( varargin{:} )
-            
-            % Auto-parent
-            if ~ismember( 'Parent', varargin(1:2:end) )
-                obj.Parent = gcf();
+            % First step is to create the parent class. We pass the
+            % arguments (if any) just incase the parent needs setting
+            obj@uiextras.Box( varargin{:} );
+ 
+            % Set properties
+            if nargin > 0
+                set( obj, varargin{:} );
             end
-            
         end % constructor
         
-    end % structors
+    end % public methods
     
-    methods
+    %% Protected methods
+    methods( Access = protected )
         
-        function value = get.Enable( ~ )
+        function [widths,heights] = redraw( obj )
+            %REDRAW  Redraw container contents.
             
-            % Warn
-            % warning( 'uiextras:Deprecated', ...
-            %     'Property ''Enable'' will be removed in a future release.' )
+            % Get container width and height
+            totalPosition = ceil( getpixelposition( obj.UIContainer ) );
+            totalWidth = totalPosition(3);
+            totalHeight = totalPosition(4);
             
-            % Return
-            value = 'on';
+            % Get children
+            children = obj.getValidChildren();
+            nChildren = numel( children );
             
-        end % get.Enable
+            % Get padding, spacing and sizes
+            padding = obj.Padding;
+            spacing = obj.Spacing;
+            
+            % Compute widths
+            widths = repmat( totalWidth - padding * 2, size( children ) );
+            widths = max( widths, 1 ); % minimum is 1 pixel
+            
+            % Compute heights
+            heights = uiextras.calculatePixelSizes( totalHeight, ...
+                obj.Sizes, obj.MinimumSizes, padding, spacing );
+            
+            % Compute and set new positions in pixels
+            for ii = 1:nChildren
+                child = children(ii);
+                newPosition = [padding + 1, ...
+                    totalHeight - sum( heights(1:ii) ) - padding - spacing*(ii-1) + 1, ...
+                    widths(ii), ...
+                    heights(ii)];
+                obj.repositionChild( child, newPosition );
+            end
+            
+        end % redraw
         
-        function set.Enable( ~, value )
-            
-            % Check
-            assert( ischar( value ) && any( strcmp( value, {'on','off'} ) ), ...
-                'uiextras:InvalidPropertyValue', ...
-                'Property ''Enable'' must be ''on'' or ''off''.' )
-            
-            % Warn
-            % warning( 'uiextras:Deprecated', ...
-            %     'Property ''Enable'' will be removed in a future release.' )
-            
-        end % set.Enable
-        
-        function value = get.Sizes( obj )
-            
-            % Get
-            value = transpose( obj.Heights );
-            
-        end % get.Sizes
-        
-        function set.Sizes( obj, value )
-            
-            % Set
-            obj.Heights = value;
-            
-        end % set.Sizes
-        
-        function value = get.MinimumSizes( obj )
-            
-            % Get
-            value = transpose( obj.MinimumHeights );
-            
-        end % get.MinimumSizes
-        
-        function set.MinimumSizes( obj, value )
-            
-            % Get
-            obj.MinimumHeights = value;
-            
-        end % set.MinimumSizes
-        
-    end % accessors
+    end % protected methods
     
 end % classdef

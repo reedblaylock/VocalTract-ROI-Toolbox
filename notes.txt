@@ -153,7 +153,6 @@ NEXT
 - Figure out how to show the vertical current frame number line on the timeseries
 - Make lines and rectangles clickable [you can addlistener(handleArray, ...) all the objects you get with handleArray = findall(figure/axes?, 'Tag', region.id)]
 - Exporting basically works, but make sure mview isn't over-filtering
-- Fix the button group (see vt.Component.FrameType). Right now, it doesn't register as a valid handle in vt.State.Listener, so state changes don't trigger an update --DONE
 
 SOON
 - Refactor
