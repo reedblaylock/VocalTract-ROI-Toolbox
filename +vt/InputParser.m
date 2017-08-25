@@ -6,11 +6,10 @@ classdef InputParser < inputParser
 		end
 		
 		function [] = addParameter(this, paramName, defaultValue, varargin)
-			p = inputParser;
 			if( this.isOldMatlabVersion() )
-				p.addParamValue(paramName, defaultValue, varargin{:});
+				addParamValue(this, paramName, defaultValue, varargin{:});
 			else
-				p.addParameter(paramName, defaultValue, varargin{:});
+				addParameter@inputParser(this, paramName, defaultValue, varargin{:});
 			end
 		end
 		
