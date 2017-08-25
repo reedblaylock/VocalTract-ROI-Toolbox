@@ -1,7 +1,7 @@
 classdef (Abstract) Listener < vt.Root
 	methods
 		function method = action2method(this, underscore_action)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('underscoreAction', @ischar);
 			p.parse(underscore_action);
 			
@@ -13,7 +13,7 @@ classdef (Abstract) Listener < vt.Root
 		end
 		
 		function [] = register(this, action)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Listener'));
 			p.addRequired('action', @(action) isa(action, 'vt.Action'));
 			p.parse(this, action);
@@ -34,7 +34,7 @@ classdef (Abstract) Listener < vt.Root
 		end
 		
 		function b = isMethod(this, methodName)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Listener'));
 			p.addRequired('methodName', @ischar);
 			p.parse(this, methodName);

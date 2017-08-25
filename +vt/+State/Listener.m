@@ -22,7 +22,7 @@ classdef Listener < vt.Listener
 		end
 		
 		function [] = update(this, propertyName, state)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('this',  @(this) isa(this, 'vt.State.Listener'));
 			p.addRequired('propertyName', @ischar);
 			p.addRequired('state', @(state) isa(state, 'vt.State'));
@@ -52,7 +52,7 @@ classdef Listener < vt.Listener
 		end
 		
 		function method = property2method(this, propertyName)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('propertyName', @ischar);
 			p.parse(propertyName);
 			

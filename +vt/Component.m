@@ -6,7 +6,7 @@ classdef (Abstract) Component < vt.Root
 	
 	methods		
 		function [] = setParameters(this, varargin)
-			p = inputParser;
+			p = vt.InputParser;
 			p.KeepUnmatched = true;
 			p.addRequired('this', @(this) isa(this, 'vt.Component'));
 			parse(p, this, varargin{:});
@@ -26,7 +26,7 @@ classdef (Abstract) Component < vt.Root
 		end
 		
 		function value = getParameter(this, param)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('param', @ischar);
 			parse(p, param);
 			
@@ -40,7 +40,7 @@ classdef (Abstract) Component < vt.Root
 		
 	methods (Access = ?vt.Action.Dispatcher)
 		function [] = setCallback(this, varargin)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Action.Dispatcher'));
 			p.addOptional('callbackName', 'Callback', @ischar);
 			p.parse(this, varargin{:});

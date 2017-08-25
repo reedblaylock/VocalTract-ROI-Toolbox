@@ -11,7 +11,7 @@ classdef Listener < vt.Listener
 	
 	methods
 		function this = Listener(reducer)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('reducer', @(reducer) isa(reducer, 'vt.Reducer'));
 			parse(p, reducer);
 			
@@ -19,7 +19,7 @@ classdef Listener < vt.Listener
 		end
 		
 		function [] = registerAction(this, action)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Action.Listener'));
 			p.addRequired('action', @(action) isa(action, 'vt.Action'));
 			p.parse(this, action);

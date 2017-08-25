@@ -23,7 +23,7 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 		end
 		
 		function [] = drawOrigin(this, regionId, coordinates, color)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('regionId', @isnumeric);
 			p.addRequired('coordinates', @isnumeric);
 			p.addRequired('color', @(color) (isnumeric(color) || ischar(color)));

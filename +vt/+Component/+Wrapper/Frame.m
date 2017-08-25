@@ -23,7 +23,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		% Store a vt.Component.Frame object, and register a callback function
 		% (see vt.Component and vt.Action.Dispatcher).
 		function this = Frame(frame)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('frame', @(frame) isa(frame, 'vt.Component.Frame'));
 			parse(p, frame);
 			

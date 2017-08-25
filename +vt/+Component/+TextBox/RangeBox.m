@@ -46,7 +46,7 @@ classdef (Abstract) RangeBox < vt.Component.TextBox & vt.Action.Dispatcher
 		
 		% Make sure that the current value is within the specified range.
 		function validatedNum = validateData(this, num)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('num', @isnumeric);
 			parse(p, num);
 			

@@ -78,7 +78,7 @@ classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listene
 		% Overwrite the vt.Component function setCallback. Dispatch an action
 		% whenever the Value value of ths slider changes.
 		function [] = setCallback(this, varargin)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Action.Dispatcher'));
 			p.addOptional('callbackName', 'Callback', @ischar);
 			p.parse(this, varargin{:});

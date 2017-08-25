@@ -13,7 +13,7 @@ classdef Action < vt.Root
 % 		end
 		
 		function [] = dispatch(this, varargin)
-			p = inputParser;
+			p = vt.InputParser;
 % 			p.addRequired('this', @(this) isa(this, 'vt.Action'));
 			p.addOptional('data', '', @(data) validate(this, data));
 			parse(p, varargin{:});

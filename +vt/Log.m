@@ -12,7 +12,7 @@ classdef Log < handle
 	
 	methods
 		function this = Log(varargin)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addOptional('debugMode', 0, @isnumeric);
 			parse(p, varargin{:});
 			
@@ -45,7 +45,7 @@ classdef Log < handle
 		end
 		
 		function [] = exception(this, exception)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Log'));
 			p.addRequired('exception', @(exception) isa(exception, 'MException'));
 			p.parse(this, exception);

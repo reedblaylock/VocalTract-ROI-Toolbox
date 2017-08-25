@@ -50,7 +50,7 @@ classdef (Abstract) Dispatcher < vt.Root
 		end
 		
 		function [] = dispatchAction(this, ~, ~)
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Action.Dispatcher'));
 			parse(p, this);
 % 			p.addOptional('data', []);

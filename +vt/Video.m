@@ -11,7 +11,7 @@ classdef Video < vt.Root
 	
 	methods
 		function this = Video( filename, fullpath, width, height, nFrames, frameRate, matrix )
-			p = inputParser;
+			p = vt.InputParser;
 			p.addRequired('filename', @ischar);
 			p.addRequired('fullpath', @ischar);
 			p.addRequired('width', @isnumeric);
