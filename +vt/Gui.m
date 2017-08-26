@@ -147,6 +147,9 @@ classdef Gui < vt.Root & vt.State.Listener
 			
 			%%% Region settings panel
 			gui = this.addRegionSettingsGrid(gui);
+            
+            % Make sure regionsettings tab is the currently open one
+            gui.RightBox.setParameters('Selection', 1);
 		end
 		
 		function [] = deleteAllTimeseries(this, ~)
