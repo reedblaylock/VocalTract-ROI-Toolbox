@@ -19,7 +19,12 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 		
 		function [] = update(this, frame)
 			% Use imshow?
-			this.imageHandle.CData = frame;
+            set(this.imageHandle, 'CData', frame);
+            axis image;
+            if( this.isOldMatlabVersion() )
+                set(gca, 'Ydir', 'reverse');
+            end
+% 			this.imageHandle.CData = frame;
 		end
 		
 		function [] = drawOrigin(this, regionId, coordinates, color)

@@ -30,10 +30,17 @@ classdef Listener < vt.Listener
 			
 			% Prevent trying to call handles that have been deleted
 			try
-				if(isa(this, 'vt.Component') && ~(isvalid(this.handle) && ishandle(this.handle)))
-					disp(['Avoiding deleted handle ' class(this)]);
-					return;
-				end
+                if( this.isOldMatlabVersion() )
+                    if(isa(this, 'vt.Component') && ~ishandle(this.handle))
+                        disp(['Avoiding deleted handle ' class(this)]);
+                        return;
+                    end
+                else
+                    if(isa(this, 'vt.Component') && ~(isvalid(this.handle) && ishandle(this.handle)))
+                        disp(['Avoiding deleted handle ' class(this)]);
+                        return;
+                    end
+                end
 			catch excp
 				this.log.exception(excp);
 			end
