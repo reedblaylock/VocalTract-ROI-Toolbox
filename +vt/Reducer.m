@@ -439,6 +439,8 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			d = struct('NAME','AUDIO','SRATE',sr,'SIGNAL',s,'LOCATION',[]);
 
 			% load images
+            % TODO: You've already done this to load the video in the first
+            % place, so just copy the video frames over...
 			try
 				h = VideoReader(video_name);
 			catch
