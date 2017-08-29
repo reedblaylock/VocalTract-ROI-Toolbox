@@ -49,6 +49,28 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 % 			disp(['Deleting ' regionId '...']);
 		end
 		
+		function [] = drawMidline(this, midlineId, points)
+			p = vt.InputParser;
+			p.addRequired('midlineId', @isnumeric);
+			p.addRequired('coordinates', @isnumeric);
+			p.addRequired('color', @(color) (isnumeric(color) || ischar(color)));
+			parse(p, midlineId, points, color);
+			
+			midlineId = num2str(p.Results.midlineId);
+			nPoints = size(p.Results.points, 1);
+			for iPoint = 1:nPoints
+				coordinates = p.Results.points(iPoint, :) - .5;
+				% TODO: Apply rectangles in bulk, rather than in a loop
+				rectangle('Parent', this.handle, 'Position', [coordinates(:)', 1, 1], 'EdgeColor', 'black', 'FaceColor', p.Results.color, 'Tag', midlineId);
+			end
+		end
+		
+		function [] = deleteMidline(this, midlineId)
+			midlineId = num2str(midlineId);
+			oldMidline = findobj('Type', 'rectangle', 'Tag', midlineId, 'Parent', this.handle);
+			delete(oldMidline);
+		end
+		
 		function [] = drawOutline(this, regionId, mask, color)
 			regionId = num2str(regionId);
 			

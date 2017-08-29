@@ -128,7 +128,11 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			% TODO: Put this logic somewhere else
 			mask = this.getMidlineMask(eventData.data);
 			
-			this.state.midline.mask = mask;
+			% TODO: mask might not be necessary
+			midline.mask = mask;
+			midline.points = eventData.data;
+			
+			this.state.midline = midline;
 		end
 		
 		function mask = getMidlineMask(this, points)

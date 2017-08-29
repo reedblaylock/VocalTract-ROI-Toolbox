@@ -98,6 +98,13 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			this.redrawAllRegions(state);
 		end
 		
+		% Redraw midline. This function is called by State.Listener whenever the
+		% midline is changed in State (i.e. added, deleted, or changed).
+		function [] = onMidlineChange(this, state)
+			this.deleteMidline(state);
+			this.redrawMidline(state);
+		end
+		
 		%%%%% ACTION DISPATCHER %%%%%
 		
 		% Overwrite the vt.Action.Dispatcher function dispatchAction to include
@@ -237,6 +244,16 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			region.showFill = false; % connected to the "Show fill" checkbox
 			
 			this.currentRegion = region;
+		end
+		
+		% Delete the visualization of the midline
+		function [] = deleteMidline(this, ~)
+			this.frame.deleteMidline('midline');
+		end
+		
+		% Redraw the midline defined by state.midline.points
+		function [] = redrawMidline(this, state)
+			this.frame.drawMidline('midline', state.midline.points);
 		end
 	end
 	
