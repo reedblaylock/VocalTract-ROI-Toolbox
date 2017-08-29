@@ -17,7 +17,7 @@ classdef Gui < vt.Root & vt.State.Listener
 	
 	methods
 		function this = Gui()
-			this.log = vt.Log(0);
+			this.log = vt.Log(2);
 			this.log.on();
 		end
 		
@@ -143,13 +143,27 @@ classdef Gui < vt.Root & vt.State.Listener
 				'Padding', this.styles.Padding, ...
 				'Spacing', this.styles.Spacing ...
 			);
-			gui.RightBox.setParameters('TabTitles', {'Region settings', 'Timeseries'});
+			gui.MidlineTab = vt.Component.Layout.HBox( ...
+				gui.RightBox, ...
+				'Padding', this.styles.Padding, ...
+				'Spacing', this.styles.Spacing ...
+			);
+			gui.RightBox.setParameters('TabTitles', {'Region settings', 'Timeseries', 'Midline'});
 			
 			%%% Region settings panel
 			gui = this.addRegionSettingsGrid(gui);
+			
+			%%% Timeseries panel doesn't have anything in it to start
+			
+			%%% Midline panel
+			gui = this.addMidlinePanelContents(gui);
             
             % Make sure regionsettings tab is the currently open one
             gui.RightBox.setParameters('Selection', 1);
+		end
+		
+		function gui = addMidlinePanelContents(this, gui)
+			
 		end
 		
 		function [] = deleteAllTimeseries(this, ~)
