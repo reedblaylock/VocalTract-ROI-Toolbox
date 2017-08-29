@@ -24,6 +24,8 @@ classdef (Sealed) State < handle
 		
 		timeseries = struct()
 		currentTimeseries = struct()
+		
+		midline = struct()
 	end
 end
 

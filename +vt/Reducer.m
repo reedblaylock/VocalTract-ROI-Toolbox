@@ -124,6 +124,21 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			this.changeMask();
 		end
 		
+		function [] = setMidline(this, ~, eventData)
+			% TODO: Put this logic somewhere else
+			mask = this.getMidlineMask(eventData.data);
+			
+			this.state.midline.mask = mask;
+		end
+		
+		function mask = getMidlineMask(this, points)
+			s = sqrt(size(this.state.video.matrix,2));
+			mask = zeros(s, s);
+			for r = 1:size(points,1)
+				mask(points(r,2), points(r,1)) = 1;
+			end
+		end
+		
 		function [] = changeMask(this)
 			% Set the mask as well
 			% TODO: Get this logic out of here

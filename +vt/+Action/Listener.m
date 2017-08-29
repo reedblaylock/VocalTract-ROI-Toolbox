@@ -97,6 +97,29 @@ classdef Listener < vt.Listener
 					action.dispatch(coordinates);
 			end
 		end
+		
+		function [] = createMidline(this, ~, eventData)
+			% Create the object
+			dynamicProgrammer = vt.DynamicProgrammer();
+			if(isa(dynamicProgrammer, 'vt.Root'))
+				dynamicProgrammer.log = this.log;
+			end
+			
+			dynamicProgrammer.setImage = eventData.data.image;
+			
+			% When this object is done doing its thing, it should emit an action
+			this.reducer.register(dynamicProgrammer.action);
+			
+			try
+				% eventData.data.points = [p1x p1y; p2x p2y; p3x p3y];
+				tf = dynamicProgrammer.findPath(eventData.data.points);
+				if(~tf), return, end
+			catch excp
+				this.log.exception(excp);
+			end
+			
+			% Follow up action
+		end
 	end
 	
 end
