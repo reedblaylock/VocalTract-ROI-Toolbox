@@ -62,9 +62,16 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 					% TODO: This should be getting the current region settings from
 					% state, or default preferences, to avoid code duplication
 					this.setCurrentRegionDefaults(state);
+				case 'midlineNew'
+					
+				case 'midlineEdit'
+					
 				otherwise
 					this.deleteCurrentRegion(state);
 					this.redrawAllRegions(state);
+					
+					this.deleteMidline(state);
+					this.redrawMidline(state);
 			end
 		end
 		
@@ -253,7 +260,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		
 		% Redraw the midline defined by state.midline.points
 		function [] = redrawMidline(this, state)
-			this.frame.drawMidline('midline', state.midline.points);
+			this.frame.drawMidline('midline', state.midline.points, state.midline.color);
 		end
 	end
 	

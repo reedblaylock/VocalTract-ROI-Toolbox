@@ -45,6 +45,18 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			this.state.frameType = eventData.data;
 		end
 		
+		function [] = newMidline(this, ~, ~)
+			this.state.isEditing = 'midlineNew';
+		end
+		
+		function [] = cancelMidlineChanges(this, ~, ~)
+			this.state.isEditing = '';
+			
+			% TODO: If you already have a saved midline, you have to revert back
+			% to it no matter how many changes you made. You therefore need a
+			% currentMidline in State
+		end
+		
 		function [] = newRegion(this, ~, ~)
 			this.state.isEditing = 'region';
 			
@@ -131,6 +143,7 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			% TODO: mask might not be necessary
 			midline.mask = mask;
 			midline.points = eventData.data;
+			midline.color = 'white';
 			
 			this.state.midline = midline;
 		end

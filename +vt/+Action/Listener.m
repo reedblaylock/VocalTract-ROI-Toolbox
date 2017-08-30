@@ -84,6 +84,10 @@ classdef Listener < vt.Listener
 					coordinates = eventData.data.coordinates;
 					this.reducer.register(action);
 					action.dispatch(coordinates);
+				case 'midlineNew'
+					
+				case 'midlineEdit'
+					
 				otherwise
 					% We're not in editing mode, and the frame was clicked.
 					% 1. The click location is within a region on the frame, so
@@ -96,6 +100,17 @@ classdef Listener < vt.Listener
 					this.reducer.register(action);
 					action.dispatch(coordinates);
 			end
+		end
+		
+		function [] = newMidline(this, ~, ~)
+			% Automatically switch to standard-deviation mode
+			action = vt.Action.SetFrameType();
+			this.reducer.register(action);
+			this.action.dispatch('std dev');
+			
+			action = vt.Action.NewMidline();
+			this.reducer.register(action);
+			this.action.dispatch();
 		end
 		
 		function [] = createMidline(this, ~, eventData)

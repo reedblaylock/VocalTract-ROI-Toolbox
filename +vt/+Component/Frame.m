@@ -49,10 +49,10 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 % 			disp(['Deleting ' regionId '...']);
 		end
 		
-		function [] = drawMidline(this, midlineId, points)
+		function [] = drawMidline(this, midlineId, points, color)
 			p = vt.InputParser;
 			p.addRequired('midlineId', @isnumeric);
-			p.addRequired('coordinates', @isnumeric);
+			p.addRequired('points', @isnumeric);
 			p.addRequired('color', @(color) (isnumeric(color) || ischar(color)));
 			parse(p, midlineId, points, color);
 			
