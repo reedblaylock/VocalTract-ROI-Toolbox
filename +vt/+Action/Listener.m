@@ -85,9 +85,17 @@ classdef Listener < vt.Listener
 					this.reducer.register(action);
 					action.dispatch(coordinates);
 				case 'midlineNew'
+					% TODO: Store three clicks? Or, maybe don't dispatch the
+					% notifyClick action for this at all?
 					
 				case 'midlineEdit'
+					% TODO: Respond to clicks on the midline (remove point)
 					
+					% TODO: Respond to clicks off the midline (add point)
+					% TODO: Do you add the points to the points array early
+					% (ChangeMidlinePoints), or do you do it in the reducer
+					% (AddMidlinePoint)?
+% 					action = vt.Action.ChangeMidlinePoints
 				otherwise
 					% We're not in editing mode, and the frame was clicked.
 					% 1. The click location is within a region on the frame, so
