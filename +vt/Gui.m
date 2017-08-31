@@ -442,9 +442,101 @@ classdef Gui < vt.Root & vt.State.Listener
 			gui.RightBoxGrid.setParameters('Widths', [-1 -1], 'Heights', -1.*ones(1, 9));
 		end
 		
+		function [] = applyDefaultRegionSettingsView(this, state)
+			% delete the last three areas
+			delete(this.gui.RightBoxGrid.handle.Contents(16:18));
+			delete(this.gui.RegionSettings7_2);
+			delete(this.gui.RegionSettings8_2);
+			delete(this.gui.RegionSettings9_2);
+			this.gui.RegionSettings7_2 = [];
+			this.gui.RegionSettings8_2 = [];
+			this.gui.RegionSettings9_2 = [];
+			this.gui = rmfield(this.gui, 'RegionSettings7_2');
+			this.gui = rmfield(this.gui, 'RegionSettings8_2');
+			this.gui = rmfield(this.gui, 'RegionSettings9_2');
+
+			% 7-2 + New region
+			this.gui.RegionSettings7_2 = vt.Component.Button.NewRegion( ...
+				this.gui.RightBoxGrid, ...
+				'New region' ...
+			);
+			this.initializeComponent(this.gui.RegionSettings7_2);
+			% 8-2 + Edit region
+			this.gui.RegionSettings8_2 = vt.Component.Button.EditRegion( ...
+				this.gui.RightBoxGrid, ...
+				'Edit region' ...
+			);
+			% If there is a current region, keep the button on
+			if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
+				this.gui.RegionSettings8_2.setParameters('Enable', 'on');
+			else
+				this.gui.RegionSettings8_2.setParameters('Enable', 'off');
+			end
+			this.initializeComponent(this.gui.RegionSettings8_2);
+			% 9-2 + Delete region
+			this.gui.RegionSettings9_2 = vt.Component.Button.DeleteRegion( ...
+				this.gui.RightBoxGrid, ...
+				'Delete region' ...
+			);
+			% If there is a current region, keep the button on
+			if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
+				this.gui.RegionSettings9_2.setParameters('Enable', 'on');
+			else
+				this.gui.RegionSettings9_2.setParameters('Enable', 'off');
+			end
+			this.initializeComponent(this.gui.RegionSettings9_2);
+		end
+		
+		function [] = applyDefaultTimeseriesView(this, state)
+			% delete and re-draw all timeseries
+			this.deleteAllTimeseries(state);
+			this.redrawAllTimeseries(state);
+		end
+		
+		function [] = applyDefaultMidlineView(this, state)
+			% + 1-1 Empty
+			this.gui.MidlineGrid1_1 = vt.Component.Layout.Empty( ...
+				this.gui.MidlineGrid ...
+			);
+			this.initializeComponent(this.gui.MidlineGrid1_1);
+
+			% + 1-2 Empty
+			this.gui.MidlineGrid1_2 = vt.Component.Layout.Empty( ...
+				this.gui.MidlineGrid ...
+			);
+			this.initializeComponent(this.gui.MidlineGrid1_2);
+
+			% + 2-2 New/Edit button
+			if(isfield(state.midline, 'points') && ~isempty(state.midline.points))
+				this.gui.MidlineGrid2_2 = vt.Component.Button.EditMidline( ...
+					this.gui.MidlineGrid, ...
+					'Edit midline' ...						
+				);
+			else
+				this.gui.MidlineGrid2_2 = vt.Component.Button.NewMidline( ...
+					this.gui.MidlineGrid, ...
+					'New midline' ...
+				);
+			end
+			this.initializeComponent(this.gui.MidlineGrid2_2);
+
+			% + 3-2 Delete button
+			this.gui.MidlineGrid3_2 = vt.Component.Button.DeleteMidline( ...
+					this.gui.MidlineGrid, ...
+					'Delete midline' ...						
+				);
+			if(isfield(state.midline, 'points') && ~isempty(state.midline.points))
+				this.gui.MidlineGrid3_2.setParameters('Enable', 'on');
+			else
+				this.gui.MidlineGrid3_2.setParameters('Enable', 'off');
+			end
+			this.initializeComponent(this.gui.MidlineGrid3_2);
+		end
+		
 		function [] = onIsEditingChange(this, state)
 			switch(state.isEditing)
 				case 'region'
+					%%%%% UPDATE REGION SETTINGS VIEW %%%%%
 					% delete the last three areas
 					delete(this.gui.RightBoxGrid.handle.Contents(16:18));
 					delete(this.gui.RegionSettings7_2);
@@ -476,7 +568,18 @@ classdef Gui < vt.Root & vt.State.Listener
 						'Cancel region changes' ...
 					);
 					this.initializeComponent(this.gui.RegionSettings9_2);
+					
+					%%%%% UPDATE MIDLINE VIEW %%%%%
+					this.applyDefaultMidlineView(this, state);
+					
 				case 'midlineNew'
+					%%%%% UPDATE REGION SETTINGS VIEW %%%%%
+					this.applyDefaultRegionSettingsView(this, state);
+					
+					%%%%% UPDATE TIMESERIES VIEW %%%%%
+					this.applyDefaultTimeseriesView(this, state);
+					
+					%%%%% UPDATE MIDLINE VIEW %%%%%
 					% Delete the previous buttons and add a 'Cancel' button
 					% + 1-1 Empty
 					this.gui.MidlineGrid1_1 = vt.Component.Layout.Empty( ...
@@ -502,7 +605,15 @@ classdef Gui < vt.Root & vt.State.Listener
 						'Cancel midline changes' ...						
 					);
 					this.initializeComponent(this.gui.MidlineGrid3_2);
+					
 				case 'midlineEdit'
+					%%%%% UPDATE REGION SETTINGS VIEW %%%%%
+					this.applyDefaultRegionSettingsView(this, state);
+					
+					%%%%% UPDATE TIMESERIES VIEW %%%%%
+					this.applyDefaultTimeseriesView(this, state);
+					
+					%%%%% UPDATE MIDLINE VIEW %%%%%
 					% Delete the previous buttons and Color, Save, Cancel, and
 					% Delete buttons
 					% + 1-1 Color button
@@ -532,95 +643,17 @@ classdef Gui < vt.Root & vt.State.Listener
 						'Cancel midline changes' ...
 					);
 					this.initializeComponent(this.gui.MidlineGrid3_2);
+					
 				otherwise
 					% Not in any editing mode
 					%%% UPDATE TIMESERIES PANEL %%%
-					% delete and re-draw all timeseries
-					this.deleteAllTimeseries(state);
-					this.redrawAllTimeseries(state);
+					this.applyDefaultTimeseriesView(this, state);
 					
 					%%% UPDATE REGION SETTINGS PANEL %%%
-					% delete the last three areas
-					delete(this.gui.RightBoxGrid.handle.Contents(16:18));
-					delete(this.gui.RegionSettings7_2);
-					delete(this.gui.RegionSettings8_2);
-					delete(this.gui.RegionSettings9_2);
-					this.gui.RegionSettings7_2 = [];
-					this.gui.RegionSettings8_2 = [];
-					this.gui.RegionSettings9_2 = [];
-					this.gui = rmfield(this.gui, 'RegionSettings7_2');
-					this.gui = rmfield(this.gui, 'RegionSettings8_2');
-					this.gui = rmfield(this.gui, 'RegionSettings9_2');
-					
-					% 7-2 + New region
-					this.gui.RegionSettings7_2 = vt.Component.Button.NewRegion( ...
-						this.gui.RightBoxGrid, ...
-						'New region' ...
-					);
-					this.initializeComponent(this.gui.RegionSettings7_2);
-					% 8-2 + Edit region
-					this.gui.RegionSettings8_2 = vt.Component.Button.EditRegion( ...
-						this.gui.RightBoxGrid, ...
-						'Edit region' ...
-					);
-					% If there is a current region, keep the button on
-					if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
-						this.gui.RegionSettings8_2.setParameters('Enable', 'on');
-					else
-						this.gui.RegionSettings8_2.setParameters('Enable', 'off');
-					end
-					this.initializeComponent(this.gui.RegionSettings8_2);
-					% 9-2 + Delete region
-					this.gui.RegionSettings9_2 = vt.Component.Button.DeleteRegion( ...
-						this.gui.RightBoxGrid, ...
-						'Delete region' ...
-					);
-					% If there is a current region, keep the button on
-					if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
-						this.gui.RegionSettings9_2.setParameters('Enable', 'on');
-					else
-						this.gui.RegionSettings9_2.setParameters('Enable', 'off');
-					end
-					this.initializeComponent(this.gui.RegionSettings9_2);
+					this.applyDefaultRegionSettingsView(this, state);
 					
 					%%% UPDATE MIDLINE PANEL %%%
-					% + 1-1 Empty
-					this.gui.MidlineGrid1_1 = vt.Component.Layout.Empty( ...
-						this.gui.MidlineGrid ...
-					);
-					this.initializeComponent(this.gui.MidlineGrid1_1);
-					
-					% + 1-2 Empty
-					this.gui.MidlineGrid1_2 = vt.Component.Layout.Empty( ...
-						this.gui.MidlineGrid ...
-					);
-					this.initializeComponent(this.gui.MidlineGrid1_2);
-					
-					% + 2-2 New/Edit button
-					if(isfield(state.midline, 'points') && ~isempty(state.midline.points))
-						this.gui.MidlineGrid2_2 = vt.Component.Button.EditMidline( ...
-							this.gui.MidlineGrid, ...
-							'Edit midline' ...						
-						);
-					else
-						this.gui.MidlineGrid2_2 = vt.Component.Button.NewMidline( ...
-							this.gui.MidlineGrid, ...
-							'New midline' ...
-						);
-					end
-					this.initializeComponent(this.gui.MidlineGrid2_2);
-					
-					% + 3-2 Delete button
-					this.gui.MidlineGrid3_2 = vt.Component.Button.DeleteMidline( ...
-							this.gui.MidlineGrid, ...
-							'Delete midline' ...						
-						);
-					if(isfield(state.midline, 'points') && ~isempty(state.midline.points))
-						this.gui.MidlineGrid3_2.setParameters('Enable', 'on');
-					else
-						this.gui.MidlineGrid3_2.setParameters('Enable', 'off');
-					end
-					this.initializeComponent(this.gui.MidlineGrid3_2);
+					this.applyDefaultMidlineView(this, state);
 			end
 		end
 		

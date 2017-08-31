@@ -19,6 +19,12 @@ classdef Reducer < vt.Listener & vt.State.Setter
 	end
 	
 	methods
+		%%%%% ISEDITING %%%%%
+		function [] = setIsEditing(this, ~, eventData)
+			this.state.isEditing = eventData.data;
+		end
+		
+		%%%%% FRAME NUMBER %%%%%
 		function [] = increment(this, ~, eventData)
 			if(isempty(this.state.currentFrameNo))
 				return
@@ -37,16 +43,26 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			this.state.currentFrameNo = newFrameNo;
 		end
 		
-		function [] = setVideo(this, ~, eventData)
-			this.state.video = eventData.data;
-		end
-		
+		%%%%% FRAME TYPE %%%%%
 		function [] = setFrameType(this, ~, eventData)
 			this.state.frameType = eventData.data;
 		end
 		
+		%%%%% VIDEO %%%%%
+		function [] = setVideo(this, ~, eventData)
+			this.state.video = eventData.data;
+		end
+		
+		%%%%% MIDLINE %%%%%
 		function [] = newMidline(this, ~, ~)
 			this.state.isEditing = 'midlineNew';
+			
+			% TODO: mask might not be necessary
+% 			midline.mask = [];
+			midline.points = [];
+			midline.color = 'white';
+			
+			this.state.currentMidline = midline;
 		end
 		
 		function [] = cancelMidlineChanges(this, ~, ~)
@@ -55,8 +71,51 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			% TODO: If you already have a saved midline, you have to revert back
 			% to it no matter how many changes you made. You therefore need a
 			% currentMidline in State
+			this.state.currentMidline = this.state.midline;
 		end
 		
+		function [] = saveMidline(this, ~, ~)
+			this.state.isEditing = '';
+			
+			this.state.midline = this.state.currentMidline;
+		end
+		
+		function [] = deleteMidline(this, ~, ~)
+			this.state.isEditing = '';
+			
+			this.state.midline = struct();
+			this.state.currentMidline = this.state.midline;
+		end
+		
+		function [] = changeMidlineColor(this, ~, eventData)
+			this.state.currentMidline.color = eventData.data;
+		end
+		
+		function [] = changeMidlinePoints(this, ~, eventData)
+			this.state.currentMidline.points = eventData.data;
+		end
+		
+% 		function [] = setCurrentMidline(this, ~, eventData)
+% 			% TODO: Put this logic somewhere else
+% % 			mask = this.getMidlineMask(eventData.data);
+% 			
+% 			% TODO: mask might not be necessary
+% % 			midline.mask = mask;
+% 			midline.points = eventData.data;
+% 			midline.color = this.state.currentMidline.color;
+% 			
+% 			this.state.currentMidline = midline;
+% 		end
+		
+% 		function mask = getMidlineMask(this, points)
+% 			s = sqrt(size(this.state.video.matrix,2));
+% 			mask = zeros(s, s);
+% 			for r = 1:size(points,1)
+% 				mask(points(r,2), points(r,1)) = 1;
+% 			end
+% 		end
+		
+		%%%%% REGION %%%%%
 		function [] = newRegion(this, ~, ~)
 			this.state.isEditing = 'region';
 			
@@ -134,26 +193,6 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		function [] = changeCurrentRegionOrigin(this, ~, eventData)
 			this.state.currentRegion.origin = eventData.data;
 			this.changeMask();
-		end
-		
-		function [] = setMidline(this, ~, eventData)
-			% TODO: Put this logic somewhere else
-			mask = this.getMidlineMask(eventData.data);
-			
-			% TODO: mask might not be necessary
-			midline.mask = mask;
-			midline.points = eventData.data;
-			midline.color = 'white';
-			
-			this.state.midline = midline;
-		end
-		
-		function mask = getMidlineMask(this, points)
-			s = sqrt(size(this.state.video.matrix,2));
-			mask = zeros(s, s);
-			for r = 1:size(points,1)
-				mask(points(r,2), points(r,1)) = 1;
-			end
 		end
 		
 		function [] = changeMask(this)
@@ -362,6 +401,7 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			this.clearCurrentRegion(source, eventData);
 		end
 		
+		%%%%% LOADING AND EXPORTING %%%%%
 		function [] = export(this, source, eventData)
 			if(isempty(fieldnames(this.state.regions)) || ~numel(this.state.regions))
 				% There are no regions saved right now, so there's nothing to

@@ -63,6 +63,10 @@ classdef Frame < vt.Component %& vt.Action.Dispatcher
 				% TODO: Apply rectangles in bulk, rather than in a loop
 				rectangle('Parent', this.handle, 'Position', [coordinates(:)', 1, 1], 'EdgeColor', 'black', 'FaceColor', p.Results.color, 'Tag', midlineId);
 			end
+			
+			% Make sure the midline sits behind all the other graphics items
+			children = get(this.handle, 'Children');
+			this.setParameter('Children', [children((end-nPoints+1):end), children(1:end-nPoints)]);
 		end
 		
 		function [] = deleteMidline(this, midlineId)

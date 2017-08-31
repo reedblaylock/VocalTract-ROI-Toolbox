@@ -107,7 +107,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		
 		% Redraw midline. This function is called by State.Listener whenever the
 		% midline is changed in State (i.e. added, deleted, or changed).
-		function [] = onMidlineChange(this, state)
+		function [] = onCurrentMidlineChange(this, state)
 			this.deleteMidline(state);
 			this.redrawMidline(state);
 		end
@@ -260,7 +260,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		
 		% Redraw the midline defined by state.midline.points
 		function [] = redrawMidline(this, state)
-			this.frame.drawMidline('midline', state.midline.points, state.midline.color);
+			this.frame.drawMidline('midline', state.currentMidline.points, state.currentMidline.color);
 		end
 	end
 	

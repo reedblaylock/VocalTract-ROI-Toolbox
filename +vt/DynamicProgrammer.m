@@ -15,7 +15,7 @@ classdef DynamicProgrammer < vt.Root & vt.Action.Dispatcher
 		P		% A rx2x(r*c) matrix which stores the coordinaes of the brightest path from a given coordinate (top of its column in the z-dimension) to an endpoint.
 		image	% A rxc matrix (treated here as an image) whose pixel intensity values will be used to establish the brightest path.
 		
-		actionType = @vt.Action.SetMidline
+		actionType = @vt.Action.ChangeMidlinePoints
 	end
 	
 	methods

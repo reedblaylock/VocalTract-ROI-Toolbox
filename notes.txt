@@ -147,8 +147,9 @@ setting, and may even have to get its color from a different button.
 
 
 
-RIGHT NOW
-- You need a currentMidline in State, which is what Frame will have to get points from
+
+
+
 
 NEXT
 - Figure out how to show the vertical current frame number line on the timeseries

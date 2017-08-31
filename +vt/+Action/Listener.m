@@ -134,6 +134,9 @@ classdef Listener < vt.Listener
 			end
 			
 			% Follow up action
+			action = vt.Action.SetIsEditing();
+			this.reducer.register(action);
+			action.dispatch('midlineEdit');
 		end
 	end
 	
