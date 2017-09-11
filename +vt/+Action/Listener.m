@@ -75,27 +75,32 @@ classdef Listener < vt.Listener
 		
 		function [] = notifyFrameClick(this, ~, eventData)
 			isEditing = eventData.data.isEditing;
-			disp('click!');
+			coordinates = eventData.data.coordinates;
+			
 			switch(isEditing)
 				case 'region'
 					% We're in region-editing mode, and the frame was clicked.
 					% Put down an origin point.
 					action = vt.Action.ChangeCurrentRegionOrigin();
-					coordinates = eventData.data.coordinates;
-					this.reducer.register(action);
-					action.dispatch(coordinates);
+% 					coordinates = eventData.data.coordinates;
+% 					this.reducer.register(action);
+% 					action.dispatch(coordinates);
 				case 'midlineNew'
 					% TODO: Store three clicks? Or, maybe don't dispatch the
 					% notifyClick action for this at all?
 					
 				case 'midlineEdit'
-					% TODO: Respond to clicks on the midline (remove point)
+% 					coordinates = eventData.data.coordinates;
+					points = eventData.data.points;
 					
-					% TODO: Respond to clicks off the midline (add point)
-					% TODO: Do you add the points to the points array early
-					% (ChangeMidlinePoints), or do you do it in the reducer
-					% (AddMidlinePoint)?
-% 					action = vt.Action.ChangeMidlinePoints
+					if(ismember(coordinates, points, 'rows'))
+						action = vt.Action.RemoveMidlinePoint();
+					else
+						action = vt.Action.AddMidlinePoint();
+					end
+					
+% 					this.reducer.register(action);
+% 					action.dispatch(coordinates);
 				otherwise
 					% We're not in editing mode, and the frame was clicked.
 					% 1. The click location is within a region on the frame, so
@@ -104,10 +109,13 @@ classdef Listener < vt.Listener
 					%    currentRegion (or, do nothing)
 					% TODO: Take the logic out of the reducer somehow
 					action = vt.Action.SetCurrentRegion();
-					coordinates = eventData.data.coordinates;
-					this.reducer.register(action);
-					action.dispatch(coordinates);
+% 					coordinates = eventData.data.coordinates;
+% 					this.reducer.register(action);
+% 					action.dispatch(coordinates);
 			end
+			
+			this.reducer.register(action);
+			action.dispatch(coordinates);
 		end
 		
 		function [] = newMidline(this, ~, ~)

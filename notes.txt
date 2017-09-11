@@ -150,7 +150,7 @@ setting, and may even have to get its color from a different button.
 
 
 RIGHT NOW
-- Work on notifyFrame click function to add and remove points, and to work with the three initial points
+- Get three initial points
 
 NEXT
 - Figure out how to show the vertical current frame number line on the timeseries
@@ -166,6 +166,3 @@ SOON
 - Add color box next to the set color button so you can see the current color
 - Notifications should disappear on the next action (maybe put that in vt.Action.Listener or vt.Reducer before they redirect to their usual functions)
 - Add midline stuff
-
-BEFORE DISTRIBUTION TO TESTERS
-- Provide set/get support for <=2014a

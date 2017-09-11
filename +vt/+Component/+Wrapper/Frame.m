@@ -14,6 +14,9 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		
 		% The parameters of the current region.
 		currentRegion
+		
+		% The list of current midline points
+		currentMidline
 	end
 	
 	methods
@@ -108,6 +111,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		% Redraw midline. This function is called by State.Listener whenever the
 		% midline is changed in State (i.e. added, deleted, or changed).
 		function [] = onCurrentMidlineChange(this, state)
+			this.currentMidline = state.currentMidline;
 			this.deleteMidline(state);
 			this.redrawMidline(state);
 		end
@@ -221,6 +225,8 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 					end
 				end
 			end
+			
+			this.setRegionCallback(region.id);
 		end
 		
 		% Fill this object's currentRegion property with the same defaults found
@@ -261,6 +267,22 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		% Redraw the midline defined by state.midline.points
 		function [] = redrawMidline(this, state)
 			this.frame.drawMidline('midline', state.currentMidline.points, state.currentMidline.color);
+			
+			this.setMidlineCallback();
+		end
+		
+		function [] = dispatchRectangleAction(this, source, ~)
+			position = get(source, 'Position');
+			coordinates = position(1, 1:2) + .5;
+			
+			d = struct();
+			d.isEditing = this.isEditing;
+			d.coordinates = coordinates;
+			if(strcmp(this.isEditing, 'midlineEdit'))
+				d.points = this.currentMidline.points;
+			end
+			
+			this.action.dispatch(d);
 		end
 	end
 	
@@ -273,6 +295,31 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 				this.frame.imageHandle, ...
 				'ButtonDownFcn', ...
 				@(source, eventdata) dispatchAction(this, source, eventdata) ...
+			);
+		end
+		
+		function [] = setRegionCallback(this, regionId)
+			regionHandles = findobj(this.frame.handle, 'Tag', num2str(regionId), '-and', 'Type', 'rectangle');
+			set( ...
+				regionHandles, ...
+				'ButtonDownFcn', ...
+				@(source, eventdata) dispatchRectangleAction(this, source, eventdata) ...
+			);
+		
+% 			regionHandles = findobj(this.frame.handle, 'Tag', num2str(regionId), '-and', 'Type', 'line');
+% 			set( ...
+% 				regionHandles, ...
+% 				'ButtonDownFcn', ...
+% 				@(source, eventdata) dispatchLineAction(this, source, eventdata) ...
+% 			);
+		end
+		
+		function [] = setMidlineCallback(this)
+			midlineHandles = findobj(this.frame.handle, 'Tag', 'midline');
+			set( ...
+				midlineHandles, ...
+				'ButtonDownFcn', ...
+				@(source, eventdata) dispatchRectangleAction(this, source, eventdata) ...
 			);
 		end
 	end

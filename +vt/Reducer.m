@@ -61,6 +61,7 @@ classdef Reducer < vt.Listener & vt.State.Setter
 % 			midline.mask = [];
 			midline.points = [];
 			midline.color = 'white';
+			midline.isVisible = 1;
 			
 			this.state.currentMidline = midline;
 		end
@@ -93,6 +94,25 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		
 		function [] = changeMidlinePoints(this, ~, eventData)
 			this.state.currentMidline.points = eventData.data;
+		end
+		
+		function [] = changeMidlineVisibility(this, ~, eventData)
+			this.state.currentMidline.isVisible = eventData.data;
+		end
+		
+		function [] = removeMidlinePoint(this, ~, eventData)
+			coordinates = eventData.data;
+			idx = ismember(coordinates, this.state.currentMidline.points, 'rows');
+			if(ismember(coordinates, this.state.currentMidline.points))
+				this.state.currentMidline.points(idx) = [];
+			end
+		end
+		
+		function [] = addMidlinePoint(this, ~, eventData)
+			coordinates = eventData.data;
+			if(~ismember(coordinates, this.state.currentMidline.points))
+				this.state.currentMidline.points = [this.state.currentMidline.points; coordinates];
+			end
 		end
 		
 % 		function [] = setCurrentMidline(this, ~, eventData)
