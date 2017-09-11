@@ -330,8 +330,56 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			this.clearCurrentRegion(source, eventData);
 		end
 		
-		function [] = export(this, source, eventData)
-			if(isempty(fieldnames(this.state.regions)) || ~numel(this.state.regions))
+		function [] = copy(this, source, eventData)
+			% Select which files to copy to via the file select UI
+			fileSelector = vt.FileSelector();
+			[filenames, fullpaths] = fileSelector.selectMultiFile('avi');
+			
+			% For each of the files selected...
+			for iFile = 1:numel(filenames)
+				filename = filenames{iFile};
+				fullpath = fullpaths{iFile};
+				
+				disp(['Copying regions to ' filename '...']);
+				
+				% - Load the appropriate video
+				videoLoader = vt.Video.Loader;
+				video = videoLoader.loadVideo(filename, fullpath);
+				
+				% - Check the file to make sure the frame size is the same
+				if(video.height ~= this.state.video.height)
+					this.log.exception('When copying region information, videos must have the same height.');
+					return;
+				end
+				if(video.width ~= this.state.video.width)
+					this.log.exception('When copying region information, videos must have the same width.');
+					return;
+				end
+				
+				% - Apply regions to the appropriate positions
+				regions = this.state.regions;
+				
+				% - Re-take timeseries
+				timeseries = this.state.timeseries; % copy, not reference
+				for iTimeseries = 1:numel(timeseries)
+					currentTimeseries = timeseries(iTimeseries);
+					idx = find([regions.id] == currentTimeseries.id);
+					currentRegion = regions(idx);
+					
+					timeseries(iTimeseries).data = mean(video.matrix(:, currentRegion.mask > 0),2);
+				end
+				
+				% - Export
+				this.exportData(video, regions, timeseries);
+			end
+		end
+		
+		function [] = export(this, ~, ~)
+			this.exportData(this.state.video, this.state.regions, this.state.timeseries);
+		end
+		
+		function [] = exportData(this, video, regions, allTimeseries)
+			if(isempty(fieldnames(regions)) || ~numel(regions))
 				% There are no regions saved right now, so there's nothing to
 				% delete
 				return;
@@ -342,20 +390,20 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			wav_dir = 'wav';
 			avi_dir = 'avi';
 			velum_upordown = 'down';
-			data.fps = this.state.video.frameRate;
+			data.fps = video.frameRate;
 			
-			frames = 0:(this.state.video.nFrames-1); % 1 gets added in FormatData.m, so subtract it here (assuming the frames are 1-based instead of 0-based, I suppose)
-			times = frames ./ this.state.video.frameRate;
+			frames = 0:(video.nFrames-1); % 1 gets added in FormatData.m, so subtract it here (assuming the frames are 1-based instead of 0-based, I suppose)
+			times = frames ./ video.frameRate;
 
-% 			regionNames = {this.state.regions(:).name};	
-			regionIds = [this.state.regions(:).id];
+% 			regionNames = {regions(:).name};	
+			regionIds = [regions(:).id];
 			
 			for iRegion = 1:length(regionIds)
 				regionId = regionIds(iRegion);
-				regionIdx = find([this.state.regions.id] == regionId);
-				region = this.state.regions(regionIdx);
-				timeseries = this.state.timeseries(regionIdx);
-% 				region = this.state.regions(iRegion);
+				regionIdx = find([regions.id] == regionId);
+				region = regions(regionIdx);
+				oneTimeseries = allTimeseries(regionIdx);
+% 				region = regions(iRegion);
 				
 				data.gest(iRegion).name = region.name;
 
@@ -372,8 +420,8 @@ classdef Reducer < vt.Listener & vt.State.Setter
 				disp(['Smoothing timeseries for region ' region.name '...']);
 				interp = 1; % If you make this value bigger, you can interpolate additional points
 				wwid = .9;
-				X	= 1:size(timeseries.data(:,1));
-				Y	= timeseries.data;
+				X	= 1:size(oneTimeseries.data(:,1));
+				Y	= oneTimeseries.data;
 				D	= linspace(min(X),max(X),(interp*max(X)))';
 				[filtered_timeseries, ~] = lwregress3(X',Y,D,wwid);
 				
@@ -383,10 +431,10 @@ classdef Reducer < vt.Listener & vt.State.Setter
 					smooth_ts = max(filtered_timeseries) - filtered_timeseries + min(filtered_timeseries);
 				end
 				data.gest(iRegion).Ismoothed = smooth_ts;
-				data.gest(iRegion).stimes = (D-1) ./ this.state.video.frameRate;
+				data.gest(iRegion).stimes = (D-1) ./ video.frameRate;
 			end
 			
-			filename = this.state.video.filename;
+			filename = video.filename;
 			[~, filename, ~] = fileparts(filename); % Make sure you're getting only the file name, not the extension
 			data = this.formatData(data, filename, wav_dir, avi_dir);
 % 			data = FormatData2(data, filename, wav_dir, avi_dir);
@@ -396,9 +444,14 @@ classdef Reducer < vt.Listener & vt.State.Setter
 % 				data = FormatData2(data, filename, wav_dir, avi_dir); % This function should be with the other MViewRT function
 % 			end
 
-			save(filename, 'data');
+			%%% Save a separate variable with the region and video settings
+			state = struct();
+			state.video = video;
+			state.regions = regions;
+
+			save(filename, 'data', 'state');
 			
-			disp('Finished exporting!');
+			disp(['Finished exporting ' filename]);
 		end
 		
 		% TODO: Move this somewhere else

@@ -17,7 +17,7 @@ classdef Gui < vt.Root & vt.State.Listener
 	
 	methods
 		function this = Gui()
-			this.log = vt.Log(0);
+			this.log = vt.Log(2);
 			this.log.on();
 		end
 		
@@ -216,7 +216,9 @@ classdef Gui < vt.Root & vt.State.Listener
 			gui.LoadMenu = vt.Component.MenuItem( gui.FileMenu, 'Load...' );
 			gui.LoadAvi  = vt.Component.MenuItem.Load( gui.LoadMenu, 'AVI', 'avi' );
 			
-			gui.Export   = vt.Component.MenuItem.Export( gui.FileMenu, 'Export timeseries' );
+			gui.CopyMenu = vt.Component.MenuItem.Copy( gui.FileMenu, 'Copy regions' );
+			
+			gui.ExportMenu = vt.Component.MenuItem.Export( gui.FileMenu, 'Export timeseries' );
 			
 			gui.ExitMenu = vt.Component.MenuItem.Exit( gui.FileMenu, 'Exit' );
 

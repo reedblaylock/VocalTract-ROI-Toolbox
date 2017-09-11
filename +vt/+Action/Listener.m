@@ -52,10 +52,17 @@ classdef Listener < vt.Listener
 			if(isa(videoLoader, 'vt.Root'))
 				videoLoader.log = this.log;
 			end
-			this.reducer.register(videoLoader.action);
+% 			this.reducer.register(videoLoader.action);
 			try
-				tf = videoLoader.loadVideo(eventData.data);
-				if(~tf), return, end
+				fileSelector = vt.FileSelector();
+				[filename, fullpath] = fileSelector.selectSingleFile(eventData.data);
+				
+				video = videoLoader.loadVideo(filename, fullpath);
+				if(isempty(video)), return, end
+				
+				action = vt.Action.SetVideo();
+				this.reducer.register(action);
+				action.dispatch(video);
 			catch excp
 				this.log.exception(excp);
 				return
