@@ -13,17 +13,10 @@ classdef (Sealed) State < handle
 	% PostSet event. In this case, a PostSet event is only triggered when a new
 	% object (either a new instance or a new class) is assigned to the property.
 	properties (SetObservable = true, AbortSet = true, SetAccess = ?vt.State.Setter)
-		currentFrameNo % numeric
-		video % vt.Video
-		frameType = 'frame'
-		
-		regions = struct()
-		currentRegion = struct()
-		regionIdCounter = 0
-		isEditing % character array
-		
-		timeseries = struct()
-		currentTimeseries = struct()
+		frame
+		video
+		region
+		isEditing
 	end
 end
 
