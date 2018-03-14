@@ -15,12 +15,12 @@ classdef Export < vt.Action
 		end
 		
 		function [] = dispatch(this)
-			export(this.regions, this.video);
+			exportMview(this.regions, this.video);
 		end
 	end
 end
 
-function [] = export(regions, video)
+function [] = exportMview(regions, video)
 	if(isempty(fieldnames(regions)) || ~numel(regions))
 		% There are no regions saved right now, so there's nothing to
 		% delete

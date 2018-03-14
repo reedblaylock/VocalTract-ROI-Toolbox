@@ -1,11 +1,13 @@
 classdef CancelRegion < vt.Component.Button & vt.State.Listener & vt.Action.Dispatcher
 	properties
-		actionType = @vt.Action.CancelRegionChange
+		action
 	end
 	
 	methods
 		function this = CancelRegion(parent, label, varargin)
 			this@vt.Component.Button(parent, label, varargin{:});
+			
+			this.action = this.actionFactory.get('STOP_EDITING');
 			
 			this.setCallback();
 		end
