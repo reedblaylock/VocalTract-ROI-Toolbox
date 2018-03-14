@@ -8,9 +8,10 @@ classdef DeleteRegion < vt.Action
 	end
 	
 	methods
-		function this = DeleteRegion(id)
+		function prepare(this, id)
 			this.id = id;
 		end
+
 	end
 end
 

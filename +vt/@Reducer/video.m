@@ -5,7 +5,7 @@ function newState = video(this, oldState, action)
 	parse(p, oldState, action);
 
 	switch(p.Results.action.type)
-		case 'SET_VIDEO'
+		case 'LOAD_VIDEO'
 			newState = p.Results.action.video;
 		otherwise
 			newState = p.Results.oldState;

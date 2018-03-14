@@ -2,10 +2,10 @@ classdef (Abstract) Listener < vt.Root
 	methods
 		function method = action2method(this, underscore_action)
 			p = vt.InputParser;
-			p.addRequired('underscoreAction', @ischar);
+			p.addRequired('underscore_action', @ischar);
 			p.parse(underscore_action);
 			
-			method = this.underscore2camelCase(lower(underscore_action));
+			method = this.underscore2camelCase(lower(p.Results.underscore_action));
 		end
 		
 		function ccStr = underscore2camelCase(~, us_str)

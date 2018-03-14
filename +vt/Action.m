@@ -1,36 +1,27 @@
 classdef Action < vt.Root
-	properties
-		data
+	methods (Abstract = true)
+		prepare(this)
+		% Can be implemented with any number of arguments, as required by the
+		% implementing subclass. vt.Action/prepare() takes application data and
+		% uses it to set the values of all the action properties. Must be called
+		% before vt.Action/dispatch(). Should call vt.Action/validate().
 	end
 	
 	methods
-% 		function this = Action(varargin)
-% 			p = inputParser;
-% 			p.addOptional('data', []);
-% 			parse(p, varargin{:});
-% 			
-% 			this.data = p.Results.data;
-% 		end
-		
-		function [] = dispatch(this, varargin)
-			p = vt.InputParser;
-% 			p.addRequired('this', @(this) isa(this, 'vt.Action'));
-			p.addOptional('data', '', @(data) validate(this, data));
-			parse(p, varargin{:});
-% 			parse(p, this, varargin{:});
-			
+		function [] = dispatch(this)
 			actionName = this.getName();
-			if(isempty(p.Results.data))
-				actionData = vt.EventData(this.data);
-			else
-				this.data = p.Results.data;
-				actionData = vt.EventData(p.Results.data);
+			
+			actionData = struct();
+			actionData.type = actionName;
+			
+			props = properties(this);
+			for iProp = 1:numel(props)
+				actionData.(props{iProp}) = this.(props{iProp});
 			end
-			notify(this, actionName, actionData);
-		end
-		
-		function tf = validate(this, data)
-			tf = 1;
+			
+			eventData = vt.EventData(actionData);
+			
+			notify(this, actionName, eventData);
 		end
 		
 		function actionName = getName(this)

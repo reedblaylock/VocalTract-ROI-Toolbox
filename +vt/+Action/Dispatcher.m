@@ -53,16 +53,8 @@ classdef (Abstract) Dispatcher < vt.Root
 			p = vt.InputParser;
 			p.addRequired('this', @(this) isa(this, 'vt.Action.Dispatcher'));
 			parse(p, this);
-% 			p.addOptional('data', []);
-% 			parse(p, this, data);
 			
 			this.action.dispatch();
-			
-% 			if(isempty(p.Results.data))
-% 				this.action.dispatch();
-% 			else
-% 				this.action.dispatch(p.Results.data);
-% 			end
 		end
 	end
 end

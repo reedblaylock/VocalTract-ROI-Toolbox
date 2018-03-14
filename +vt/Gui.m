@@ -9,7 +9,6 @@ classdef Gui < vt.Root & vt.State.Listener
 		styles
 		reducer
 		gui
-		actionListener
 		
 		% TODO: get this from user-specified preferences
 		currentRegion = struct('shape', 'Circle')
@@ -24,7 +23,6 @@ classdef Gui < vt.Root & vt.State.Listener
 		function [] = run(this)
 			this.state = vt.State();
 			this.reducer = vt.Reducer(this.state);
-			this.actionListener = vt.Action.Listener(this.reducer);
 			
 			this.styles = this.createStyles();
 			this.gui = this.createInterface();
@@ -48,7 +46,7 @@ classdef Gui < vt.Root & vt.State.Listener
 					obj.registerAllMethodsToState(this.state);
 				end
 				if(isa(obj, 'vt.Action.Dispatcher'))
-					this.actionListener.registerAction(obj.action);
+					this.reducer.register(obj.action);
 				end
 			end
 			
@@ -73,7 +71,7 @@ classdef Gui < vt.Root & vt.State.Listener
 				obj.registerAllMethodsToState(this.state);
 			end
 			if(isa(obj, 'vt.Action.Dispatcher'))
-				this.actionListener.registerAction(obj.action);
+				this.reducer.register(obj.action);
 			end
 		end
 		

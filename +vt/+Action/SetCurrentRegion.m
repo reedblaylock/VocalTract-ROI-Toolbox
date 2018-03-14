@@ -8,7 +8,7 @@ classdef SetCurrentRegion < vt.Action
 	end
 	
 	methods
-		function this = SetCurrentRegion(coordinates, regions)
+		function [] = prepare(this, coordinates, regions)
 			% TODO: For overlapping regions, pick the region based on some
 			% algorithm
 			coordinates = fliplr(coordinates);

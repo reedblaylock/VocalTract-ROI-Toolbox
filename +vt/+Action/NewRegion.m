@@ -21,7 +21,7 @@ classdef NewRegion < vt.Action
 	end
 	
 	methods
-		function this = NewRegion()
+		function [] = prepare(this)
 			this.region = struct();
 			
 			% Increment the counter in the constructor

@@ -1,8 +1,6 @@
 classdef Window < vt.Component & vt.State.Listener
 	% This class has a default callback. Closing figures is often more trouble
-	% than it's worth, so avoid doing a custom job. If you want to see an
-	% example of a custom window callback, see the Exit button and
-	% vt.Reducer.closeGui().
+	% than it's worth, so avoid doing a custom job.
 	
 	properties
 		baseName

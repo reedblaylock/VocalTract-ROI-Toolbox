@@ -8,7 +8,7 @@ classdef SetFrameType < vt.Action
 	end
 	
 	methods
-		function this = SetFrameType(frameType)
+		function [] = prepare(this, frameType)
 			this.frameType = frameType;
 		end
 	end

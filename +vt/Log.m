@@ -6,10 +6,6 @@ classdef Log < handle
 		isOn
 	end
 	
-% 	events
-% 		NOTIFY_ERROR
-% 	end
-	
 	methods
 		function this = Log(varargin)
 			p = vt.InputParser;
@@ -20,7 +16,7 @@ classdef Log < handle
 			if(this.debugMode == 2)
 				dbstop if error
 			end
-			this.action = vt.Action.NotifyError();
+% 			this.action = vt.Action.NotifyError();
 			this.isOn = false;
 		end
 		
@@ -50,7 +46,7 @@ classdef Log < handle
 			p.addRequired('exception', @(exception) isa(exception, 'MException'));
 			p.parse(this, exception);
 			
-			this.notifyError(exception);
+% 			this.notifyError(exception);
 			
 			if(this.debugMode)
 				throwAsCaller(exception);
@@ -59,7 +55,7 @@ classdef Log < handle
 		
 		function [] = warning(this, warning)
 			exception = MException('customExceptionID', warning);
-			this.notifyError(exception);
+% 			this.notifyError(exception);
 			
 			if(this.debugMode)
 				throwAsCaller(warning);

@@ -8,7 +8,7 @@ classdef SetCurrentFrameNo < vt.Action
 	end
 	
 	methods
-		function this = setCurrentFrameNo(frameNo, maxFrame)
+		function [] = prepare(this, frameNo, maxFrame)
 			if(frameNo > maxFrame), frameNo = maxFrame; end
 			if(frameNo < 1), frameNo = 1; end
 			

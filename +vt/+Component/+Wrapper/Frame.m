@@ -103,12 +103,35 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		% Overwrite the vt.Action.Dispatcher function dispatchAction to include
 		% the current isEditing state and the coordinates that were clicked.
 		function [] = dispatchAction(this, ~, ~)
-			d = struct();
-			d.isEditing = this.isEditing;
-			coordinates = this.frame.getParameter('CurrentPoint');
-			d.coordinates = round(coordinates(1, 1:2));
+% 			d = struct();
+% 			d.isEditing = this.isEditing;
+% 			coordinates = this.frame.getParameter('CurrentPoint');
+% 			d.coordinates = round(coordinates(1, 1:2));
+% 			
+% 			this.action.dispatch(d);
 			
-			this.action.dispatch(d);
+			coordinates = this.frame.getParameter('CurrentPoint');
+			coordinates = round(coordinates(1, 1:2));
+			switch(this.isEditing)
+				case 'region'
+					% We're in region-editing mode, and the frame was clicked.
+					% Put down an origin point.
+					action = vt.Action.ChangeRegionParameter();
+					action.reducer.register();
+					action.prepare(region, 'origin', coordinates, video);
+					action.dispatch();
+				otherwise
+					% We're not in editing mode, and the frame was clicked.
+					% 1. The click location is within a region on the frame, so
+					%    set currentRegion = the clicked region
+					% 2. The click location is not within a region, so clear the
+					%    currentRegion (or, do nothing)
+					% TODO: Take the logic out of the reducer somehow
+					action = vt.Action.SetCurrentRegion();
+					action.reducer.register();
+					action.prepare(coordinates);
+					action.dispatch();
+			end
 		end
 		
 		%%%%% OTHER %%%%%
