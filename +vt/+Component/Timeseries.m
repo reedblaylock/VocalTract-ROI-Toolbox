@@ -1,6 +1,5 @@
-classdef Timeseries < vt.Component & vt.State.Listener %& vt.Action.Dispatcher
+classdef Timeseries < vt.Component & vt.State.Listener
 	properties
-% 		actionType = @vt.Action.NotifyTimeseriesClick
 		currentFrameNoLine
 		lineLabel
 	end

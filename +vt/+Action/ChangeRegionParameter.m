@@ -23,16 +23,17 @@ classdef ChangeRegionParameter < vt.Action
 			
 			switch(parameter)
 				% Parameter/value sets
-				case {'origin', 'shape', 'radius', 'width', 'height'}
+				case {'origin', 'shape', 'radius', 'width', 'height', 'minPixels'}
 					region.(parameter) = value;
 					
 					region.mask = getMask(region, video);
 					
 					this.region.timeseries = mean(video.matrix(:, region.mask > 0), 2);
-					
-				% Toggles
-				case {'showOrigin', 'showOutline', 'showFill'}
-					region.(parameter) = ~region.(parameter);
+				case {'color', 'showOrigin', 'showOutline', 'showFill'}
+					region.(parameter) = value;
+% 				% Toggles
+% 				case {'showOrigin', 'showOutline', 'showFill'}
+% 					region.(parameter) = ~region.(parameter);
 				otherwise
 					% TODO: throw error
 			end

@@ -2,10 +2,8 @@
 % statistically-generated region.
 classdef SearchRadius < vt.Component.TextBox.RangeBox & vt.State.Listener
 	properties
-		% Required by Action.Dispatcher. When the user changes the value in this
-		% textbox, send that value to State as the new search radius for the
-		% current region.
-		actionType = @vt.Action.ChangeSearchRadius;
+		currentRegion
+		video
 	end
 	
 	methods
@@ -45,9 +43,35 @@ classdef SearchRadius < vt.Component.TextBox.RangeBox & vt.State.Listener
 		% State. Called dynamically from State.Listener whenever the region
 		% changes.
 		function [] = onCurrentRegionChange(this, state)
-			this.maxValue = round(min(state.video.height, state.video.width) / 3);
-			this.setParameters('String', num2str(state.currentRegion.searchRadius));
-			this.data = num2str(state.currentRegion.searchRadius);
+			this.currentRegion = [];
+			
+			regions = state.regions;
+			for iRegion = 1:numel(regions)
+				if regions{iRegion}.id == state.currentRegion
+					this.currentRegion = regions{iRegion};
+					break;
+				end
+			end
+			
+			this.setParameters('String', num2str(this.currentRegion.searchRadius));
+% 			this.data = num2str(state.currentRegion.searchRadius);
+		end
+		
+		function [] = onVideoChange(this, state)
+			this.maxValue = round(min(state.video.height, state.video.width) / 2);
+			this.video = state.video;
+		end
+		
+		function [] = dispatchAction(this, ~, ~)
+			str = this.getParameter('String');
+			num = str2double(str);
+			validatedNum = this.validateData(num);
+			if(~isempty(validatedNum))
+				this.setParameters('String', num2str(validatedNum));
+				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+				action.prepare(this.currentRegion, 'searchRadius', validatedNum, this.video);
+				action.dispatch();
+			end
 		end
 	end
 	

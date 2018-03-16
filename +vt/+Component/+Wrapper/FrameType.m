@@ -3,10 +3,6 @@
 % to dispatch actions when buttons are selected.
 classdef FrameType < vt.Component.Wrapper & vt.Action.Dispatcher & vt.State.Listener
 	properties
-		% This object dispatches an action with information about where the
-		% frame was clicked.
-		actionType = @vt.Action.SetFrameType
-		
 		% An object of type vt.Component.FrameType
 		frameType
 	end
@@ -46,7 +42,9 @@ classdef FrameType < vt.Component.Wrapper & vt.Action.Dispatcher & vt.State.List
 			set( this.frameType.buttons(this.frameType.buttons~=source), 'Value', 0 ) % unselect others
 			
 			buttonString = get( source, 'String' );
-			this.action.dispatch(buttonString);
+			action = this.actionFactory.actions.SET_FRAME_TYPE;
+			action.prepare(buttonString);
+			action.dispatch();
 		end
 	end
 	

@@ -1,13 +1,7 @@
-classdef CancelRegion < vt.Component.Button & vt.State.Listener & vt.Action.Dispatcher
-	properties
-		action
-	end
-	
+classdef StopEditing < vt.Component.Button & vt.State.Listener & vt.Action.Dispatcher
 	methods
-		function this = CancelRegion(parent, label, varargin)
+		function this = StopEditing(parent, label, varargin)
 			this@vt.Component.Button(parent, label, varargin{:});
-			
-			this.action = this.actionFactory.get('STOP_EDITING');
 			
 			this.setCallback();
 		end
@@ -19,6 +13,12 @@ classdef CancelRegion < vt.Component.Button & vt.State.Listener & vt.Action.Disp
 				otherwise
 					this.setParameters('Enable', 'off');
 			end
+		end
+		
+		function [] = dispatchAction(this, source, eventData)
+			action = this.actionFactory.actions.STOP_EDITING;
+			action.prepare();
+			action.dispatch();
 		end
 	end
 	

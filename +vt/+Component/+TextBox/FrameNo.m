@@ -1,12 +1,6 @@
 % The textbox that displays the current frame number beneath the video frame.
 classdef FrameNo < vt.Component.TextBox.RangeBox & vt.State.Listener
 	
-	properties
-		% Required by Action.Dispatcher. When the user changes the value in this
-		% textbox, send that value to State as the new frame number.
-		actionType = @vt.Action.SetCurrentFrameNo;
-	end
-	
 	methods
 		
 		%%%%% CONSTRUCTOR %%%%%
@@ -61,6 +55,18 @@ classdef FrameNo < vt.Component.TextBox.RangeBox & vt.State.Listener
 					this.setParameters('Enable', 'on');
 				otherwise
 					this.setParameters('Enable', 'off');
+			end
+		end
+		
+		function [] = dispatchAction(this, source, eventData)
+			str = this.getParameter('String');
+			num = str2double(str);
+			validatedNum = this.validateData(num);
+			if(~isempty(validatedNum))
+				this.setParameters('String', num2str(validatedNum));
+				action = this.actionFactory.actions.SET_CURRENT_FRAME_NO;
+				action.prepare(validatedNum, maxValue);
+				action.dispatch();
 			end
 		end
 	end

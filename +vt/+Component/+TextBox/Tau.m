@@ -2,10 +2,8 @@
 % region.
 classdef Tau < vt.Component.TextBox.RangeBox & vt.State.Listener
 	properties
-		% Required by Action.Dispatcher. When the user changes the value in this
-		% textbox, send that value to State as the new tau for the current
-		% region.
-		actionType = @vt.Action.ChangeTau;
+		currentRegion
+		video
 	end
 	
 	methods
@@ -28,6 +26,7 @@ classdef Tau < vt.Component.TextBox.RangeBox & vt.State.Listener
 			this@vt.Component.TextBox.RangeBox(parent, varargin{:});
 			
 			this.minValue = 0.01;
+			this.maxValue = 1;
 		end
 		
 		%%%%% STATE LISTENER %%%%%
@@ -47,9 +46,34 @@ classdef Tau < vt.Component.TextBox.RangeBox & vt.State.Listener
 		% Updates the String value of the textbox to the tau in State. Called 
 		% dynamically from State.Listener whenever the region changes.
 		function [] = onCurrentRegionChange(this, state)
-			this.maxValue = 1;
-			this.setParameters('String', num2str(state.currentRegion.tau));
-			this.data = num2str(state.currentRegion.tau);
+			this.currentRegion = [];
+			
+			regions = state.regions;
+			for iRegion = 1:numel(regions)
+				if regions{iRegion}.id == state.currentRegion
+					this.currentRegion = regions{iRegion};
+					break;
+				end
+			end
+			
+			this.setParameters('String', num2str(this.currentRegion.tau));
+% 			this.data = num2str(state.currentRegion.tau);
+		end
+		
+		function [] = onVideoChange(this, state)
+			this.video = state.video;
+		end
+		
+		function [] = dispatchAction(this, ~, ~)
+			str = this.getParameter('String');
+			num = str2double(str);
+			validatedNum = this.validateData(num);
+			if(~isempty(validatedNum))
+				this.setParameters('String', num2str(validatedNum));
+				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+				action.prepare(this.currentRegion, 'tau', validatedNum, this.video);
+				action.dispatch();
+			end
 		end
 	end
 	

@@ -1,6 +1,6 @@
 classdef ShowOrigin < vt.Component.Checkbox & vt.State.Listener & vt.Action.Dispatcher
 	properties
-		actionType = @vt.Action.ToggleShowOrigin
+		currentRegion
 	end
 	
 	methods
@@ -11,7 +11,17 @@ classdef ShowOrigin < vt.Component.Checkbox & vt.State.Listener & vt.Action.Disp
 		end
 		
 		function [] = onCurrentRegionChange(this, state)
-			this.setParameters('Value', state.currentRegion.showOrigin);
+			this.currentRegion = [];
+			
+			regions = state.regions;
+			for iRegion = 1:numel(regions)
+				if regions{iRegion}.id == state.currentRegion
+					this.currentRegion = regions{iRegion};
+					break;
+				end
+			end
+			
+			this.setParameters('Value', this.currentRegion.showOrigin);
 		end
 		
 		function [] = onIsEditingChange(this, state)
@@ -25,7 +35,9 @@ classdef ShowOrigin < vt.Component.Checkbox & vt.State.Listener & vt.Action.Disp
 		
 		function [] = dispatchAction(this, ~, ~)
 			value = this.getParameter('Value');
-			this.action.dispatch(value);
+			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+			action.prepare(this.currentRegion, 'showOrigin', value);
+			action.dispatch();
 		end
 	end
 	

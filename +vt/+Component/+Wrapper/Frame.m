@@ -2,9 +2,9 @@
 % to make appropriate updates to the frame's visualization.
 classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 	properties
-		% This object dispatches an action with information about where the
-		% frame was clicked.
-		actionType = @vt.Action.NotifyFrameClick
+		regions
+		video
+		
 		
 		% An object of type vt.Component.Frame
 		frame
@@ -43,6 +43,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		% Update the current frame shown. This function is called by
 		% vt.State.Listener when the current video changes in State.
 		function [] = onVideoChange(this, state)
+			this.video = state.video;
 			this.switchFrameType(state.frameType, state.video, 1);
 		end
 		
@@ -72,28 +73,35 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		% currentRegion property. This function is called by State.Listener
 		% whenever a value of the current region changes in State.
 		function [] = onCurrentRegionChange(this, state)
+			this.currentRegion = [];
+			
+			regions = state.regions;
+			for iRegion = 1:numel(regions)
+				if regions{iRegion}.id == state.currentRegion
+					this.currentRegion = regions{iRegion};
+					break;
+				end
+			end
+			
 			if(~strcmp(state.isEditing, 'region'))
 				return;
 			end
 			
-			region = state.currentRegion;
-			
-			if(~isempty(region.mask))
+			if(~isempty(this.currentRegion.mask))
 				this.deleteCurrentRegion(state);
-				if(region.showOrigin)
-					this.frame.drawOrigin(region.id, region.origin, region.color);
+				if(this.currentRegion.showOrigin)
+					this.frame.drawOrigin(this.currentRegion.id, this.currentRegion.origin, this.currentRegion.color);
 				end
-				if(region.showOutline)
-					this.frame.drawOutline(region.id, region.mask, region.color);
+				if(this.currentRegion.showOutline)
+					this.frame.drawOutline(this.currentRegion.id, this.currentRegion.mask, this.currentRegion.color);
 				end
 			end
-			
-			this.currentRegion = state.currentRegion;
 		end
 		
 		% Redraw all saved regions. This function is called by State.Listener
 		% whenever a saved region is changed in State (i.e. added or deleted).
 		function [] = onRegionsChange(this, state)
+			this.regions = state.regions;
 			this.deleteCurrentRegion(state);
 			this.redrawAllRegions(state);
 		end
@@ -116,9 +124,8 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 				case 'region'
 					% We're in region-editing mode, and the frame was clicked.
 					% Put down an origin point.
-					action = vt.Action.ChangeRegionParameter();
-					action.reducer.register();
-					action.prepare(region, 'origin', coordinates, video);
+					action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+					action.prepare(this.currentRegion, 'origin', coordinates, this.video);
 					action.dispatch();
 				otherwise
 					% We're not in editing mode, and the frame was clicked.
@@ -127,9 +134,8 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 					% 2. The click location is not within a region, so clear the
 					%    currentRegion (or, do nothing)
 					% TODO: Take the logic out of the reducer somehow
-					action = vt.Action.SetCurrentRegion();
-					action.reducer.register();
-					action.prepare(coordinates);
+					action = this.actionFactory.actions.SET_CURRENT_REGION();
+					action.prepare(coordinates, this.regions);
 					action.dispatch();
 			end
 		end
@@ -202,9 +208,9 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		
 		% Delete any visualization of the current region.
 		function [] = deleteCurrentRegion(this, state)
-			if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
-				this.frame.deleteOrigin(state.currentRegion.id);
-				this.frame.deleteOutline(state.currentRegion.id);
+			if ~isempty(state.currentRegion)
+				this.frame.deleteOrigin(state.currentRegion);
+				this.frame.deleteOutline(state.currentRegion);
 			end
 		end
 		

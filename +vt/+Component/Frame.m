@@ -1,8 +1,6 @@
-classdef Frame < vt.Component %& vt.Action.Dispatcher
+classdef Frame < vt.Component
 	properties
-% 		actionType = @vt.Action.NotifyFrameClick
 		imageHandle
-% 		isEditing = ''
 	end
 	
 	methods

@@ -1,20 +1,18 @@
 classdef FrameType < vt.Component.Layout.HButtonGroup & vt.Action.Dispatcher & vt.State.Listener
-	properties
-		actionType = @vt.Action.SetFrameType
-	end
-	
 	methods
 		function this = FrameType(parent, varargin)
 			this@vt.Component.Layout.HButtonGroup(parent, varargin{:});
 			
 			this.setParameters('ButtonStyle', 'radio', 'Enable', 'off');
 			this.handle.Buttons = {'frame', 'mean', 'std dev'};
-			this.handle.SelectionChangeFcn = {@(source, event) changeButton(this, source, event)};
+			this.handle.SelectionChangeFcn = {@(source, event) dispatchAction(this, source, event)};
 		end
 		
-		function [] = changeButton(this, source, ~)
+		function [] = dispatchAction(this, source, ~)
 			buttonName = source.SelectedObject.String;
-			this.action.dispatch(buttonName);
+			action = this.actionFactory.actions.SET_FRAME_TYPE;
+			action.prepare(buttonName);
+			action.dispatch();
 		end
 		
 % 		function [] = onFrameTypeChange(this, state)

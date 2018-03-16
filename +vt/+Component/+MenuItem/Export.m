@@ -1,6 +1,7 @@
 classdef Export < vt.Component.MenuItem & vt.Action.Dispatcher
 	properties
-		actionType = @vt.Action.Export
+		regions
+		video
 	end
 	
 	methods
@@ -12,9 +13,21 @@ classdef Export < vt.Component.MenuItem & vt.Action.Dispatcher
 			
 			this@vt.Component.MenuItem(p.Results.parent, p.Results.label);
 			
-% 			this@vt.Action.Dispatcher();
-			
 			this.setCallback();
+		end
+		
+		function [] = onVideoChange(this, state)
+			this.video = state.video;
+		end
+		
+		function [] = onRegionsChange(this, state)
+			this.regions = state.regions;
+		end
+		
+		function [] = dispatchAction(this, source, eventData)
+			action = this.actionFactory.actions.EXPORT;
+			action.prepare(this.regions, this.video);
+			action.dispatch();
 		end
 	end
 	

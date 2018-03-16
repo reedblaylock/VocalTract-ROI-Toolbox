@@ -11,23 +11,28 @@
 	
 classdef Load < vt.Component.MenuItem & vt.Action.Dispatcher
 	properties
-		actionType = @vt.Action.Load
+		loadType
 	end
 	
 	methods
-		function this = Load(parent, label, data)
+		function this = Load(parent, label, loadType)
 			p = vt.InputParser;
 			p.addParent();
 			p.addRequired('label', @ischar);
-			p.addRequired('data',  @ischar);
-			parse(p, parent, label, data);
+			p.addRequired('loadType',  @ischar);
+			parse(p, parent, label, loadType);
 			
 			this@vt.Component.MenuItem(p.Results.parent, p.Results.label);
 			
-			this@vt.Action.Dispatcher();
-			this.action.data = p.Results.data;
+			this.loadType = loadType;
 			
 			this.setCallback();
+		end
+		
+		function [] = dispatchAction(this, source, eventData)
+			action = this.actionFactory.actions.LOAD;
+			action.prepare(this.loadType);
+			action.dispatch();
 		end
 	end
 	

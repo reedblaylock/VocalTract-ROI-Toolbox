@@ -1,6 +1,6 @@
 classdef ShowOutline < vt.Component.Checkbox & vt.State.Listener & vt.Action.Dispatcher
 	properties
-		actionType = @vt.Action.ToggleShowOutline
+		currentRegion
 	end
 	
 	methods
@@ -11,7 +11,17 @@ classdef ShowOutline < vt.Component.Checkbox & vt.State.Listener & vt.Action.Dis
 		end
 		
 		function [] = onCurrentRegionChange(this, state)
-			this.setParameters('Value', state.currentRegion.showOutline);
+			this.currentRegion = [];
+			
+			regions = state.regions;
+			for iRegion = 1:numel(regions)
+				if regions{iRegion}.id == state.currentRegion
+					this.currentRegion = regions{iRegion};
+					break;
+				end
+			end
+			
+			this.setParameters('Value', this.currentRegion.showOutline);
 		end
 		
 		function [] = onIsEditingChange(this, state)
@@ -25,7 +35,9 @@ classdef ShowOutline < vt.Component.Checkbox & vt.State.Listener & vt.Action.Dis
 		
 		function [] = dispatchAction(this, ~, ~)
 			value = this.getParameter('Value');
-			this.action.dispatch(value);
+			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+			action.prepare(this.currentRegion, 'showOutline', value);
+			action.dispatch();
 		end
 	end
 	

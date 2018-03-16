@@ -1,9 +1,7 @@
 % This is the slider that controls the current frame number shown.
 classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listener
 	properties
-		% This object dispatches an action that changes the current frame
-		% number.
-		actionType = @vt.Action.SetCurrentFrameNo
+		maxFrame
 	end
 	
 	methods
@@ -31,6 +29,7 @@ classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listene
 				'SliderStep', [1/state.video.nFrames, 10/state.video.nFrames] ...
 			);
 			
+			this.maxFrame = state.video.nFrames;
 			this.switchFrameType(state.frameType);
 		end
 		
@@ -55,7 +54,10 @@ classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listene
 		function [] = dispatchAction(this, ~, ~)
 			frameNo = this.getParameter('Value');
 			frameNo = round(frameNo);
-			this.action.dispatch(frameNo);
+			
+			action = this.actionFactory.actions.SET_CURRENT_FRAME_NO;
+			action.prepare(frameNo, this.maxFrame);
+			this.action.dispatch();
 		end
 		
 		%%%%% OTHER %%%%%

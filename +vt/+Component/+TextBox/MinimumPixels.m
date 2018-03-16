@@ -1,13 +1,6 @@
 % The textbox that displays the minimum pixel size of the current
 % statistically-generated region.
 classdef MinimumPixels < vt.Component.TextBox.RangeBox & vt.State.Listener
-	properties
-		% Required by Action.Dispatcher. When the user changes the value in this
-		% textbox, send that value to State as the new minimum pixel value for
-		% the current region.
-		actionType = @vt.Action.ChangeMinimumPixels;
-	end
-	
 	methods
 		%%%%% CONSTRUCTOR %%%%%
 		
@@ -44,9 +37,35 @@ classdef MinimumPixels < vt.Component.TextBox.RangeBox & vt.State.Listener
 		% State. Called dynamically from State.Listener whenever the region
 		% changes.
 		function [] = onCurrentRegionChange(this, state)
+			this.currentRegion = [];
+			
+			regions = state.regions;
+			for iRegion = 1:numel(regions)
+				if regions{iRegion}.id == state.currentRegion
+					this.currentRegion = regions{iRegion};
+					break;
+				end
+			end
+			
+			this.setParameters('String', num2str(this.currentRegion.minimumPixels));
+% 			this.data = num2str(this.currentRegion.minPixels);
+		end
+		
+		function [] = onVideoChange(this, state)
+			this.video = state.video;
 			this.maxValue = min(state.video.height, state.video.width);
-			this.setParameters('String', num2str(state.currentRegion.minimumPixels));
-			this.data = num2str(state.currentRegion.minimumPixels);
+		end
+		
+		function [] = dispatchAction(this, source, eventData)
+			str = this.getParameter('String');
+			num = str2double(str);
+			validatedNum = this.validateData(num);
+			if(~isempty(validatedNum))
+				this.setParameters('String', num2str(validatedNum));
+				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+				action.prepare(this.currentRegion, 'minPixels', validatedNum, this.video);
+				action.dispatch();
+			end
 		end
 	end
 	

@@ -1,7 +1,6 @@
 classdef DeleteRegion < vt.Component.Button & vt.State.Listener & vt.Action.Dispatcher
 	properties
-		actionType = @vt.Action.DeleteRegion
-% 		regionId
+		regionId
 	end
 	
 	methods
@@ -12,27 +11,30 @@ classdef DeleteRegion < vt.Component.Button & vt.State.Listener & vt.Action.Disp
 		end
 		
 		function [] = onCurrentRegionChange(this, state)
-			if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
-				this.setParameters('Enable', 'on');
-			else
-				this.setParameters('Enable', 'off');
-			end
+			this.regionId = state.currentRegion;
+% 			if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
+% 				this.setParameters('Enable', 'on');
+% 			else
+% 				this.setParameters('Enable', 'off');
+% 			end
 		end
 		
 		function [] = onIsEditingChange(this, state)
 			switch(state.isEditing)
 				case 'region'
-% 					this.regionId = state.currentRegion.id;
+% 					this.currentRegion = state.currentRegion;
 					this.setParameters('Enable', 'on');
 				otherwise
-% 					this.regionId = [];
+% 					this.currentRegion = [];
 					this.setParameters('Enable', 'off');
 			end
 		end
 		
-% 		function [] = dispatchAction(this, ~, ~)
-% 			this.action.dispatch(this.regionId);
-% 		end
+		function [] = dispatchAction(this, ~, ~)
+			action = this.actionFactory.actions.DELETE_REGION;
+			action.prepare(this.regionId);
+			action.dispatch();
+		end
 	end
 	
 end

@@ -1,10 +1,8 @@
 % The textbox that displays the height of the current rectangular region.
 classdef Height < vt.Component.TextBox.RangeBox & vt.State.Listener
 	properties
-		% Required by Action.Dispatcher. When the user changes the value in this
-		% textbox, send that value to State as the new height for the current
-		% region.
-		actionType = @vt.Action.ChangeRegionHeight;
+		currentRegion
+		video
 	end
 	
 	methods
@@ -43,9 +41,35 @@ classdef Height < vt.Component.TextBox.RangeBox & vt.State.Listener
 		% Updates the String value of the textbox to the height value in State. 
 		% Called dynamically from State.Listener whenever the region changes.
 		function [] = onCurrentRegionChange(this, state)
+			this.currentRegion = [];
+			
+			regions = state.regions;
+			for iRegion = 1:numel(regions)
+				if regions{iRegion}.id == state.currentRegion
+					this.currentRegion = regions{iRegion};
+					break;
+				end
+			end
+			
+			this.setParameters('String', num2str(this.currentRegion.height));
+% 			this.data = num2str(this.currentRegion.height);
+		end
+		
+		function [] = onVideoChange(this, state)
+			this.video = state.video;
 			this.maxValue = state.video.height;
-			this.setParameters('String', num2str(state.currentRegion.height));
-			this.data = num2str(state.currentRegion.height);
+		end
+		
+		function [] = dispatchAction(this, source, eventData)
+			str = this.getParameter('String');
+			num = str2double(str);
+			validatedNum = this.validateData(num);
+			if(~isempty(validatedNum))
+				this.setParameters('String', num2str(validatedNum));
+				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+				action.prepare(this.region, 'height', validatedNum, this.video);
+				action.dispatch();
+			end
 		end
 	end
 	

@@ -1,6 +1,6 @@
 classdef RegionColor < vt.Component.Button & vt.Action.Dispatcher & vt.State.Listener
 	properties
-		actionType = @vt.Action.ChangeRegionColor
+		currentRegion
 	end
 	
 	methods
@@ -16,7 +16,9 @@ classdef RegionColor < vt.Component.Button & vt.Action.Dispatcher & vt.State.Lis
 				return;
 			end
 			
-			this.action.dispatch(color);
+			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+			action.prepare(this.currentRegion, 'color', color);
+			this.action.dispatch();
 		end
 		
 		function [] = onIsEditingChange(this, state)
@@ -25,6 +27,18 @@ classdef RegionColor < vt.Component.Button & vt.Action.Dispatcher & vt.State.Lis
 					this.setParameters('Enable', 'on');
 				otherwise
 					this.setParameters('Enable', 'off');
+			end
+		end
+		
+		function [] = onCurrentRegionChange(this, state)
+			this.currentRegion = [];
+			
+			regions = state.regions;
+			for iRegion = 1:numel(regions)
+				if regions{iRegion}.id == state.currentRegion
+					this.currentRegion = regions{iRegion};
+					break;
+				end
 			end
 		end
 	end

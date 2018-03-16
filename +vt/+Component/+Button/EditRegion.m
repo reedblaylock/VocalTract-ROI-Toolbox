@@ -1,8 +1,4 @@
 classdef EditRegion < vt.Component.Button & vt.Action.Dispatcher & vt.State.Listener
-	properties
-		actionType = @vt.Action.EditRegion
-	end
-	
 	methods
 		function this = EditRegion(parent, label, varargin)
 			this@vt.Component.Button(parent, label, varargin{:});
@@ -12,7 +8,7 @@ classdef EditRegion < vt.Component.Button & vt.Action.Dispatcher & vt.State.List
 		end
 		
 		function [] = onCurrentRegionChange(this, state)
-			if(isfield(state.currentRegion, 'id') && ~isempty(state.currentRegion.id))
+			if ~isempty(state.currentRegion)
 				this.setParameters('Enable', 'on');
 			else
 				this.setParameters('Enable', 'off');
@@ -32,6 +28,12 @@ classdef EditRegion < vt.Component.Button & vt.Action.Dispatcher & vt.State.List
 				otherwise
 					this.setParameters('Enable', 'off');
 			end
+		end
+		
+		function [] = dispatchAction(this, ~, ~)
+			action = this.actionFactory.actions.EDIT_REGION;
+			action.prepare();
+			action.dispatch();
 		end
 	end
 	

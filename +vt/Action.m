@@ -21,6 +21,8 @@ classdef Action < vt.Root
 			
 			eventData = vt.EventData(actionData);
 			
+			this.unsetProps();
+			
 			notify(this, actionName, eventData);
 		end
 		
@@ -34,6 +36,13 @@ classdef Action < vt.Root
 				% TODO: this will probably throw an error, because this.log does
 				% not exist
 				this.log.exception(excp);
+			end
+		end
+		
+		function [] = unsetProps(this)
+			props = properties(this);
+			for iProp = 1:numel(props)
+				this.(props{iProp}) = [];
 			end
 		end
 	end

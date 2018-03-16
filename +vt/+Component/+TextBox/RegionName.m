@@ -1,10 +1,7 @@
 % The textbox that displays the name of the current region region.
 classdef RegionName < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listener
 	properties
-		% Required by Action.Dispatcher. When the user changes the value in this
-		% textbox, send that value to State as the new name for the current
-		% region.
-		actionType = @vt.Action.ChangeRegionName;
+		currentRegion
 	end
 	
 	methods
@@ -44,14 +41,26 @@ classdef RegionName < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Lis
 		% Updates the String value of the textbox to the region name in State. 
 		% Called dynamically from State.Listener whenever the region changes.
 		function [] = onCurrentRegionChange(this, state)
-			this.setParameters('String', state.currentRegion.name);
+			this.currentRegion = [];
+			
+			regions = state.regions;
+			for iRegion = 1:numel(regions)
+				if regions{iRegion}.id == state.currentRegion
+					this.currentRegion = regions{iRegion};
+					break;
+				end
+			end
+			
+			this.setParameters('String', this.currentRegion.name);
 		end
 		
 		% Overloads the Action.Dispatcher dispatchAction function. Sends the
 		% current region name as a parameter when dispatching an action.
 		function [] = dispatchAction(this, ~, ~)
 			newName = this.getParameter('String');
-			this.action.dispatch(newName);
+			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+			action.prepare(this.currentRegion, 'name', newName);
+			action.dispatch();
 		end
 	end
 	

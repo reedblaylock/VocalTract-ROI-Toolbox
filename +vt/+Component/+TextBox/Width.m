@@ -1,10 +1,8 @@
 % The textbox that displays the width of the current rectangular region.
 classdef Width < vt.Component.TextBox.RangeBox & vt.State.Listener
 	properties
-		% Required by Action.Dispatcher. When the user changes the value in this
-		% textbox, send that value to State as the new width for the current
-		% region.
-		actionType = @vt.Action.ChangeRegionWidth;
+		currentRegion
+		video
 	end
 	
 	methods
@@ -43,9 +41,35 @@ classdef Width < vt.Component.TextBox.RangeBox & vt.State.Listener
 		% Updates the String value of the textbox to the width value in State. 
 		% Called dynamically from State.Listener whenever the region changes.
 		function [] = onCurrentRegionChange(this, state)
+			this.currentRegion = [];
+			
+			regions = state.regions;
+			for iRegion = 1:numel(regions)
+				if regions{iRegion}.id == state.currentRegion
+					this.currentRegion = regions{iRegion};
+					break;
+				end
+			end
+			
+			this.setParameters('String', num2str(this.currentRegion.width));
+% 			this.data = num2str(state.currentRegion.width);
+		end
+		
+		function [] = onVideoChange(this, state)
 			this.maxValue = state.video.width;
-			this.setParameters('String', num2str(state.currentRegion.width));
-			this.data = num2str(state.currentRegion.width);
+			this.video = state.video;
+		end
+		
+		function [] = dispatchAction(this, ~, ~)
+			str = this.getParameter('String');
+			num = str2double(str);
+			validatedNum = this.validateData(num);
+			if(~isempty(validatedNum))
+				this.setParameters('String', num2str(validatedNum));
+				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+				action.prepare(this.currentRegion, 'width', validatedNum, this.video);
+				action.dispatch();
+			end
 		end
 	end
 	
