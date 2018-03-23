@@ -1,8 +1,9 @@
-function newState = isEditing(this, oldState, action)
-	p = inputparser;
-	addOptional(p, 'oldState', '');
+function newState = isEditing(this, varargin)
+	p = inputParser;
+	addOptional(p, 'oldState', '', @(oldState) ischar(oldState) || isempty(oldState));
 	addOptional(p, 'action', struct('type', ''));
-	parse(p, oldState, action);
+	p.StructExpand = false;
+	parse(p, varargin{:});
 	
 	switch(p.Results.action.type)
 		case {'NEW_REGION', 'EDIT_REGION'}

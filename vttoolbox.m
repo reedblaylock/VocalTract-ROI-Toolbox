@@ -11,8 +11,8 @@ function vttoolbox()
 	s = warning('error', 'MATLAB:callback:error');
 	warning('error', 'MATLAB:class:InvalidHandle');
 	
-	gui = vt.Gui();
-	gui.run();
+	app = vt.App(2);
+	app.run();
 	
 	warning(s);
 end

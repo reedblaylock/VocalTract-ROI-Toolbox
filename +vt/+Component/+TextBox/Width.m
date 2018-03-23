@@ -51,8 +51,10 @@ classdef Width < vt.Component.TextBox.RangeBox & vt.State.Listener
 				end
 			end
 			
-			this.setParameters('String', num2str(this.currentRegion.width));
-% 			this.data = num2str(state.currentRegion.width);
+			if ~isempty(this.currentRegion)
+				this.setParameters('String', num2str(this.currentRegion.width));
+				this.backupText = num2str(this.currentRegion.width);
+			end
 		end
 		
 		function [] = onVideoChange(this, state)
@@ -66,6 +68,7 @@ classdef Width < vt.Component.TextBox.RangeBox & vt.State.Listener
 			validatedNum = this.validateData(num);
 			if(~isempty(validatedNum))
 				this.setParameters('String', num2str(validatedNum));
+				this.backupText = num2str(validatedNum);
 				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
 				action.prepare(this.currentRegion, 'width', validatedNum, this.video);
 				action.dispatch();

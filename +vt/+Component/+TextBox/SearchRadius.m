@@ -53,8 +53,10 @@ classdef SearchRadius < vt.Component.TextBox.RangeBox & vt.State.Listener
 				end
 			end
 			
-			this.setParameters('String', num2str(this.currentRegion.searchRadius));
-% 			this.data = num2str(state.currentRegion.searchRadius);
+			if ~isempty(this.currentRegion)
+				this.setParameters('String', num2str(this.currentRegion.searchRadius));
+				this.backupText = num2str(this.currentRegion.searchRadius);
+			end
 		end
 		
 		function [] = onVideoChange(this, state)
@@ -68,6 +70,7 @@ classdef SearchRadius < vt.Component.TextBox.RangeBox & vt.State.Listener
 			validatedNum = this.validateData(num);
 			if(~isempty(validatedNum))
 				this.setParameters('String', num2str(validatedNum));
+				this.backupText = num2str(validatedNum);
 				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
 				action.prepare(this.currentRegion, 'searchRadius', validatedNum, this.video);
 				action.dispatch();

@@ -3,7 +3,7 @@
 % objects, creates the GUI components, sets up the connections between the GUI
 % components and their functionality, and disables most interface capabilities
 % until a video is loaded.
-classdef Gui < vt.Root & vt.State.Listener
+classdef App < vt.Root & vt.State.Listener
 	properties
 		state
 		styles
@@ -16,8 +16,12 @@ classdef Gui < vt.Root & vt.State.Listener
 	end
 	
 	methods
-		function this = Gui()
-			this.log = vt.Log(0);
+		function this = App(debugSetting)
+			p = inputParser;
+			addOptional(p, 'debugSetting', 0);
+			parse(p, debugSetting);
+			
+			this.log = vt.Log(p.Results.debugSetting);
 			this.log.on();
 		end
 		
@@ -58,6 +62,12 @@ classdef Gui < vt.Root & vt.State.Listener
 				prop = propertyList{iProp};
 				if(isa(this.(prop), 'vt.Root'))
 					this.(prop).log = this.log;
+				end
+				if(isa(this.(prop), 'vt.Action.Factory'))
+					actionNames = fieldnames(this.(prop).actions);
+					for iAction = 1:numel(actionNames)
+						this.(prop).actions.(actionNames{iAction}).log = this.log;
+					end
 				end
 			end
 			
@@ -166,13 +176,13 @@ classdef Gui < vt.Root & vt.State.Listener
 		end
 		
 		function [] = redrawAllTimeseries(this, state)
-			if(isempty(fieldnames(state.regions)) || ~numel(state.regions))
+			if isempty(state.regions) || ~numel(state.regions)
 				% There are no regions to draw
 				return;
 			end
 			
 			for iRegion = 1:numel(state.regions)
-				region = state.regions(iRegion);
+				region = state.regions{iRegion};
 				label = ['Timeseries' num2str(region.id)];
 				containerLabel = [label 'Container'];
 				
@@ -400,7 +410,7 @@ classdef Gui < vt.Root & vt.State.Listener
 % 						this.gui.RightBoxGrid, ...
 % 						'Save region' ...
 % 					);
-					this.initializeComponent(this.gui.RegionSettings7_2);
+% 					this.initializeComponent(this.gui.RegionSettings7_2);
 					% 8-2 + Delete button
 					this.gui.RegionSettings8_2 = vt.Component.Button.DeleteRegion( ...
 						this.gui.RightBoxGrid, ...
@@ -486,7 +496,7 @@ classdef Gui < vt.Root & vt.State.Listener
 					break;
 				end
 			end
-			if(strcmp(this.currentRegion.shape, currentRegion.shape))
+			if isempty(currentRegion) || strcmp(this.currentRegion.shape, currentRegion.shape)
 				return;
 			end
 			
@@ -667,7 +677,7 @@ classdef Gui < vt.Root & vt.State.Listener
 			end
 			
 			% If there's no mask, you can't have a timeseries
-			if(isempty(currentRegion.mask))
+			if isempty(currentRegion) || isempty(currentRegion.mask)
 				return;
 			end
 			

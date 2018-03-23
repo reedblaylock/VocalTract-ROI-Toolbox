@@ -30,7 +30,7 @@ classdef Load < vt.Component.MenuItem & vt.Action.Dispatcher
 		end
 		
 		function [] = dispatchAction(this, source, eventData)
-			action = this.actionFactory.actions.LOAD;
+			action = this.actionFactory.actions.LOAD_VIDEO;
 			action.prepare(this.loadType);
 			action.dispatch();
 		end

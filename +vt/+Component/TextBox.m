@@ -1,5 +1,6 @@
 classdef TextBox < vt.Component
 	properties
+		backupText
 	end
 	
 	methods
@@ -15,6 +16,8 @@ classdef TextBox < vt.Component
 				'Style', 'edit', ...
 				'String', p.Results.String ...
 			);
+		
+			this.backupText = p.Results.String;
 		
 			if(numel(fieldnames(p.Unmatched)))
 				this.setParameters(varargin{:});

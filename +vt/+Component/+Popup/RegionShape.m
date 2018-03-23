@@ -37,7 +37,9 @@ classdef RegionShape < vt.Component.Popup & vt.State.Listener & vt.Action.Dispat
 				end
 			end
 			
-			this.setCurrentPopupString(this.currentRegion.shape);
+			if ~isempty(this.currentRegion)
+				this.setCurrentPopupString(this.currentRegion.shape);
+			end
 		end
 		
 		function [] = onVideoChange(this, state)

@@ -47,8 +47,10 @@ classdef MinimumPixels < vt.Component.TextBox.RangeBox & vt.State.Listener
 				end
 			end
 			
-			this.setParameters('String', num2str(this.currentRegion.minimumPixels));
-% 			this.data = num2str(this.currentRegion.minPixels);
+			if ~isempty(this.currentRegion)
+				this.setParameters('String', num2str(this.currentRegion.minimumPixels));
+				this.backupText = num2str(this.currentRegion.minPixels);
+			end
 		end
 		
 		function [] = onVideoChange(this, state)
@@ -62,6 +64,7 @@ classdef MinimumPixels < vt.Component.TextBox.RangeBox & vt.State.Listener
 			validatedNum = this.validateData(num);
 			if(~isempty(validatedNum))
 				this.setParameters('String', num2str(validatedNum));
+				this.backupText = num2str(validatedNum);
 				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
 				action.prepare(this.currentRegion, 'minPixels', validatedNum, this.video);
 				action.dispatch();

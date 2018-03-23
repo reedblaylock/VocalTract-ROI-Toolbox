@@ -21,7 +21,9 @@ classdef ShowOrigin < vt.Component.Checkbox & vt.State.Listener & vt.Action.Disp
 				end
 			end
 			
-			this.setParameters('Value', this.currentRegion.showOrigin);
+			if ~isempty(this.currentRegion)
+				this.setParameters('Value', this.currentRegion.showOrigin);
+			end
 		end
 		
 		function [] = onIsEditingChange(this, state)

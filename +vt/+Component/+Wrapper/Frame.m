@@ -5,7 +5,6 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		regions
 		video
 		
-		
 		% An object of type vt.Component.Frame
 		frame
 		
@@ -37,7 +36,9 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		% Update the current frame shown. This function is called by
 		% vt.State.Listener when the current frame number changes in State.
 		function [] = onCurrentFrameNoChange(this, state)
-			this.switchFrameType(state.frameType, state.video, state.currentFrameNo);
+			if ~isempty(state.video) && ~isempty(state.frameType) && ~isempty(state.currentFrameNo)
+				this.switchFrameType(state.frameType, state.video, state.currentFrameNo);
+			end
 		end
 		
 		% Update the current frame shown. This function is called by
@@ -60,9 +61,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			this.isEditing = state.isEditing;
 			switch(state.isEditing)
 				case 'region'
-					% TODO: This should be getting the current region settings from
-					% state, or default preferences, to avoid code duplication
-					this.setCurrentRegionDefaults(state);
+					this.setCurrentRegionDefaults();
 				otherwise
 					this.deleteCurrentRegion(state);
 					this.redrawAllRegions(state);
@@ -87,7 +86,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 				return;
 			end
 			
-			if(~isempty(this.currentRegion.mask))
+			if ~isempty(this.currentRegion) && ~isempty(this.currentRegion.mask)
 				this.deleteCurrentRegion(state);
 				if(this.currentRegion.showOrigin)
 					this.frame.drawOrigin(this.currentRegion.id, this.currentRegion.origin, this.currentRegion.color);
@@ -216,14 +215,14 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		
 		% Redraw all regions stored in State.regions.
 		function [] = redrawAllRegions(this, state)
-			if(isempty(fieldnames(state.regions)) || ~numel(state.regions))
+			if isempty(state.regions) || ~numel(state.regions)
 				% There are no regions saved right now
 				return;
 			end
 			
 			nRegions = numel(state.regions);
 			for iRegion = 1:nRegions
-				region = state.regions(iRegion);
+				region = state.regions{iRegion};
 				
 				if(~isempty(region.mask))
 					this.frame.deleteOrigin(region.id);
@@ -240,32 +239,9 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		
 		% Fill this object's currentRegion property with the same defaults found
 		% in State.
-		function [] = setCurrentRegionDefaults(this, state)
-			% TODO: All of this should be given by vt.State
-			region = struct();
-			region.id = state.regionIdCounter + 1; % In Reducer, the id value is set after the isEditing change. Since this is triggered by onIsEditingChange, you have to increment it explicitly here
-			region.name = '';
-% 			region.isSaved = false; % is the region part of vt.State.regions
-			region.origin = []; % origin pixel of the region
-			region.type = 'Average'; % what kind of timeseries do you want?
-			
-			% Region shapes and shape parameters
-			region.shape = 'Circle'; % region shape
-			region.radius = 3; % radius of the region; type='circle'
-			region.height = 3; % height of the region; type='rectangle'
-			region.width = 3; % width of the region; type='rectangle'
-			region.minPixels = 5; % minimum number of pixels required for a valid region; type='statistically-generated'
-			region.tau = .6; % type='statistically-generated'
-			region.searchRadius = 1; % how far away from click location to look for regions; type='statistically-generated'
-			region.mask = []; % a binary matrix, where 1 represents a pixel within the region
-			
-			% Region appearance
-			region.color = 'red'; % region color
-			region.showOrigin = true; % connected to the "Show origin" checkbox
-			region.showOutline = true; % connected to the "Show outline" checkbox
-			region.showFill = false; % connected to the "Show fill" checkbox
-			
-			this.currentRegion = region;
+		function [] = setCurrentRegionDefaults(this)
+			config = vt.Config();
+			this.currentRegion = config.region;
 		end
 	end
 	

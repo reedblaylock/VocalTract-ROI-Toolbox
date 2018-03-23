@@ -9,7 +9,8 @@ classdef Factory < vt.Root
 	methods
 		function this = Factory(reducer)
 			% Instantiate an instance of every vt.Action
-			[pathToActions, ~, ~] = fileparts(mfilename('fullfile'));
+% 			[pathToActions, ~, ~] = fileparts(mfilename('fullfile'));
+			pathToActions = [cd filesep '+vt' filesep '+Action'];
 			files = dir(pathToActions);
 			exclude = {'Dispatcher', 'Factory'};
 			
@@ -19,8 +20,7 @@ classdef Factory < vt.Root
 				actionFile = files(iFile).name;
 				[~, actionName, ~] = fileparts(actionFile);
 				
-				if exist(['vt.Action' actionName], 'class') == 8 ...
-						&& ~sum(strcmp(actionName, exclude))
+				if (exist(['vt.Action.' actionName], 'class') == 8) && ~sum(strcmp(actionName, exclude))
 					action = vt.Action.(actionName);
 				
 					% Register each vt.Action to the reducer

@@ -27,7 +27,7 @@ classdef FrameNo < vt.Component.TextBox.RangeBox & vt.State.Listener
 		% number changes.
 		function [] = onCurrentFrameNoChange(this, state)
 			str = num2str(state.currentFrameNo);
-			this.data = str;
+			this.backupText = str;
 			this.setParameters('String', str);
 		end
 		
@@ -64,8 +64,9 @@ classdef FrameNo < vt.Component.TextBox.RangeBox & vt.State.Listener
 			validatedNum = this.validateData(num);
 			if(~isempty(validatedNum))
 				this.setParameters('String', num2str(validatedNum));
+				this.backupText = num2str(validatedNum);
 				action = this.actionFactory.actions.SET_CURRENT_FRAME_NO;
-				action.prepare(validatedNum, maxValue);
+				action.prepare(validatedNum, this.maxValue);
 				action.dispatch();
 			end
 		end

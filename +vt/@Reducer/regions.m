@@ -1,8 +1,9 @@
-function newState = regions(this, oldState, action)
-	p = inputparser;
+function newState = regions(this, varargin)
+	p = inputParser;
 	addOptional(p, 'oldState', {});
 	addOptional(p, 'action', struct('type', ''));
-	parse(p, oldState, action);
+	p.StructExpand = false;
+	parse(p, varargin{:});
 
 	switch(p.Results.action.type)
 		case 'NEW_REGION'

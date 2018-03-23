@@ -1,8 +1,9 @@
-function newState = frameType(this, oldState, action)
-	p = inputparser;
-	addOptional(p, 'oldState', []);
+function newState = frameType(this, varargin)
+	p = inputParser;
+	addOptional(p, 'oldState', 'frame', @(oldState) ischar(oldState));
 	addOptional(p, 'action', struct('type', ''));
-	parse(p, oldState, action);
+	p.StructExpand = false;
+	parse(p, varargin{:});
 
 	switch(p.Results.action.type)
 		case 'SET_FRAME_TYPE'

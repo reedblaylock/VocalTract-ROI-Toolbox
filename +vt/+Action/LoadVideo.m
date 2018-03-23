@@ -3,9 +3,13 @@ classdef LoadVideo < vt.Action
 		LOAD_VIDEO
 	end
 	
+	properties
+		video
+	end
+	
 	methods
 		function [] = prepare(this, loadType)
-			p = inputparser;
+			p = inputParser;
 			addRequired(p, 'loadType', @ischar);
 			parse(p, loadType);
 			

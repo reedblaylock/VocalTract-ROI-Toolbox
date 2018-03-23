@@ -51,13 +51,17 @@ classdef RegionName < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Lis
 				end
 			end
 			
-			this.setParameters('String', this.currentRegion.name);
+			if ~isempty(this.currentRegion)
+				this.setParameters('String', this.currentRegion.name);
+				this.backupText = this.currentRegion.name;
+			end
 		end
 		
 		% Overloads the Action.Dispatcher dispatchAction function. Sends the
 		% current region name as a parameter when dispatching an action.
 		function [] = dispatchAction(this, ~, ~)
 			newName = this.getParameter('String');
+			this.backupText = num2str(validatedNum);
 			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
 			action.prepare(this.currentRegion, 'name', newName);
 			action.dispatch();

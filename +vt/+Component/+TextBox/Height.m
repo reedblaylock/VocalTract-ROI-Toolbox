@@ -51,8 +51,10 @@ classdef Height < vt.Component.TextBox.RangeBox & vt.State.Listener
 				end
 			end
 			
-			this.setParameters('String', num2str(this.currentRegion.height));
-% 			this.data = num2str(this.currentRegion.height);
+			if ~isempty(this.currentRegion)
+				this.setParameters('String', num2str(this.currentRegion.height));
+				this.backupText = num2str(this.currentRegion.height);
+			end
 		end
 		
 		function [] = onVideoChange(this, state)
@@ -66,6 +68,7 @@ classdef Height < vt.Component.TextBox.RangeBox & vt.State.Listener
 			validatedNum = this.validateData(num);
 			if(~isempty(validatedNum))
 				this.setParameters('String', num2str(validatedNum));
+				this.backupText = num2str(validatedNum);
 				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
 				action.prepare(this.region, 'height', validatedNum, this.video);
 				action.dispatch();

@@ -9,7 +9,8 @@ classdef ChangeRegionParameter < vt.Action
 	
 	methods
 		function [] = prepare(this, region, parameter, value, video)
-			p = inputparser;
+			p = inputParser;
+			p.StructExpand = false;
 			addRequired(p, 'region');
 			addRequired(p, 'parameter');
 			addOptional(p, 'value', []);

@@ -57,7 +57,7 @@ classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listene
 			
 			action = this.actionFactory.actions.SET_CURRENT_FRAME_NO;
 			action.prepare(frameNo, this.maxFrame);
-			this.action.dispatch();
+			action.dispatch();
 		end
 		
 		%%%%% OTHER %%%%%

@@ -28,6 +28,10 @@ classdef Timeseries < vt.Component & vt.State.Listener
 			p.addParameter('Title', '', @ischar);
 			p.parse(data, color, currentFrameNo, varargin{:});
 			
+			if isempty(p.Results.data)
+				return
+			end
+			
 			plot( ...
 				p.Results.data, ...
 				'Parent', this.handle, ...

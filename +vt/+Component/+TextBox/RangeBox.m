@@ -38,7 +38,7 @@ classdef (Abstract) RangeBox < vt.Component.TextBox & vt.Action.Dispatcher
 			num = str2double(str);
 			validatedNum = this.validateData(num);
 			if(~isempty(validatedNum))
-				this.data = str;
+				this.backupText = num2str(validatedNum);
 				this.setParameters('String', num2str(validatedNum));
 				this.action.dispatch(validatedNum);
 			end
@@ -58,7 +58,7 @@ classdef (Abstract) RangeBox < vt.Component.TextBox & vt.Action.Dispatcher
 			catch
 				% The user entered something that isn't a number. You can't fix
 				% this one, so return early.
-				this.setParameters('String', this.data);
+				this.setParameters('String', this.backupText);
 				excp = MException('InvalidInput:RangeBox:Non-numerical', 'Value must be numerical.');
 				this.log.exception(excp);
 				return;

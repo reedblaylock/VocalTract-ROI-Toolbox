@@ -1,8 +1,9 @@
-function newState = frame(this, oldState, action)
-	p = inputparser;
+function newState = frame(this, varargin)
+	p = inputParser;
 	addOptional(p, 'oldState', struct('currentFrameNo', [], 'frameType', []));
 	addOptional(p, 'action', struct('type', ''));
-	parse(p, oldState, action);
+	p.StructExpand = false;
+	parse(p, varargin{:});
 
 	newState = struct( ...
 		'currentFrameNo', currentFrameNo(this, p.Results.oldState.currentFrameNo, p.Results.action), ...

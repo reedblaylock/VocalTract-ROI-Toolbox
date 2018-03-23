@@ -21,7 +21,9 @@ classdef ShowOutline < vt.Component.Checkbox & vt.State.Listener & vt.Action.Dis
 				end
 			end
 			
-			this.setParameters('Value', this.currentRegion.showOutline);
+			if ~isempty(this.currentRegion)
+				this.setParameters('Value', this.currentRegion.showOutline);
+			end
 		end
 		
 		function [] = onIsEditingChange(this, state)

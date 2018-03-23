@@ -17,7 +17,7 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		end
 		
 		function [] = register(this, actionObj)
-			p = inputparser;
+			p = inputParser;
 			addRequired(p, 'action', @(action) isa(action, 'vt.Action'));
 			parse(p, actionObj);
 			
@@ -26,7 +26,7 @@ classdef Reducer < vt.Listener & vt.State.Setter
 				addlistener( ...
 					p.Results.action, ...
 					actionName, ...
-					@(source, actionData) this.reduce(source, actionData)...
+					@(source, eventData) this.reduce(source, eventData)...
 				);
 			catch excp
 				this.log.exception(excp);
@@ -36,7 +36,9 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		
 		% The main reduce function. Calls all the other reduce functions in this
 		% class (by calling some from within others).
-		function [] = reduce(this, ~, actionData)
+		function [] = reduce(this, ~, eventData)
+			actionData = eventData.data;
+			
 			% Frame functions
 			this.state.currentFrameNo = this.currentFrameNo(this.state.currentFrameNo, actionData);
 			this.state.frameType = this.frameType(this.state.frameType, actionData);
@@ -45,8 +47,8 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			this.state.video = this.video(this.state.video, actionData);
 			
 			% Region functions
-			this.state.currentRegion = this.currentRegion(this.state.currentRegion, actionData);
 			this.state.regions = this.regions(this.state.regions, actionData);
+			this.state.currentRegion = this.currentRegion(this.state.currentRegion, actionData);
 			
 			% isEditing functions
 			this.state.isEditing = this.isEditing(this.state.isEditing, actionData);
@@ -63,8 +65,8 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			this.state.video = this.video();
 			
 			% Region functions
-			this.state.currentRegion = this.currentRegion();
 			this.state.regions = this.regions();
+			this.state.currentRegion = this.currentRegion();
 			
 			% isEditing functions
 			this.state.isEditing = this.isEditing();
@@ -76,7 +78,7 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		newState = currentRegion(this, oldState, actionData)
 % 		newState = frame(this, oldState, action)
 		newState = frameType(this, oldState, actionData)
-		newState = isEditing(oldState, actionData)
+		newState = isEditing(this, oldState, actionData)
 % 		newState = region(this, oldState, action)
 		newState = regions(this, oldState, actionData)
 		newState = video(this, oldState, actionData)
