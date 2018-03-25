@@ -41,6 +41,15 @@ classdef ShowOrigin < vt.Component.Checkbox & vt.State.Listener & vt.Action.Disp
 			action.prepare(this.currentRegion, 'showOrigin', value);
 			action.dispatch();
 		end
+		
+		function [] = onRegionsChange(this, state)
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					this.currentRegion = state.regions{iRegion};
+					break;
+				end
+			end
+		end
 	end
 	
 end

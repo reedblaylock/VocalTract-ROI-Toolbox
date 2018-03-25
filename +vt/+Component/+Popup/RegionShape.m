@@ -50,7 +50,16 @@ classdef RegionShape < vt.Component.Popup & vt.State.Listener & vt.Action.Dispat
 			str = this.getCurrentPopupString();
 			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
 			action.prepare(this.currentRegion, 'shape', str, this.video);
-			this.action.dispatch();
+			action.dispatch();
+		end
+		
+		function [] = onRegionsChange(this, state)
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					this.currentRegion = state.regions{iRegion};
+					break;
+				end
+			end
 		end
 	end
 end

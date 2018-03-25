@@ -18,7 +18,7 @@ classdef RegionColor < vt.Component.Button & vt.Action.Dispatcher & vt.State.Lis
 			
 			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
 			action.prepare(this.currentRegion, 'color', color);
-			this.action.dispatch();
+			action.dispatch();
 		end
 		
 		function [] = onIsEditingChange(this, state)
@@ -37,6 +37,15 @@ classdef RegionColor < vt.Component.Button & vt.Action.Dispatcher & vt.State.Lis
 			for iRegion = 1:numel(regions)
 				if regions{iRegion}.id == state.currentRegion
 					this.currentRegion = regions{iRegion};
+					break;
+				end
+			end
+		end
+		
+		function [] = onRegionsChange(this, state)
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					this.currentRegion = state.regions{iRegion};
 					break;
 				end
 			end

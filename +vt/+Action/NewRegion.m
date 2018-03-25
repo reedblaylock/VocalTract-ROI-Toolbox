@@ -7,6 +7,8 @@ classdef NewRegion < vt.Action
 		region
 	end
 	
+	% TODO: When you load states from a previous session, this will overwrite
+	% IDs.
 	methods (Static, Access = private)
 		function out = getOrIncrementCount(increment)
 			persistent id;
@@ -28,6 +30,11 @@ classdef NewRegion < vt.Action
 			% Increment the counter in the constructor
 			this.region.id = vt.Action.NewRegion.getOrIncrementCount(1);
 			this.region.name = ['Region' num2str(this.region.id)];
+		end
+		
+		function [] = delete(this)
+			delete@vt.Action.NewRegion(this);
+			clear vt.Action.NewRegion;
 		end
 	end
 end

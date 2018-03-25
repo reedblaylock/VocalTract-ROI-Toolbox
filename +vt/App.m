@@ -434,14 +434,14 @@ classdef App < vt.Root & vt.State.Listener
 					this.redrawAllTimeseries(state);
 					
 					% delete the last three areas
-					delete(this.gui.RightBoxGrid.handle.Contents(16:18));
-					delete(this.gui.RegionSettings7_2);
+					delete(this.gui.RightBoxGrid.handle.Contents(16:end));
+% 					delete(this.gui.RegionSettings7_2);
 					delete(this.gui.RegionSettings8_2);
 					delete(this.gui.RegionSettings9_2);
-					this.gui.RegionSettings7_2 = [];
+% 					this.gui.RegionSettings7_2 = [];
 					this.gui.RegionSettings8_2 = [];
 					this.gui.RegionSettings9_2 = [];
-					this.gui = rmfield(this.gui, 'RegionSettings7_2');
+% 					this.gui = rmfield(this.gui, 'RegionSettings7_2');
 					this.gui = rmfield(this.gui, 'RegionSettings8_2');
 					this.gui = rmfield(this.gui, 'RegionSettings9_2');
 					

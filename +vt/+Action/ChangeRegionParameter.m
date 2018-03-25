@@ -5,17 +5,20 @@ classdef ChangeRegionParameter < vt.Action
 	
 	properties
 		region
+		parameter
+		value
 	end
 	
 	methods
-		function [] = prepare(this, region, parameter, value, video)
+		function [] = prepare(this, region, parameter, value, varargin)
 			p = inputParser;
 			p.StructExpand = false;
 			addRequired(p, 'region');
 			addRequired(p, 'parameter');
-			addOptional(p, 'value', []);
+% 			addOptional(p, 'value', []);
+			addRequired(p, 'value');
 			addOptional(p, 'video', []);
-			parse(p, region, parameter, value, video);
+			parse(p, region, parameter, value, varargin{:});
 			
 			region = p.Results.region;
 			parameter = p.Results.parameter;
@@ -24,12 +27,12 @@ classdef ChangeRegionParameter < vt.Action
 			
 			switch(parameter)
 				% Parameter/value sets
-				case {'origin', 'shape', 'radius', 'width', 'height', 'minPixels'}
+				case {'origin', 'shape', 'type', 'radius', 'width', 'height', 'minPixels'}
 					region.(parameter) = value;
 					
 					region.mask = getMask(region, video);
 					
-					this.region.timeseries = mean(video.matrix(:, region.mask > 0), 2);
+					region.timeseries = mean(video.matrix(:, region.mask > 0), 2);
 				case {'color', 'showOrigin', 'showOutline', 'showFill'}
 					region.(parameter) = value;
 % 				% Toggles
@@ -40,11 +43,15 @@ classdef ChangeRegionParameter < vt.Action
 			end
 			
 			this.region = region;
+			this.parameter = parameter;
+			this.value = value;
 		end
 	end
 end
 
 function mask = getMask(region, video)
+	mask = [];
+	
 	if(isempty(region.origin))
 		return;
 	end

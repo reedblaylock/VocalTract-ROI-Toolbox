@@ -13,9 +13,9 @@ classdef SetCurrentRegion < vt.Action
 			% algorithm
 			coordinates = fliplr(coordinates);
 			for iRegion = 1:numel(regions)
-				mask = regions(iRegion).mask;
+				mask = regions{iRegion}.mask;
 				if(mask(coordinates(1), coordinates(2)))
-					this.id = regions(iRegion).id;
+					this.id = regions{iRegion}.id;
 				end
 			end
 		end

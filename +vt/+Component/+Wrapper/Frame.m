@@ -61,7 +61,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 			this.isEditing = state.isEditing;
 			switch(state.isEditing)
 				case 'region'
-					this.setCurrentRegionDefaults();
+% 					this.setCurrentRegionDefaults();
 				otherwise
 					this.deleteCurrentRegion(state);
 					this.redrawAllRegions(state);

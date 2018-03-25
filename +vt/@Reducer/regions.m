@@ -11,7 +11,7 @@ function newState = regions(this, varargin)
 		case 'CHANGE_REGION_PARAMETER'
 			% Find region by ID
 			for iRegion = 1:numel(p.Results.oldState)
-				if p.Results.oldState{iRegion}.id == action.region.id
+				if p.Results.oldState{iRegion}.id == p.Results.action.region.id
 					break;
 				end
 			end
