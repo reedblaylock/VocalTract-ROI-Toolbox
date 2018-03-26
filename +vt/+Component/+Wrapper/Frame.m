@@ -101,6 +101,14 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		% whenever a saved region is changed in State (i.e. added or deleted).
 		function [] = onRegionsChange(this, state)
 			this.regions = state.regions;
+			
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					this.currentRegion = state.regions{iRegion};
+					break;
+				end
+			end
+			
 			this.deleteCurrentRegion(state);
 			this.redrawAllRegions(state);
 		end
