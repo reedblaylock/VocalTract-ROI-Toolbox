@@ -71,7 +71,7 @@ classdef App < vt.Root & vt.State.Listener
 				end
 			end
 			
-			% Register vt.Gui as a state listener
+			% Register vt.App as a state listener
 			this.registerAllMethodsToState(this.state);
 		end
 		
@@ -212,6 +212,8 @@ classdef App < vt.Root & vt.State.Listener
 			
 			this.deleteAllTimeseries(state);
 			this.redrawAllTimeseries(state);
+			
+			this.redrawRegionEditingArea(state);
 		end
 		
 		function [] = guiDelete(this, fieldname)
@@ -482,11 +484,7 @@ classdef App < vt.Root & vt.State.Listener
 			end
 		end
 		
-		% Dynamically called by State.Listener
-		function [] = onCurrentRegionChange(this, state)
-			% REDRAW TIMESERIES 
-			this.redrawCurrentTimeseries(state);
-			
+		function [] = redrawRegionEditingArea(this, state)
 			% REDRAW REGION EDITING AREA
 			% Prevent re-drawing when other changes than shape changes are made
 			currentRegion = [];
@@ -505,6 +503,9 @@ classdef App < vt.Root & vt.State.Listener
 			% 1. Delete seems to be the only thing that works
 			% 2. When vt.State.Listeners are deleted, they first delete their
 			%    own listener handles
+			
+			% TODO: Use the Selection property on panels to change which box is
+			% visible.
 			delete(this.gui.RightBoxGrid.handle.Contents(10:12));
 			switch(this.currentRegion.shape)
 				case 'Circle'
@@ -568,6 +569,9 @@ classdef App < vt.Root & vt.State.Listener
 					end
 					this.initializeComponent(this.gui.RegionSettings1_2);
 					this.initializeComponent(this.gui.RegionRadius);
+					% TODO: this is a hack
+					this.gui.RegionRadius.currentRegion = currentRegion;
+					this.gui.RegionRadius.video = state.video;
 					% 2-2 + Empty space
 					this.gui.RegionSettings2_2 = vt.Component.Layout.Empty( ...
 						this.gui.RightBoxGrid ...
@@ -593,6 +597,9 @@ classdef App < vt.Root & vt.State.Listener
 					end
 					this.initializeComponent(this.gui.RegionSettings1_2);
 					this.initializeComponent(this.gui.RegionWidth);
+					% TODO: this is a hack
+					this.gui.RegionWidth.currentRegion = currentRegion;
+					this.gui.RegionWidth.video = state.video;
 					% 2-2 + Height
 					this.gui.RegionSettings2_2 = vt.Component.Layout.Panel( ...
 						this.gui.RightBoxGrid, ...
@@ -607,6 +614,9 @@ classdef App < vt.Root & vt.State.Listener
 					end
 					this.initializeComponent(this.gui.RegionSettings2_2);
 					this.initializeComponent(this.gui.RegionHeight);
+					% TODO: this is a hack
+					this.gui.RegionHeight.currentRegion = currentRegion;
+					this.gui.RegionHeight.video = state.video;
 					% 3-2 + Empty space
 					this.gui.RegionSettings3_2 = vt.Component.Layout.Empty( ...
 						this.gui.RightBoxGrid ...
@@ -627,6 +637,9 @@ classdef App < vt.Root & vt.State.Listener
 					end
 					this.initializeComponent(this.gui.RegionSettings1_2);
 					this.initializeComponent(this.gui.MinimumPixels);
+					% TODO: this is a hack
+					this.gui.MinimumPixels.currentRegion = currentRegion;
+					this.gui.MinimumPixels.video = state.video;
 					% 2-2 + Search radius textbox
 					this.gui.RegionSettings2_2 = vt.Component.Layout.Panel( ...
 						this.gui.RightBoxGrid, ...
@@ -641,6 +654,9 @@ classdef App < vt.Root & vt.State.Listener
 					end
 					this.initializeComponent(this.gui.RegionSettings2_2);
 					this.initializeComponent(this.gui.SearchRadius);
+					% TODO: this is a hack
+					this.gui.SearchRadius.currentRegion = currentRegion;
+					this.gui.SearchRadius.video = state.video;
 					% 3-2 + Tau textbox
 					this.gui.RegionSettings3_2 = vt.Component.Layout.Panel( ...
 						this.gui.RightBoxGrid, ...
@@ -655,16 +671,28 @@ classdef App < vt.Root & vt.State.Listener
 					end
 					this.initializeComponent(this.gui.RegionSettings3_2);
 					this.initializeComponent(this.gui.Tau);
+					% TODO: this is a hack
+					this.gui.Tau.currentRegion = currentRegion;
+					this.gui.Tau.video = state.video;
 				otherwise
 					% TODO: add the rest
 			end
 			
 			% re-order the elements so that elements 16:18 are 10:12
-			newOrder = [1:9 16:18 10:15];
+			newOrder = [1:9 16:17 10:15]; % 17, now that I took out the save button
 			this.gui.RightBoxGrid.handle.Contents = this.gui.RightBoxGrid.handle.Contents(newOrder);
 			
 			% Update the local copy of currentRegion
 			this.currentRegion = currentRegion;
+		end
+		
+		% Dynamically called by State.Listener
+		function [] = onCurrentRegionChange(this, state)
+			% REDRAW TIMESERIES 
+			this.redrawCurrentTimeseries(state);
+			
+			% Also sets this.currentRegion = currentRegion
+			this.redrawRegionEditingArea(state);
 		end
 		
 		function [] = redrawCurrentTimeseries(this, state)

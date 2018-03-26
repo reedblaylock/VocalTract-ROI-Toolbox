@@ -62,6 +62,15 @@ classdef Height < vt.Component.TextBox.RangeBox & vt.State.Listener
 			this.maxValue = state.video.height;
 		end
 		
+		function [] = onRegionsChange(this, state)
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					this.currentRegion = state.regions{iRegion};
+					break;
+				end
+			end
+		end
+		
 		function [] = dispatchAction(this, source, eventData)
 			str = this.getParameter('String');
 			num = str2double(str);
@@ -70,7 +79,7 @@ classdef Height < vt.Component.TextBox.RangeBox & vt.State.Listener
 				this.setParameters('String', num2str(validatedNum));
 				this.backupText = num2str(validatedNum);
 				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
-				action.prepare(this.region, 'height', validatedNum, this.video);
+				action.prepare(this.currentRegion, 'height', validatedNum, this.video);
 				action.dispatch();
 			end
 		end

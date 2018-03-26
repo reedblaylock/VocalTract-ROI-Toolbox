@@ -49,7 +49,8 @@ classdef Log < handle
 % 			this.notifyError(exception);
 			
 			if(this.debugMode)
-				throwAsCaller(exception);
+% 				throwAsCaller(exception);
+				throw(exception);
 			end
 		end
 		

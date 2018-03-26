@@ -62,6 +62,15 @@ classdef Radius < vt.Component.TextBox.RangeBox & vt.State.Listener
 			this.video = state.video;
 		end
 		
+		function [] = onRegionsChange(this, state)
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					this.currentRegion = state.regions{iRegion};
+					break;
+				end
+			end
+		end
+		
 		function [] = dispatchAction(this, ~, ~)
 			str = this.getParameter('String');
 			num = str2double(str);
