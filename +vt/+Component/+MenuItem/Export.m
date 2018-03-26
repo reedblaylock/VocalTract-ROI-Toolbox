@@ -1,4 +1,4 @@
-classdef Export < vt.Component.MenuItem & vt.Action.Dispatcher
+classdef Export < vt.Component.MenuItem & vt.State.Listener & vt.Action.Dispatcher
 	properties
 		regions
 		video

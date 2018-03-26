@@ -21,7 +21,7 @@ classdef Export < vt.Action
 end
 
 function [] = exportMview(regions, video)
-	if(isempty(fieldnames(regions)) || ~numel(regions))
+	if isempty(regions) || ~numel(regions)
 		% There are no regions saved right now, so there's nothing to
 		% delete
 		return;
@@ -66,7 +66,7 @@ function [] = exportMview(regions, video)
 	save(filename, 'data');
 end
 
-function d = formatData(~, v, fName, wav_dir, avi_dir)
+function d = formatData(v, fName, wav_dir, avi_dir)
 	%FORMATDATA  - format rtMRI data for use with mviewRT
 	%
 	%	usage:  d = FormatData(v, fName, locNames)

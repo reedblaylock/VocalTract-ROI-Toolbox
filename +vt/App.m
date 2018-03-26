@@ -343,17 +343,26 @@ classdef App < vt.Root & vt.State.Listener
 				gui.RightBoxGrid, ...
 				'Show fill' ...
 			);
-			% 1-2 + Radius
+			% 1-2 + Radius and Width
 			gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
 				gui.RightBoxGrid, ...
 				'Title', 'Radius' ...
 			);
+			gui.RegionWidth = vt.Component.TextBox.Width( ...
+				gui.RegionSettings1_2 ...
+			);
 			gui.RegionRadius = vt.Component.TextBox.Radius( ...
 				gui.RegionSettings1_2 ...
 			);
-			% 2-2 + Empty space
-			gui.RegionSettings2_2 = vt.Component.Layout.Empty( ...
+			% 2-2 + Empty space and Height
+			gui.RegionSettings2_2 = vt.Component.Layout.Panel( ...
 				gui.RightBoxGrid ...
+			);
+			gui.RegionHeight = vt.Component.TextBox.Height( ...
+				gui.RegionSettings2_2 ...
+			);
+			gui.RegionSettingsEmpty2_2 = vt.Component.Layout.Empty( ...
+				gui.RegionSettings2_2 ...
 			);
 			% 3-2 + Empty space
 			gui.RegionSettings3_2 = vt.Component.Layout.Empty( ...
@@ -506,122 +515,72 @@ classdef App < vt.Root & vt.State.Listener
 			
 			% TODO: Use the Selection property on panels to change which box is
 			% visible.
-			delete(this.gui.RightBoxGrid.handle.Contents(10:12));
-			switch(this.currentRegion.shape)
-				case 'Circle'
-					delete(this.gui.RegionRadius);
-					this.gui.RegionSettings1_2 = [];
-					this.gui.RegionSettings2_2 = [];
-					this.gui.RegionSettings3_2 = [];
-					this.gui.RegionRadius = [];
-					this.gui = rmfield(this.gui, 'RegionSettings1_2');
-					this.gui = rmfield(this.gui, 'RegionSettings2_2');
-					this.gui = rmfield(this.gui, 'RegionSettings3_2');
-					this.gui = rmfield(this.gui, 'RegionRadius');
-				case 'Rectangle'
-					delete(this.gui.RegionWidth);
-					delete(this.gui.RegionHeight);
-					this.gui.RegionSettings1_2 = [];
-					this.gui.RegionSettings2_2 = [];
-					this.gui.RegionSettings3_2 = [];
-					this.gui.RegionWidth = [];
-					this.gui.RegionHeight = [];
-					this.gui = rmfield(this.gui, 'RegionSettings1_2');
-					this.gui = rmfield(this.gui, 'RegionSettings2_2');
-					this.gui = rmfield(this.gui, 'RegionSettings3_2');
-					this.gui = rmfield(this.gui, 'RegionWidth');
-					this.gui = rmfield(this.gui, 'RegionHeight');
-				case 'Statistically-generated'
-					delete(this.gui.MinimumPixels);
-					delete(this.gui.SearchRadius);
-					delete(this.gui.Tau);
-					this.gui.RegionSettings1_2 = [];
-					this.gui.RegionSettings2_2 = [];
-					this.gui.RegionSettings3_2 = [];
-					this.gui.MinimumPixels = [];
-					this.gui.SearchRadius = [];
-					this.gui.Tau = [];
-					this.gui = rmfield(this.gui, 'RegionSettings1_2');
-					this.gui = rmfield(this.gui, 'RegionSettings2_2');
-					this.gui = rmfield(this.gui, 'RegionSettings3_2');
-					this.gui = rmfield(this.gui, 'MinimumPixels');
-					this.gui = rmfield(this.gui, 'SearchRadius');
-					this.gui = rmfield(this.gui, 'Tau');
-				otherwise
-					% TODO: something here
-			end
+% 			delete(this.gui.RightBoxGrid.handle.Contents(10:12));
+% 			switch(this.currentRegion.shape)
+% 				case 'Circle'
+% 					delete(this.gui.RegionRadius);
+% 					this.gui.RegionSettings1_2 = [];
+% 					this.gui.RegionSettings2_2 = [];
+% 					this.gui.RegionSettings3_2 = [];
+% 					this.gui.RegionRadius = [];
+% 					this.gui = rmfield(this.gui, 'RegionSettings1_2');
+% 					this.gui = rmfield(this.gui, 'RegionSettings2_2');
+% 					this.gui = rmfield(this.gui, 'RegionSettings3_2');
+% 					this.gui = rmfield(this.gui, 'RegionRadius');
+% 				case 'Rectangle'
+% 					delete(this.gui.RegionWidth);
+% 					delete(this.gui.RegionHeight);
+% 					this.gui.RegionSettings1_2 = [];
+% 					this.gui.RegionSettings2_2 = [];
+% 					this.gui.RegionSettings3_2 = [];
+% 					this.gui.RegionWidth = [];
+% 					this.gui.RegionHeight = [];
+% 					this.gui = rmfield(this.gui, 'RegionSettings1_2');
+% 					this.gui = rmfield(this.gui, 'RegionSettings2_2');
+% 					this.gui = rmfield(this.gui, 'RegionSettings3_2');
+% 					this.gui = rmfield(this.gui, 'RegionWidth');
+% 					this.gui = rmfield(this.gui, 'RegionHeight');
+% 				case 'Statistically-generated'
+% 					delete(this.gui.MinimumPixels);
+% 					delete(this.gui.SearchRadius);
+% 					delete(this.gui.Tau);
+% 					this.gui.RegionSettings1_2 = [];
+% 					this.gui.RegionSettings2_2 = [];
+% 					this.gui.RegionSettings3_2 = [];
+% 					this.gui.MinimumPixels = [];
+% 					this.gui.SearchRadius = [];
+% 					this.gui.Tau = [];
+% 					this.gui = rmfield(this.gui, 'RegionSettings1_2');
+% 					this.gui = rmfield(this.gui, 'RegionSettings2_2');
+% 					this.gui = rmfield(this.gui, 'RegionSettings3_2');
+% 					this.gui = rmfield(this.gui, 'MinimumPixels');
+% 					this.gui = rmfield(this.gui, 'SearchRadius');
+% 					this.gui = rmfield(this.gui, 'Tau');
+% 				otherwise
+% 					% TODO: something here
+% 			end
 			
 			% TODO: If isEditing='region', 'Enable'='on'; otherwise,
 			% 'Enable'='off'
 			switch(currentRegion.shape)
 				case 'Circle'
 					% 1-2 + Radius
-					this.gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
-						this.gui.RightBoxGrid, ...
-						'Title', 'Radius' ...
-					);
-					this.gui.RegionRadius = vt.Component.TextBox.Radius( ...
-						this.gui.RegionSettings1_2, ...
-						'String', num2str(currentRegion.radius) ...
-					);
-					if(~strcmp(state.isEditing, 'region'))
-						this.gui.RegionRadius.setParameters('Enable', 'off');
-					end
-					this.initializeComponent(this.gui.RegionSettings1_2);
-					this.initializeComponent(this.gui.RegionRadius);
-					% TODO: this is a hack
-					this.gui.RegionRadius.currentRegion = currentRegion;
-					this.gui.RegionRadius.video = state.video;
+					this.gui.RegionSettings1_2.setParameters('Title', 'Radius');
+					this.gui.RegionSettings1_2.handle.Selection = 2;
 					% 2-2 + Empty space
-					this.gui.RegionSettings2_2 = vt.Component.Layout.Empty( ...
-						this.gui.RightBoxGrid ...
-					);
-					this.initializeComponent(this.gui.RegionSettings2_2);
+					this.gui.RegionSettings2_2.handle.Selection = 2;
+					this.gui.RegionSettings2_2.setParameters('Title', '');
 					% 3-2 + Empty space
-					this.gui.RegionSettings3_2 = vt.Component.Layout.Empty( ...
-						this.gui.RightBoxGrid ...
-					);
-					this.initializeComponent(this.gui.RegionSettings3_2);
+% 					this.gui.RegionSettings3_2.handle.Selection = 2;
 				case 'Rectangle'
 					% 1-2 + Width
-					this.gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
-						this.gui.RightBoxGrid, ...
-						'Title', 'Width' ...
-					);
-					this.gui.RegionWidth = vt.Component.TextBox.Width( ...
-						this.gui.RegionSettings1_2, ...
-						'String', num2str(currentRegion.width) ...
-					);
-					if(~strcmp(state.isEditing, 'region'))
-						this.gui.RegionWidth.setParameters('Enable', 'off');
-					end
-					this.initializeComponent(this.gui.RegionSettings1_2);
-					this.initializeComponent(this.gui.RegionWidth);
-					% TODO: this is a hack
-					this.gui.RegionWidth.currentRegion = currentRegion;
-					this.gui.RegionWidth.video = state.video;
+					this.gui.RegionSettings1_2.setParameters('Title', 'Width');
+					this.gui.RegionSettings1_2.handle.Selection = 1;
 					% 2-2 + Height
-					this.gui.RegionSettings2_2 = vt.Component.Layout.Panel( ...
-						this.gui.RightBoxGrid, ...
-						'Title', 'Height' ...
-					);
-					this.gui.RegionHeight = vt.Component.TextBox.Height( ...
-						this.gui.RegionSettings2_2, ...
-						'String', num2str(currentRegion.height) ...
-					);
-					if(~strcmp(state.isEditing, 'region'))
-						this.gui.RegionHeight.setParameters('Enable', 'off');
-					end
-					this.initializeComponent(this.gui.RegionSettings2_2);
-					this.initializeComponent(this.gui.RegionHeight);
-					% TODO: this is a hack
-					this.gui.RegionHeight.currentRegion = currentRegion;
-					this.gui.RegionHeight.video = state.video;
+					this.gui.RegionSettings2_2.setParameters('Title', 'Height');
+					this.gui.RegionSettings2_2.handle.Selection = 1;
 					% 3-2 + Empty space
-					this.gui.RegionSettings3_2 = vt.Component.Layout.Empty( ...
-						this.gui.RightBoxGrid ...
-					);
-					this.initializeComponent(this.gui.RegionSettings3_2);
+% 					this.gui.RegionSettings3_2.handle.Selection = 1;
 				case 'Statistically-generated'
 					% 1-2 + Minimum # pixels textbox
 					this.gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
@@ -679,8 +638,8 @@ classdef App < vt.Root & vt.State.Listener
 			end
 			
 			% re-order the elements so that elements 16:18 are 10:12
-			newOrder = [1:9 16:17 10:15]; % 17, now that I took out the save button
-			this.gui.RightBoxGrid.handle.Contents = this.gui.RightBoxGrid.handle.Contents(newOrder);
+% 			newOrder = [1:9 16:17 10:15]; % 17, now that I took out the save button
+% 			this.gui.RightBoxGrid.handle.Contents = this.gui.RightBoxGrid.handle.Contents(newOrder);
 			
 			% Update the local copy of currentRegion
 			this.currentRegion = currentRegion;
