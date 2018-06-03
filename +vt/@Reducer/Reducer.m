@@ -5,13 +5,13 @@ classdef Reducer < vt.Listener & vt.State.Setter
 	% gets its own reducer.
 	
 	properties
-		state
+		stateObj
 	end
 	
 	methods
 		% Constructor function. Receives a vt.State object.
-		function this = Reducer(state)
-			this.state = state;
+		function this = Reducer(stateObj)
+			this.stateObj = stateObj;
 			
 			this.initializeState();
 		end
@@ -38,38 +38,46 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		% class (by calling some from within others).
 		function [] = reduce(this, ~, eventData)
 			actionData = eventData.data;
+			newState = struct();
+			oldState = this.stateObj.state;
 			
 			% Frame functions
-			this.state.currentFrameNo = this.currentFrameNo(this.state.currentFrameNo, actionData);
-			this.state.frameType = this.frameType(this.state.frameType, actionData);
+			newState.currentFrameNo = this.currentFrameNo(oldState.currentFrameNo, actionData);
+			newState.frameType = this.frameType(oldState.frameType, actionData);
 			
 			% Video functions
-			this.state.video = this.video(this.state.video, actionData);
+			newState.video = this.video(oldState.video, actionData);
 			
 			% Region functions
-			this.state.regions = this.regions(this.state.regions, actionData);
-			this.state.currentRegion = this.currentRegion(this.state.currentRegion, actionData);
+			newState.regions = this.regions(oldState.regions, actionData);
+			newState.currentRegion = this.currentRegion(oldState.currentRegion, actionData);
 			
 			% isEditing functions
-			this.state.isEditing = this.isEditing(this.state.isEditing, actionData);
+			newState.isEditing = this.isEditing(oldState.isEditing, actionData);
+			
+			this.stateObj.state = newState;
 		end
 		
 		% Initialize the vt.State object by reducing without any input
 		% parameters.
 		function [] = initializeState(this)
+			newState = struct();
+			
 			% Frame functions
-			this.state.currentFrameNo = this.currentFrameNo();
-			this.state.frameType = this.frameType();
+			newState.currentFrameNo = this.currentFrameNo();
+			newState.frameType = this.frameType();
 			
 			% Video functions
-			this.state.video = this.video();
+			newState.video = this.video();
 			
 			% Region functions
-			this.state.regions = this.regions();
-			this.state.currentRegion = this.currentRegion();
+			newState.regions = this.regions();
+			newState.currentRegion = this.currentRegion();
 			
 			% isEditing functions
-			this.state.isEditing = this.isEditing();
+			newState.isEditing = this.isEditing();
+			
+			this.stateObj.state = newState;
 		end
 		
 		% Function declarations for the other reducer methods. You can find them

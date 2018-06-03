@@ -50,6 +50,16 @@ You won't need the MATLAB command window again while you use the GUI.
 
 You can load an AVI video into the GUI by going to the figure's `File` menu and selecting `Load...` > `AVI`. Once you've done this, you should see the first frame of your video, and a few of the figure's controls should be usable.
 
+#### What if I get an error when loading a video?
+
+This StackOverflow answer may be helpful: https://stackoverflow.com/questions/22773403/cant-read-an-avi-file-to-matlab-using-videoread?answertab=votes#tab-top.
+
+Short answer:
+1. Download ffmpeg (on Mac, brew install ffmpeg)
+2. Run this command: ffmpeg -i videoIWantToUse.avi -an -vcodec rawvideo -y outputNameForUsableVideo.avi
+
+Note: if you had trouble opening your videos in QuickTime, this should fix that problem too.
+
 ### Video interaction
 
 Beneath the image of your video frame is a set of controls. The text box with a number inside can be edited to take you to any frame you want. You can also use the slider to change frames incrementally.

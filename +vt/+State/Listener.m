@@ -5,27 +5,19 @@ classdef Listener < vt.Listener
 	
 	methods
 		function [] = registerAllMethodsToState(this, state)
-			propertyList = this.getProperties(state);
-			
-% 			event.proplistener( ...
-% 				state, ...
-% 				propertyList, ...
-% 				'PostSet', ...
-% 				@(source, eventdata) update(this, source.Name, eventdata.AffectedObject) ...
-% 			);
 			this.listenerHandle = addlistener( ...
 				state, ...
-				propertyList, ...
-				'PostSet', ...
-				@(source, eventdata) update(this, source.Name, eventdata.AffectedObject) ...
+				'StateChange', ...
+				@(source, eventdata) update(this, eventdata.data.propertyName, eventdata.data.state) ...
 			);
 		end
 		
 		function [] = update(this, propertyName, state)
-			p = vt.InputParser;
+			p = inputParser;
+			p.StructExpand = false;
 			p.addRequired('this',  @(this) isa(this, 'vt.State.Listener'));
 			p.addRequired('propertyName', @ischar);
-			p.addRequired('state', @(state) isa(state, 'vt.State'));
+			p.addRequired('state', @isstruct);
 			parse(p, this, propertyName, state);
 			
 			% Prevent trying to call handles that have been deleted
@@ -45,12 +37,9 @@ classdef Listener < vt.Listener
 				this.log.exception(excp);
 			end
 			
-			method = this.property2method(propertyName);
-			try
-				assert(this.isMethod(method));
-				this.(method)(state);
-			catch excp
-				this.log.exception(excp);
+			method = this.property2method(p.Results.propertyName);
+			if this.isMethod(method)
+				this.(method)(p.Results.state);
 			end
 		end
 		

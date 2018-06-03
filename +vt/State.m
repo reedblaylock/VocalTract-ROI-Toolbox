@@ -1,31 +1,34 @@
 classdef (Sealed) State < handle
-	% SetObservable emits PreSet and PostSet events.
-	%
-	% AbortSet will prevent the PostSet event from being emitted based on
-	% isequal(). Non-static objects will not be considered equal, even if their
-	% property values are identical.
+	properties (AbortSet = true, SetAccess = ?vt.State.Setter)
+		state = struct();
+	end
 	
-	% https://www.mathworks.com/help/matlab/matlab_oop/validate-property-values.html
+	properties
+		oldStateArray = {};
+	end
 	
-	% When a property is a struct, any change to a field of that property will
-	% trigger a PostSet event for the property.
-	% When a property is an object, changes to that object will not trigger a
-	% PostSet event. In this case, a PostSet event is only triggered when a new
-	% object (either a new instance or a new class) is assigned to the property.
-	properties (SetObservable = true, AbortSet = true, SetAccess = ?vt.State.Setter)
-		% Frame
-		currentFrameNo
-		frameType
-		
-		% Video
-		video
-
-		% Region
-		currentRegion
-		regions
-
-		% isEditing
-		isEditing
+	events
+		StateChange
+	end
+	
+	methods
+		function set.state(obj, newState)
+			oldState = obj.state;
+			obj.state = newState;
+			
+			% Save the old state for un-do purposes
+			obj.oldStateArray{end+1} = oldState;
+			
+			% Notify all listeners about the new state
+			fields = fieldnames(obj.state);
+			eventdata = vt.EventData(struct('state', obj.state));
+			for iField = 1:numel(fields)
+				if isfield(oldState, fields{iField}) ...
+						&& ~isequal(obj.state.(fields{iField}), oldState.(fields{iField}))
+					eventdata.data.propertyName = fields{iField};
+					notify(obj, 'StateChange', eventdata);
+				end
+			end
+		end
 	end
 end
-

@@ -61,7 +61,6 @@ classdef RegionName < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Lis
 		% current region name as a parameter when dispatching an action.
 		function [] = dispatchAction(this, ~, ~)
 			newName = this.getParameter('String');
-			this.backupText = num2str(validatedNum);
 			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
 			action.prepare(this.currentRegion, 'name', newName);
 			action.dispatch();
