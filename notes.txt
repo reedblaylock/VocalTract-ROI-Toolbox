@@ -1,3 +1,14 @@
+NOTES FROM JUNE 3, 2018
+
+The New Region ID doesn't get cleared after you exit the program. Either stop
+using a static/persistent region ID, or throw in some onDelete cleanup.
+
+You can change some (most?) properties of a region just fine, but if you change
+its name, the region disappears when you save it!
+
+--------------------------------------------------------------------------------
+NOTES FROM SEPTEMBER 2017
+
 TODO
 
 - Use MATLAB class naming conventions (camelCase?)

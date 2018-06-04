@@ -57,6 +57,15 @@ classdef RegionName < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Lis
 			end
 		end
 		
+		function [] = onRegionsChange(this, state)
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					this.currentRegion = state.regions{iRegion};
+					break;
+				end
+			end
+		end
+		
 		% Overloads the Action.Dispatcher dispatchAction function. Sends the
 		% current region name as a parameter when dispatching an action.
 		function [] = dispatchAction(this, ~, ~)

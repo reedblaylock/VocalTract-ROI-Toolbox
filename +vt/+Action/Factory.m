@@ -1,4 +1,4 @@
-% This class would be a singleton class, if I weren't so afraid of MATLAB
+% This class would be a singleton class if I weren't so afraid of MATLAB
 % singletons (they've given me some performance/memory/scary problems).
 
 classdef Factory < vt.Root
