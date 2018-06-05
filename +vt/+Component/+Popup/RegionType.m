@@ -9,7 +9,8 @@ classdef RegionType < vt.Component.Popup & vt.State.Listener & vt.Action.Dispatc
 			this@vt.Component.Popup(parent);
 			
 			this.setParameters( ...
-				'String', {'Average', 'Binary'} ...
+				'String', {'Average', 'Binary'}, ...
+				'Enable', 'off' ...
 			);
 		
 			this.setCallback();
@@ -24,17 +25,6 @@ classdef RegionType < vt.Component.Popup & vt.State.Listener & vt.Action.Dispatc
 			end
 		end
 		
-		function [] = onVideoChange(this, state)
-			this.video = state.video;
-		end
-		
-		function [] = dispatchAction(this, ~, ~)
-			str = this.getCurrentPopupString();
-			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
-			action.prepare(this.currentRegion, 'type', str, this.video);
-			action.dispatch();
-		end
-		
 		function [] = onCurrentRegionChange(this, state)
 			this.currentRegion = [];
 			
@@ -47,8 +37,19 @@ classdef RegionType < vt.Component.Popup & vt.State.Listener & vt.Action.Dispatc
 			end
 			
 			if ~isempty(this.currentRegion)
-				this.setCurrentPopupString(this.currentRegion.shape);
+				this.setCurrentPopupString(this.currentRegion.type);
 			end
+		end
+		
+		function [] = onVideoChange(this, state)
+			this.video = state.video;
+		end
+		
+		function [] = dispatchAction(this, ~, ~)
+			str = this.getCurrentPopupString();
+			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+			action.prepare(this.currentRegion, 'type', str, this.video);
+			action.dispatch();
 		end
 		
 		function [] = onRegionsChange(this, state)

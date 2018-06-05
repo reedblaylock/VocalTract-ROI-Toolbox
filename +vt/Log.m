@@ -15,6 +15,7 @@ classdef Log < handle
 			this.debugMode = p.Results.debugMode;
 			if(this.debugMode == 2)
 				dbstop if error
+				dbstop if warning
 			end
 % 			this.action = vt.Action.NotifyError();
 			this.isOn = false;
