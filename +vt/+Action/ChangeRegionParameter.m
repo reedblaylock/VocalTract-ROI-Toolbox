@@ -32,7 +32,19 @@ classdef ChangeRegionParameter < vt.Action
 					
 					if ~isempty(region.origin)
 						region.mask = getMask(region, video);
-						region.timeseries = mean(video.matrix(:, region.mask > 0), 2);
+						switch lower(region.type)
+							case 'average'
+								region.timeseries = mean(video.matrix(:, region.mask > 0), 2);
+							case 'binary'
+								norm_matrix = (video.matrix - min(video.matrix(:))) / (max(video.matrix(:)) - min(video.matrix(:)));
+								norm_mean = mean(norm_matrix(:, region.mask > 0), 2);
+								norm_mean(norm_mean > 0.5) = 1;
+								norm_mean(norm_mean <= 0.5) = 0;
+								region.timeseries = norm_mean;
+							otherwise
+								error('Invalid region type (vt.Action.ChangeRegionParameter.m)');
+						end
+						
 					end
 				case {'color', 'name', 'showOrigin', 'showOutline', 'showFill'}
 					region.(parameter) = value;

@@ -5,6 +5,7 @@ classdef NewRegion < vt.Action
 	
 	properties
 		region
+		id = 0
 	end
 	
 	% TODO: When you load states from a previous session, this will overwrite
@@ -23,12 +24,25 @@ classdef NewRegion < vt.Action
 	end
 	
 	methods
+% 		function out = getOrIncrementCount(this, increment)
+% 			p = inputParser;
+% 			addOptional(p, 'increment', 0, @isnumeric);
+% 			parse(p, increment);
+% 			
+% 			if increment
+% 				this.id = this.id + p.Results.increment;
+% 			end
+% 			
+% 			out = this.id;
+% 		end
+		
 		function [] = prepare(this)
 			config = vt.Config();
 			this.region = config.region;
 			
 			% Increment the counter in the constructor
 			this.region.id = vt.Action.NewRegion.getOrIncrementCount(1);
+% 			this.region.id = this.getOrIncrementCount(1);
 			this.region.name = ['Region' num2str(this.region.id)];
 		end
 		
