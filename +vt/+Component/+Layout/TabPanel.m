@@ -18,22 +18,22 @@ classdef TabPanel < vt.Component.Layout
 				nameReplacement = 'TabSize';
 				s = this.renameField(s, nameToChange, nameReplacement);
                 
-                % Change Widths to Sizes
+                % Change TabEnables to TabEnable
 				nameToChange = 'TabEnables';
 				nameReplacement = 'TabEnable';
 				s = this.renameField(s, nameToChange, nameReplacement);
                 
-                % Change Widths to Sizes
+                % Change Contents to Children
 				nameToChange = 'Contents';
 				nameReplacement = 'Children';
 				s = this.renameField(s, nameToChange, nameReplacement);
                 
-                % Change Widths to Sizes
+                % Change TabTitles to TabNames
 				nameToChange = 'TabTitles';
 				nameReplacement = 'TabNames';
 				s = this.renameField(s, nameToChange, nameReplacement);
                 
-                % Change Widths to Sizes
+                % Change Selection to SelectedChild
 				nameToChange = 'Selection';
 				nameReplacement = 'SelectedChild';
 				s = this.renameField(s, nameToChange, nameReplacement);

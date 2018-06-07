@@ -20,7 +20,7 @@ classdef EditRegion < vt.Component.Button & vt.Action.Dispatcher & vt.State.List
 				case ''
 					% The edit button can only be on when nothing is currently
 					% being edited, and there are regions available to be edited
-					if(~(isempty(fieldnames(this.state.regions)) || ~numel(this.state.regions)))
+					if(~isempty(state.regions) || numel(state.regions))
 						this.setParameters('Enable', 'on');
 					else
 						this.setParameters('Enable', 'off');

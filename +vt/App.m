@@ -350,9 +350,11 @@ classdef App < vt.Root & vt.State.Listener
 				gui.RightBoxGrid, ...
 				'Title', 'Radius' ...
 			);
+			% Selection 1
 			gui.RegionWidth = vt.Component.TextBox.Width( ...
 				gui.RegionSettings1_2 ...
 			);
+			% Selection 2
 			gui.RegionRadius = vt.Component.TextBox.Radius( ...
 				gui.RegionSettings1_2 ...
 			);
@@ -360,9 +362,11 @@ classdef App < vt.Root & vt.State.Listener
 			gui.RegionSettings2_2 = vt.Component.Layout.Panel( ...
 				gui.RightBoxGrid ...
 			);
+			% Selection 1
 			gui.RegionHeight = vt.Component.TextBox.Height( ...
 				gui.RegionSettings2_2 ...
 			);
+			% Selection 2
 			gui.RegionSettingsEmpty2_2 = vt.Component.Layout.Empty( ...
 				gui.RegionSettings2_2 ...
 			);
@@ -384,18 +388,44 @@ classdef App < vt.Root & vt.State.Listener
 				gui.RightBoxGrid ...
 			);
 			% 7-2 + New region
-			gui.RegionSettings7_2 = vt.Component.Button.NewRegion( ...
-				gui.RightBoxGrid, ...
+			gui.RegionSettings7_2 = vt.Component.Layout.CardPanel( ...
+				gui.RightBoxGrid ...
+			);
+			% Selection 1
+			gui.EmptyPanel7_2 = vt.Component.Layout.Empty( ...
+				gui.RegionSettings7_2 ...
+			);
+			% Selection 2
+			gui.NewRegionButton = vt.Component.Button.NewRegion( ...
+				gui.RegionSettings7_2, ...
 				'New region' ...
 			);
 			% 8-2 + Edit region
-			gui.RegionSettings8_2 = vt.Component.Button.EditRegion( ...
-				gui.RightBoxGrid, ...
+			gui.RegionSettings8_2 = vt.Component.Layout.CardPanel( ...
+				gui.RightBoxGrid ...
+			);
+			% Selection 1
+			gui.DeleteRegionButton_Edit = vt.Component.Button.DeleteRegion( ...
+				gui.RegionSettings8_2, ...
+				'Delete region' ...
+			);
+			% Selection 2
+			gui.EditRegionButton = vt.Component.Button.EditRegion( ...
+				gui.RegionSettings8_2, ...
 				'Edit region' ...
 			);
 			% 9-2 + Delete region
-			gui.RegionSettings9_2 = vt.Component.Button.DeleteRegion( ...
-				gui.RightBoxGrid, ...
+			gui.RegionSettings9_2 = vt.Component.Layout.CardPanel( ...
+				gui.RightBoxGrid ...
+			);
+			% Selection 1
+			gui.StopEditingButton = vt.Component.Button.StopEditing( ...
+				gui.RegionSettings9_2, ...
+				'Stop editing' ...
+			);
+			% Selection 2
+			gui.DeleteRegionButton_Default = vt.Component.Button.DeleteRegion( ...
+				gui.RegionSettings9_2, ...
 				'Delete region' ...
 			);
 			
@@ -405,93 +435,20 @@ classdef App < vt.Root & vt.State.Listener
 		function [] = onIsEditingChange(this, state)
 			switch(state.isEditing)
 				case 'region'
-					% delete the last three areas
-					delete(this.gui.RightBoxGrid.handle.Contents(16:18));
-					delete(this.gui.RegionSettings7_2);
-					delete(this.gui.RegionSettings8_2);
-					delete(this.gui.RegionSettings9_2);
-					this.gui.RegionSettings7_2 = [];
-					this.gui.RegionSettings8_2 = [];
-					this.gui.RegionSettings9_2 = [];
-					this.gui = rmfield(this.gui, 'RegionSettings7_2');
-					this.gui = rmfield(this.gui, 'RegionSettings8_2');
-					this.gui = rmfield(this.gui, 'RegionSettings9_2');
-					
-					% add the save, delete, and cancel buttons
-% 					% 7-2 + Save button
-% 					this.gui.RegionSettings7_2 = vt.Component.Button.SaveRegion( ...
-% 						this.gui.RightBoxGrid, ...
-% 						'Save region' ...
-% 					);
-% 					this.initializeComponent(this.gui.RegionSettings7_2);
-					% 8-2 + Delete button
-					this.gui.RegionSettings8_2 = vt.Component.Button.DeleteRegion( ...
-						this.gui.RightBoxGrid, ...
-						'Delete region' ...
-					);
-					this.initializeComponent(this.gui.RegionSettings8_2);
-					% 9-2 + Cancel button
-					this.gui.RegionSettings9_2 = vt.Component.Button.StopEditing( ...
-						this.gui.RightBoxGrid, ...
-						'Stop editing' ...
-					);
-					this.initializeComponent(this.gui.RegionSettings9_2);
-				
-					% re-order
-					% Not necessary at the moment, because these items go on the
-					% end
+					% 7-2 + Empty panel (replace New Region button)
+					this.gui.RegionSettings7_2.handle.Selection = 1;
+					% 8-2 + Delete Region button (replace Edit Region button)
+					this.gui.RegionSettings8_2.handle.Selection = 1;
+					% 9-2 + Stop Editing button (replace Delete Region button)
+					this.gui.RegionSettings9_2.handle.Selection = 1;
 				otherwise
-					% Not in any editing mode
-					% delete and re-draw all timeseries
-					this.deleteAllTimeseries(state);
-					this.redrawAllTimeseries(state);
-					
-					% delete the last three areas
-					delete(this.gui.RightBoxGrid.handle.Contents(16:end));
-% 					delete(this.gui.RegionSettings7_2);
-					delete(this.gui.RegionSettings8_2);
-					delete(this.gui.RegionSettings9_2);
-% 					this.gui.RegionSettings7_2 = [];
-					this.gui.RegionSettings8_2 = [];
-					this.gui.RegionSettings9_2 = [];
-% 					this.gui = rmfield(this.gui, 'RegionSettings7_2');
-					this.gui = rmfield(this.gui, 'RegionSettings8_2');
-					this.gui = rmfield(this.gui, 'RegionSettings9_2');
-					
-					% 7-2 + New region
-					this.gui.RegionSettings7_2 = vt.Component.Button.NewRegion( ...
-						this.gui.RightBoxGrid, ...
-						'New region' ...
-					);
-					this.initializeComponent(this.gui.RegionSettings7_2);
-					% 8-2 + Edit region
-					this.gui.RegionSettings8_2 = vt.Component.Button.EditRegion( ...
-						this.gui.RightBoxGrid, ...
-						'Edit region' ...
-					);
-					% If there is a current region, keep the button on
-					if ~isempty(state.currentRegion)
-						this.gui.RegionSettings8_2.setParameters('Enable', 'on');
-					else
-						this.gui.RegionSettings8_2.setParameters('Enable', 'off');
-					end
-					this.initializeComponent(this.gui.RegionSettings8_2);
-					% 9-2 + Delete region
-					this.gui.RegionSettings9_2 = vt.Component.Button.DeleteRegion( ...
-						this.gui.RightBoxGrid, ...
-						'Delete region' ...
-					);
-					% If there is a current region, keep the button on
-					if ~isempty(state.currentRegion)
-						this.gui.RegionSettings9_2.setParameters('Enable', 'on');
-					else
-						this.gui.RegionSettings9_2.setParameters('Enable', 'off');
-					end
-					this.initializeComponent(this.gui.RegionSettings9_2);
-					
-					% re-order
-					% Not necessary, since these elements are getting appended
-					% to the end anyway
+					% Not editing anything
+					% 7-2 + New Region button (replaces empty panel)
+					this.gui.RegionSettings7_2.handle.Selection = 2;
+					% 8-2 + Edit Region button (replace Delete Region button)
+					this.gui.RegionSettings8_2.handle.Selection = 2;
+					% 9-2 + Delete Region button (replace Stop Editing button)
+					this.gui.RegionSettings9_2.handle.Selection = 2;
 			end
 		end
 		
@@ -508,59 +465,6 @@ classdef App < vt.Root & vt.State.Listener
 			if isempty(currentRegion) || strcmp(this.currentRegion.shape, currentRegion.shape)
 				return;
 			end
-			
-			% Delete whatever parameter fields are currently present. The calls
-			% to delete() are the most important
-			% 1. Delete seems to be the only thing that works
-			% 2. When vt.State.Listeners are deleted, they first delete their
-			%    own listener handles
-			
-			% TODO: Use the Selection property on panels to change which box is
-			% visible.
-% 			delete(this.gui.RightBoxGrid.handle.Contents(10:12));
-% 			switch(this.currentRegion.shape)
-% 				case 'Circle'
-% 					delete(this.gui.RegionRadius);
-% 					this.gui.RegionSettings1_2 = [];
-% 					this.gui.RegionSettings2_2 = [];
-% 					this.gui.RegionSettings3_2 = [];
-% 					this.gui.RegionRadius = [];
-% 					this.gui = rmfield(this.gui, 'RegionSettings1_2');
-% 					this.gui = rmfield(this.gui, 'RegionSettings2_2');
-% 					this.gui = rmfield(this.gui, 'RegionSettings3_2');
-% 					this.gui = rmfield(this.gui, 'RegionRadius');
-% 				case 'Rectangle'
-% 					delete(this.gui.RegionWidth);
-% 					delete(this.gui.RegionHeight);
-% 					this.gui.RegionSettings1_2 = [];
-% 					this.gui.RegionSettings2_2 = [];
-% 					this.gui.RegionSettings3_2 = [];
-% 					this.gui.RegionWidth = [];
-% 					this.gui.RegionHeight = [];
-% 					this.gui = rmfield(this.gui, 'RegionSettings1_2');
-% 					this.gui = rmfield(this.gui, 'RegionSettings2_2');
-% 					this.gui = rmfield(this.gui, 'RegionSettings3_2');
-% 					this.gui = rmfield(this.gui, 'RegionWidth');
-% 					this.gui = rmfield(this.gui, 'RegionHeight');
-% 				case 'Statistically-generated'
-% 					delete(this.gui.MinimumPixels);
-% 					delete(this.gui.SearchRadius);
-% 					delete(this.gui.Tau);
-% 					this.gui.RegionSettings1_2 = [];
-% 					this.gui.RegionSettings2_2 = [];
-% 					this.gui.RegionSettings3_2 = [];
-% 					this.gui.MinimumPixels = [];
-% 					this.gui.SearchRadius = [];
-% 					this.gui.Tau = [];
-% 					this.gui = rmfield(this.gui, 'RegionSettings1_2');
-% 					this.gui = rmfield(this.gui, 'RegionSettings2_2');
-% 					this.gui = rmfield(this.gui, 'RegionSettings3_2');
-% 					this.gui = rmfield(this.gui, 'MinimumPixels');
-% 					this.gui = rmfield(this.gui, 'SearchRadius');
-% 					this.gui = rmfield(this.gui, 'Tau');
-% 				otherwise
-% 					% TODO: something here
-% 			end
 			
 			% TODO: If isEditing='region', 'Enable'='on'; otherwise,
 			% 'Enable'='off'
@@ -584,6 +488,7 @@ classdef App < vt.Root & vt.State.Listener
 					% 3-2 + Empty space
 % 					this.gui.RegionSettings3_2.handle.Selection = 1;
 				case 'Statistically-generated'
+					% TODO: Use the panel Selection property instead
 					% 1-2 + Minimum # pixels textbox
 					this.gui.RegionSettings1_2 = vt.Component.Layout.Panel( ...
 						this.gui.RightBoxGrid, ...

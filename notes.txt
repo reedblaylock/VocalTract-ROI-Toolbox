@@ -1,7 +1,15 @@
-NOTES FROM JUNE 3, 2018
+NOTES FROM JUNE 3-5, 2018
 
 The New Region ID doesn't get cleared after you exit the program. Either stop
 using a static/persistent region ID, or throw in some onDelete cleanup.
+
+Bug: region can't be edited.
+Reproduce:
+1. Create a new region, radius 5
+2. Stop editing region
+3. Edit Region
+4. Change radius
+--> Error: region passed to action is empty
 
 --------------------------------------------------------------------------------
 NOTES FROM SEPTEMBER 2017
