@@ -436,19 +436,19 @@ classdef App < vt.Root & vt.State.Listener
 			switch(state.isEditing)
 				case 'region'
 					% 7-2 + Empty panel (replace New Region button)
-					this.gui.RegionSettings7_2.handle.Selection = 1;
+					this.gui.RegionSettings7_2.setParameters('Selection', 1);
 					% 8-2 + Delete Region button (replace Edit Region button)
-					this.gui.RegionSettings8_2.handle.Selection = 1;
+					this.gui.RegionSettings8_2.setParameters('Selection', 1);
 					% 9-2 + Stop Editing button (replace Delete Region button)
-					this.gui.RegionSettings9_2.handle.Selection = 1;
+					this.gui.RegionSettings9_2.setParameters('Selection', 1);
 				otherwise
 					% Not editing anything
 					% 7-2 + New Region button (replaces empty panel)
-					this.gui.RegionSettings7_2.handle.Selection = 2;
+					this.gui.RegionSettings7_2.setParameters('Selection', 2);
 					% 8-2 + Edit Region button (replace Delete Region button)
-					this.gui.RegionSettings8_2.handle.Selection = 2;
+					this.gui.RegionSettings8_2.setParameters('Selection', 2);
 					% 9-2 + Delete Region button (replace Stop Editing button)
-					this.gui.RegionSettings9_2.handle.Selection = 2;
+					this.gui.RegionSettings9_2.setParameters('Selection', 2);
 			end
 		end
 		
@@ -471,22 +471,34 @@ classdef App < vt.Root & vt.State.Listener
 			switch(currentRegion.shape)
 				case 'Circle'
 					% 1-2 + Radius
-					this.gui.RegionSettings1_2.setParameters('Title', 'Radius');
-					this.gui.RegionSettings1_2.handle.Selection = 2;
+					this.gui.RegionSettings1_2.setParameters( ...
+						'Title', 'Radius', ...
+						'Selection', 2 ...
+					);
+% 					this.gui.RegionSettings1_2.setParameters('Selection', 2);
 					% 2-2 + Empty space
-					this.gui.RegionSettings2_2.handle.Selection = 2;
-					this.gui.RegionSettings2_2.setParameters('Title', '');
+					this.gui.RegionSettings2_2.setParameters( ...
+						'Title', '', ...
+						'Selection', 2 ...
+					);
+% 					this.gui.RegionSettings2_2.setParameters('Title', '');
 					% 3-2 + Empty space
-% 					this.gui.RegionSettings3_2.handle.Selection = 2;
+% 					this.gui.RegionSettings3_2.setParameters('Selection', 2);
 				case 'Rectangle'
 					% 1-2 + Width
-					this.gui.RegionSettings1_2.setParameters('Title', 'Width');
-					this.gui.RegionSettings1_2.handle.Selection = 1;
+					this.gui.RegionSettings1_2.setParameters( ...
+						'Title', 'Width', ...
+						'Selection', 1 ...
+					);
+% 					this.gui.RegionSettings1_2.setParameters('Selection', 1);
 					% 2-2 + Height
-					this.gui.RegionSettings2_2.setParameters('Title', 'Height');
-					this.gui.RegionSettings2_2.handle.Selection = 1;
+					this.gui.RegionSettings2_2.setParameters( ...
+						'Title', 'Height', ...
+						'Selection', 1 ...
+					);
+% 					this.gui.RegionSettings2_2.setParameters('Selection', 1);
 					% 3-2 + Empty space
-% 					this.gui.RegionSettings3_2.handle.Selection = 1;
+% 					this.gui.RegionSettings3_2.setParameters('Selection', 1);
 				case 'Statistically-generated'
 					% TODO: Use the panel Selection property instead
 					% 1-2 + Minimum # pixels textbox

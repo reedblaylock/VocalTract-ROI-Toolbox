@@ -3,11 +3,6 @@ NOTES FROM JUNE 3-5, 2018
 Bug: The New Region ID doesn't get cleared after you exit the program. Either stop
 using a static/persistent region ID, or throw in some onDelete cleanup.
 
-Bug: direct calls to handle.Selection (e.g., in App.m) will break in <R2014b.
-Fix: Make a new panel function (for all classes with Selection property) to
-	"get child/selection" (you don't need an "add selection" because the
-	children do that automatically).
-
 Bug: You can press "stop editing" without having placed a region
 Fix: If you press "stop editing" when the current region has no origin, delete
 	the region
