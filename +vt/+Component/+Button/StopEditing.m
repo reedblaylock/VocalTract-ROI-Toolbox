@@ -1,4 +1,8 @@
 classdef StopEditing < vt.Component.Button & vt.State.Listener & vt.Action.Dispatcher
+	properties
+		currentRegion
+	end
+	
 	methods
 		function this = StopEditing(parent, label, varargin)
 			this@vt.Component.Button(parent, label, varargin{:});
@@ -15,9 +19,25 @@ classdef StopEditing < vt.Component.Button & vt.State.Listener & vt.Action.Dispa
 			end
 		end
 		
+		function [] = onCurrentRegionChange(this, state)
+			regions = state.regions;
+			for iRegion = 1:numel(regions)
+				if regions{iRegion}.id == state.currentRegion
+					this.currentRegion = regions{iRegion};
+					break;
+				end
+			end
+		end
+		
 		function [] = dispatchAction(this, source, eventData)
-			action = this.actionFactory.actions.STOP_EDITING;
-			action.prepare();
+			if isempty(this.currentRegion.origin)
+				action = this.actionFactory.actions.DELETE_REGION;
+				action.prepare(this.currentRegion.id);
+			else
+				action = this.actionFactory.actions.STOP_EDITING;
+				action.prepare();
+			end
+			
 			action.dispatch();
 		end
 	end
