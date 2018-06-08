@@ -10,7 +10,8 @@ function newState = currentRegion(this, varargin)
 			newState = p.Results.action.region.id;
 		case 'SET_CURRENT_REGION'
 			newState = p.Results.action.id;
- 		case {'STOP_EDITING', 'DELETE_REGION'}
+%  		case {'STOP_EDITING', 'DELETE_REGION'}
+		case 'DELETE_REGION'
 			newState = [];
 		otherwise
 			newState = p.Results.oldState;

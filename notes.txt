@@ -1,15 +1,19 @@
 NOTES FROM JUNE 3-5, 2018
 
-The New Region ID doesn't get cleared after you exit the program. Either stop
+Bug: The New Region ID doesn't get cleared after you exit the program. Either stop
 using a static/persistent region ID, or throw in some onDelete cleanup.
 
-Bug: region can't be edited.
-Reproduce:
-1. Create a new region, radius 5
-2. Stop editing region
-3. Edit Region
-4. Change radius
---> Error: region passed to action is empty
+Bug: direct calls to handle.Selection (e.g., in App.m) will break in <R2014b.
+Fix: Make a new panel function (for all classes with Selection property) to
+	"get child/selection" (you don't need an "add selection" because the
+	children do that automatically).
+
+Bug: You can press "stop editing" without having placed a region
+Fix: If you press "stop editing" when the current region has no origin, delete
+	the region
+
+Feature: make it so that the video-viewing panel can pop out into a separate
+		 panel
 
 --------------------------------------------------------------------------------
 NOTES FROM SEPTEMBER 2017
