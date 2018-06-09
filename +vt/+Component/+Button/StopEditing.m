@@ -29,6 +29,15 @@ classdef StopEditing < vt.Component.Button & vt.State.Listener & vt.Action.Dispa
 			end
 		end
 		
+		function [] = onRegionsChange(this, state)
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					this.currentRegion = state.regions{iRegion};
+					break;
+				end
+			end
+		end
+		
 		function [] = dispatchAction(this, source, eventData)
 			if isempty(this.currentRegion.origin)
 				action = this.actionFactory.actions.DELETE_REGION;

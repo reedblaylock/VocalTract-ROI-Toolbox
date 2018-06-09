@@ -3,9 +3,30 @@ NOTES FROM JUNE 3-5, 2018
 Bug: The New Region ID doesn't get cleared after you exit the program. Either stop
 using a static/persistent region ID, or throw in some onDelete cleanup.
 
-Bug: You can press "stop editing" without having placed a region
-Fix: If you press "stop editing" when the current region has no origin, delete
-	the region
+Bug: State isn't getting updated the way you want. Every time you stop editing a
+	region, that state reverts back to the default?
+Reproduce:
+	1. Put a break point on Button.EditRegion.m line 20
+	2. Create a region with an origin, then click "Stop Editing".
+Desired behavior: state passed to Button.EditRegion.onIsEditingChange() should
+	have at least one region in state.regions.
+Actual behavior: state.regions is always empty, no matter how many regions you
+	make. In fact, if you put breakpoints on vt.State, you'll find that vt.State
+	itself has only one region at a time, even though they're all displayed
+	in the frame???
+UPDATE:
+	There's good news and bad news.
+
+	The good news is that the original problem
+	came from the lack of an onRegionsChange function in Button.StopEditing.m
+	to let it keep track of what the current region was. You've added that
+	function now, so the regions you make are getting saved in vt.State. Great!
+	
+	The bad news is that it turns out your delete function is completely screwy.
+	- the current region is still set as current in vt.State, even though you
+	  just deleted it
+	- even if it's not, components don't revert to their empty default state
+	  when the current region becomes nothing
 
 Feature: make it so that the video-viewing panel can pop out into a separate
 		 panel
