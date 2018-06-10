@@ -37,7 +37,10 @@ classdef RegionShape < vt.Component.Popup & vt.State.Listener & vt.Action.Dispat
 				end
 			end
 			
-			if ~isempty(this.currentRegion)
+			if isempty(this.currentRegion)
+				config = vt.Config();
+				this.setCurrentPopupString(config.region.shape);
+			else
 				this.setCurrentPopupString(this.currentRegion.shape);
 			end
 		end

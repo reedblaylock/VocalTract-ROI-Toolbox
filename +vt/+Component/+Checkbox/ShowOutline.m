@@ -21,7 +21,10 @@ classdef ShowOutline < vt.Component.Checkbox & vt.State.Listener & vt.Action.Dis
 				end
 			end
 			
-			if ~isempty(this.currentRegion)
+			if isempty(this.currentRegion)
+				config = vt.Config();
+				this.setParameters('Value', config.region.showOutline);
+			else
 				this.setParameters('Value', this.currentRegion.showOutline);
 			end
 		end

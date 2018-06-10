@@ -51,7 +51,11 @@ classdef RegionName < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Lis
 				end
 			end
 			
-			if ~isempty(this.currentRegion)
+			if isempty(this.currentRegion)
+				config = vt.Config();
+				this.setParameters('String', '');
+				this.backupText = '';
+			else
 				this.setParameters('String', this.currentRegion.name);
 				this.backupText = this.currentRegion.name;
 			end

@@ -36,7 +36,10 @@ classdef RegionType < vt.Component.Popup & vt.State.Listener & vt.Action.Dispatc
 				end
 			end
 			
-			if ~isempty(this.currentRegion)
+			if isempty(this.currentRegion)
+				config = vt.Config();
+				this.setCurrentPopupString(config.region.type);
+			else
 				this.setCurrentPopupString(this.currentRegion.type);
 			end
 		end

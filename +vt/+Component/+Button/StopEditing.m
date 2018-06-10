@@ -20,11 +20,15 @@ classdef StopEditing < vt.Component.Button & vt.State.Listener & vt.Action.Dispa
 		end
 		
 		function [] = onCurrentRegionChange(this, state)
-			regions = state.regions;
-			for iRegion = 1:numel(regions)
-				if regions{iRegion}.id == state.currentRegion
-					this.currentRegion = regions{iRegion};
-					break;
+			if isempty(state.currentRegion)
+				this.currentRegion = state.currentRegion;
+			else
+				regions = state.regions;
+				for iRegion = 1:numel(regions)
+					if regions{iRegion}.id == state.currentRegion
+						this.currentRegion = regions{iRegion};
+						break;
+					end
 				end
 			end
 		end

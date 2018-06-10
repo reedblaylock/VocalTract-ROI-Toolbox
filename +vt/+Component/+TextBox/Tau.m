@@ -56,7 +56,10 @@ classdef Tau < vt.Component.TextBox.RangeBox & vt.State.Listener
 				end
 			end
 			
-			if ~isempty(this.currentRegion)
+			if isempty(this.currentRegion)
+				this.setParameters('String', '');
+				this.backupText = '';
+			else
 				this.setParameters('String', num2str(this.currentRegion.tau));
 				this.backupText = num2str(this.currentRegion.tau);
 			end

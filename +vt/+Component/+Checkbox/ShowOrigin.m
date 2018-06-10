@@ -21,7 +21,10 @@ classdef ShowOrigin < vt.Component.Checkbox & vt.State.Listener & vt.Action.Disp
 				end
 			end
 			
-			if ~isempty(this.currentRegion)
+			if isempty(this.currentRegion)
+				config = vt.Config();
+				this.setParameters('Value', config.region.showOrigin);
+			else
 				this.setParameters('Value', this.currentRegion.showOrigin);
 			end
 		end

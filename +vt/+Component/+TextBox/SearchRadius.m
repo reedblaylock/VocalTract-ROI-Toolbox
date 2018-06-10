@@ -53,7 +53,10 @@ classdef SearchRadius < vt.Component.TextBox.RangeBox & vt.State.Listener
 				end
 			end
 			
-			if ~isempty(this.currentRegion)
+			if isempty(this.currentRegion)
+				this.setParameters('String', '');
+				this.backupText = '';
+			else
 				this.setParameters('String', num2str(this.currentRegion.searchRadius));
 				this.backupText = num2str(this.currentRegion.searchRadius);
 			end
