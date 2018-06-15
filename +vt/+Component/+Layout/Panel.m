@@ -12,7 +12,7 @@ classdef Panel < vt.Component.Layout
 			
 			s = p.Unmatched;
 			
-			if( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
                 % Change Contents to Children
 				nameToChange = 'Contents';
 				nameReplacement = 'Children';
@@ -38,7 +38,7 @@ classdef Panel < vt.Component.Layout
 % 			this.handle = uiextras.Panel( ...
 % 				'Parent', p.Results.parent.handle ...
 % 			);
-			if ( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
 				this.handle = uiextras.Panel( ...
 					'Parent', p.Results.parent.handle ...
 				);

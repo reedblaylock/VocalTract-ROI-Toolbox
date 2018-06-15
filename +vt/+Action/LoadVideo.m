@@ -77,18 +77,24 @@ function video = loadVideo(loadType)
 	); %#ok<GENDEP> vr.NumberOfFrames is still ok to use as of R2017a
 end
 
+% function b = isOldMatlabVersion()
+% 	newVersionDate = '08-Sep-2014';
+% 	matlabVersion = ver( 'MATLAB' );
+% 	b = datenum( matlabVersion.Date ) < datenum( newVersionDate );
+% end
+
 % Adam Lammert (2010)
 % Modified by Reed Blaylock (2014)
 function [M] = vr2matrix(vr)
 	% Get data from VideoReader
+% 	if isOldMatlabVersion()
+% 		vidFrames = read(vr);
+% 	else
+% 		while hasFrame(vr)
+% 			vidFrames = readFrame(vr);
+% 		end
+% 	end
 	vidFrames = read(vr);
-
-% 			% sometimes, the last frame doesn't want to be read
-% 			num_read_frames = size(vidFrames, 4);
-% 			if num_read_frames ~= this.numFrames
-% 				disp(['Only able to read ' num2str(num_read_frames) ' frames of ' num2str(this.numFrames) ' frames. Processing with ' num2str(num_read_frames) ' frames.']);
-% 				this.numFrames = num_read_frames;
-% 			end
 
 	% Convert VideoReader output to something usable
 	for k = 1 : vr.NumberOfFrames;

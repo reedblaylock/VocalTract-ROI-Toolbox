@@ -3,6 +3,11 @@ NOTES FROM JUNE 3-10, 2018
 Bug: The New Region ID doesn't get cleared after you exit the program. Either stop
 using a static/persistent region ID, or throw in some onDelete cleanup.
 
+Inefficiency: Checking the MATLAB version takes almost 2 seconds. Try getting
+		the MATLAB version at startup, and save it somewhere
+Fix: I think the easiest and most legible thing to do wil be to clear your
+		persistent variables when the GUI closes.
+
 Feature: make it so that the video-viewing panel can pop out into a separate
 		 panel
 

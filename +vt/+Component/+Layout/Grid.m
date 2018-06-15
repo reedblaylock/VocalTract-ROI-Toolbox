@@ -13,7 +13,7 @@ classdef Grid < vt.Component.Layout
 			
 			s = p.Unmatched;
 			
-			if( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
 				% Change Widths to Sizes
 				nameToChange = 'Widths';
 				nameReplacement = 'ColumnSizes';
@@ -44,7 +44,7 @@ classdef Grid < vt.Component.Layout
 % 			this.handle = uiextras.Grid( ...
 % 				'Parent', p.Results.parent.handle ...
 % 			);
-			if ( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
 				this.handle = uiextras.Grid( ...
 					'Parent', p.Results.parent.handle ...
 				);

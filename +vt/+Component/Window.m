@@ -29,6 +29,8 @@ classdef Window < vt.Component & vt.State.Listener
 		function [] = delete(this)
 			delete@vt.State.Listener(this);
 			this.log.off();
+% 			clear vt.Config;
+% 			clear vt.Action.NewRegion;
 % 			delete(this.log)
 % 			clear vt.Log;
 		end

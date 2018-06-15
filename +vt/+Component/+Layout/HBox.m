@@ -15,7 +15,7 @@ classdef HBox < vt.Component.Layout
 			
 			s = p.Unmatched;
 			
-			if( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
 				% Change Widths to Sizes
 				nameToChange = 'Widths';
 				nameReplacement = 'Sizes';
@@ -47,7 +47,7 @@ classdef HBox < vt.Component.Layout
 % 			this.handle = uiextras.HBox( ...
 % 				'Parent', parent.handle ...
 % 			);
-			if ( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
 				this.handle = uiextras.HBox( ...
 					'Parent', parent.handle ...
 				);

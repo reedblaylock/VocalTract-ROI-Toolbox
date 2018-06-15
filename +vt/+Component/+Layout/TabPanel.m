@@ -12,7 +12,7 @@ classdef TabPanel < vt.Component.Layout
 			
 			s = p.Unmatched;
 			
-			if( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
 				% Change Widths to Sizes
 				nameToChange = 'TabWidth';
 				nameReplacement = 'TabSize';
@@ -54,7 +54,7 @@ classdef TabPanel < vt.Component.Layout
 % 			this.handle = uiextras.TabPanel( ...
 % 				'Parent', p.Results.parent.handle ...
 % 			);
-			if ( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
 				this.handle = uiextras.TabPanel( ...
 					'Parent', p.Results.parent.handle ...
 				);

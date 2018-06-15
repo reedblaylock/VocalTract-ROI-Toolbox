@@ -12,7 +12,7 @@ classdef HButtonBox < vt.Component.Layout
 			
 			s = p.Unmatched;
 			
-			if( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
 				% Change Widths to Sizes
 				nameToChange = 'Widths';
 				nameReplacement = 'Sizes';
@@ -44,7 +44,7 @@ classdef HButtonBox < vt.Component.Layout
 % 			this.handle = uiextras.HButtonBox( ...
 % 				'Parent', parent.handle ...
 % 			);
-			if ( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
 				this.handle = uiextras.HButtonBox( ...
 					'Parent', parent.handle ...
 				);

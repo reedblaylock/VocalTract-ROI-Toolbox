@@ -12,7 +12,7 @@ classdef VBox < vt.Component.Layout
 			
 			s = p.Unmatched;
 			
-			if( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
 				% Change Widths to Sizes
 				nameToChange = 'Heights';
 				nameReplacement = 'Sizes';
@@ -44,7 +44,7 @@ classdef VBox < vt.Component.Layout
 % 			this.handle = uiextras.VBox( ...
 % 				'Parent', parent.handle ...
 % 			);
-			if ( this.isOldMatlabVersion() )
+			if vt.Config.isOldMatlabVersion()
 				this.handle = uiextras.VBox( ...
 					'Parent', parent.handle ...
 				);
