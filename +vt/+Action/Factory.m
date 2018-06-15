@@ -9,8 +9,8 @@ classdef Factory < vt.Root
 	methods
 		function this = Factory(reducer)
 			% Instantiate an instance of every vt.Action
-% 			[pathToActions, ~, ~] = fileparts(mfilename('fullfile'));
-			pathToActions = [cd filesep '+vt' filesep '+Action'];
+			[pathToActions, ~, ~] = fileparts(mfilename('fullpath'));
+% 			pathToActions = [cd filesep '+vt' filesep '+Action'];
 			files = dir(pathToActions);
 			exclude = {'Dispatcher', 'Factory'};
 			
