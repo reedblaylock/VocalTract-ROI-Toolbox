@@ -3,12 +3,26 @@ NOTES FROM JUNE 3-10, 2018
 Bug: The New Region ID doesn't get cleared after you exit the program. Either stop
 using a static/persistent region ID, or throw in some onDelete cleanup.
 
+Bug: clicking on a region's origin or boundary doesn't select the region
+
 Check:
 	- is the region ID getting cleared when the GUI closes?
 	- is the MATLAB version getting cleared when the GUI closes?
 	- any other persistent variables that need to be cleared?
 
-Performance: update region color scheme to be only bright, vibrant colors
+Performance: throw errors better when you go out of bounds on a range box. It's
+			 not as code-threatening as a real error...
+
+Performance: let the user choose (or add) different color schemes for the GUI
+			 and the regions
+
+Feature: midline...
+
+Feature: a bar on all the timeseries plots that updates as the frame changes
+
+Feature: export a pretty version of the frame and regions and/or timeseries
+
+Feature: click to select region, double-click to edit region
 
 Feature: undo/redo button
 
@@ -16,7 +30,7 @@ Feature: keyboard shortcuts
 
 Feature: statistically-generated regions
 
-Feature: custom regions
+Feature: custom regions (pixel by pixel)
 
 Feature: centroid timeseries
 
