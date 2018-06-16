@@ -65,7 +65,7 @@ classdef (Abstract) RangeBox < vt.Component.TextBox & vt.Action.Dispatcher
 			end
 			
 			try
-				assert(num > this.minValue)
+				assert(num >= this.minValue)
 			catch
 				% The user entered a value that was too low.
 				validatedNum = this.minValue;
@@ -74,7 +74,7 @@ classdef (Abstract) RangeBox < vt.Component.TextBox & vt.Action.Dispatcher
 			end
 			
 			try
-				assert(num < this.maxValue)
+				assert(num <= this.maxValue)
 			catch
 				% The user entered a value that was too high.
 				validatedNum = this.maxValue;
