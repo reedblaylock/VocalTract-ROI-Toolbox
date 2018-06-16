@@ -211,5 +211,6 @@ needs.
 
 The burden of creation was eased by:
 - Adam Lammert
-- <a href="https://www.mathworks.com/matlabcentral/fileexchange/47982-gui-layout-toolbox" target="_blank">GUI Layout Toolbox</a>
+- <a href="https://www.mathworks.com/matlabcentral/fileexchange/47982-gui-layout-toolbox">GUI Layout Toolbox</a>
+- <a href="https://www.mathworks.com/matlabcentral/fileexchange/46289-rgb2hex-and-hex2rgb>hex2rgb</a>
 <!-- - <a href="http://www.mathworks.com/matlabcentral/fileexchange/1039-hline-and-vline" target="_blank">vline</a> -->

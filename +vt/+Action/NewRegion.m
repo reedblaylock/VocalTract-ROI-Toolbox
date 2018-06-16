@@ -32,17 +32,37 @@ classdef NewRegion < vt.Action
 			this.region.color = this.getNextColor();
 		end
 		
-		function color = getNextColor(this)
-			% Adopted from:
-			% https://martin.ankerl.com/2009/12/09/how-to-create-random-colors-programmatically/
-			% Doesn't give as much color dispersion as you'd like
-			golden_ratio_conjugate = 0.618033988749895;
-% 			h = rand;
-% 			h = h + golden_ratio_conjugate;
-			h = golden_ratio_conjugate * vt.Action.NewRegion.getOrIncrementCount();
-			h = mod(h, 1);
-			color = hsv2rgb(h, 0.8, 0.95);
+		function color = getNextColor(~)
+			% Color scheme: Tartan (author unknown)
+			% Source: http://terminal.sexy/#Kysr3t7eLjQ2zAAATpoGxKAANGWkdVB7Bpia09fPVVdT7ykpiuI0_OlPcp_PrX-oNOLi7u7s
+			
+			colors = [
+				'#EF2929'; % red
+				'#8AE234'; % green
+				'#FCE94F'; % yellow
+				'#729FCF'; % blue
+				'#AD7FA8'; % purple
+				'#34E2E2'  % cyan
+			];
+			
+			colors = hex2rgb(colors);
+			
+			% Cycle through the colors every six regions
+			i = mod(vt.Action.NewRegion.getOrIncrementCount() - 1, 6) + 1;
+			color = colors(i, :);
 		end
+		
+% 		function color = getNextColor(this)
+% 			% Adopted from:
+% 			% https://martin.ankerl.com/2009/12/09/how-to-create-random-colors-programmatically/
+% 			% Doesn't give as much color dispersion as you'd like
+% 			golden_ratio_conjugate = 0.618033988749895;
+% % 			h = rand;
+% % 			h = h + golden_ratio_conjugate;
+% 			h = golden_ratio_conjugate * vt.Action.NewRegion.getOrIncrementCount();
+% 			h = mod(h, 1);
+% 			color = hsv2rgb(h, 0.8, 0.95);
+% 		end
 		
 		function [] = delete(this)
 			delete@vt.Action.NewRegion(this);

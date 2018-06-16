@@ -3,10 +3,26 @@ NOTES FROM JUNE 3-10, 2018
 Bug: The New Region ID doesn't get cleared after you exit the program. Either stop
 using a static/persistent region ID, or throw in some onDelete cleanup.
 
-Inefficiency: Checking the MATLAB version takes almost 2 seconds. Try getting
-		the MATLAB version at startup, and save it somewhere
-Fix: I think the easiest and most legible thing to do wil be to clear your
-		persistent variables when the GUI closes.
+Check:
+	- is the region ID getting cleared when the GUI closes?
+	- is the MATLAB version getting cleared when the GUI closes?
+	- any other persistent variables that need to be cleared?
+
+Performance: update region color scheme to be only bright, vibrant colors
+
+Feature: undo/redo button
+
+Feature: keyboard shortcuts
+
+Feature: statistically-generated regions
+
+Feature: custom regions
+
+Feature: centroid timeseries
+
+Feature: export colors to MView
+
+Feature: rotate regions (and keep corresponding up/down/left/right directions)
 
 Feature: make it so that the video-viewing panel can pop out into a separate
 		 panel
