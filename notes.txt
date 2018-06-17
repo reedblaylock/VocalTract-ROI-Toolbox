@@ -5,8 +5,6 @@ using a static/persistent region ID, or throw in some onDelete cleanup.
 
 Bug: clicking on a region's origin or boundary doesn't select the region
 
-Bug: popped out image color palette isn't grayscale
-
 Bug: if you leave the video panel popped out, there are a lot of print-outs to
 	 the command line when you interact with it
 

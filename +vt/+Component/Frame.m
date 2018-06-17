@@ -12,7 +12,8 @@ classdef Frame < vt.Component
 			this.handle = axes('Parent', p.Results.parent.handle);
 			this.imageHandle = imagesc([], 'Parent', this.handle);
 			axis image;
-			colormap gray;
+% 			colormap gray;
+			colormap(this.handle, 'gray');
 		end
 		
 		function [] = update(this, frame)
