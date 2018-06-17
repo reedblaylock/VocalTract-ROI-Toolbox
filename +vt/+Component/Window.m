@@ -1,4 +1,4 @@
-classdef Window < vt.Component & vt.State.Listener
+classdef Window < vt.Component
 	% This class has a default callback. Closing figures is often more trouble
 	% than it's worth, so avoid doing a custom job.
 	
@@ -20,19 +20,6 @@ classdef Window < vt.Component & vt.State.Listener
 				'MenuBar', 'none', ...
 				'Toolbar', 'none' ...
 			);
-		end
-		
-		function [] = onVideoChange(this, state)
-			this.setParameters('Name', [this.baseName ' - ' state.video.fullpath]);
-		end
-		
-		function [] = delete(this)
-			delete@vt.State.Listener(this);
-			this.log.off();
-% 			clear vt.Config;
-% 			clear vt.Action.NewRegion;
-% 			delete(this.log)
-% 			clear vt.Log;
 		end
 	end
 	

@@ -1,9 +1,18 @@
-NOTES FROM JUNE 3-10, 2018
+NOTES FROM JUNE 3-16, 2018
 
 Bug: The New Region ID doesn't get cleared after you exit the program. Either stop
 using a static/persistent region ID, or throw in some onDelete cleanup.
 
 Bug: clicking on a region's origin or boundary doesn't select the region
+
+Bug: popped out image color palette isn't grayscale
+
+Bug: if you leave the video panel popped out, there are a lot of print-outs to
+	 the command line when you interact with it
+
+Check: after you delete the app (whether you delete the whole thing at once, or
+	   the main window and then the video popout separately)
+	   - are state and everything else still in memory?
 
 Check:
 	- is the region ID getting cleared when the GUI closes?
@@ -37,9 +46,6 @@ Feature: centroid timeseries
 Feature: export colors to MView
 
 Feature: rotate regions (and keep corresponding up/down/left/right directions)
-
-Feature: make it so that the video-viewing panel can pop out into a separate
-		 panel
 
 --------------------------------------------------------------------------------
 NOTES FROM SEPTEMBER 2017

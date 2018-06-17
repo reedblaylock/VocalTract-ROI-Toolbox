@@ -55,6 +55,9 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			% isEditing functions
 			newState.isEditing = this.isEditing(oldState.isEditing, actionData);
 			
+			% Video popout
+			newState.videoIsDocked = this.toggleVideoDock(oldState.videoIsDocked, actionData);
+			
 			this.stateObj.state = newState;
 		end
 		
@@ -77,6 +80,9 @@ classdef Reducer < vt.Listener & vt.State.Setter
 			% isEditing functions
 			newState.isEditing = this.isEditing();
 			
+			% Video popout
+			newState.videoIsDocked = this.toggleVideoDock();
+			
 			this.stateObj.state = newState;
 		end
 		
@@ -90,6 +96,7 @@ classdef Reducer < vt.Listener & vt.State.Setter
 % 		newState = region(this, oldState, action)
 		newState = regions(this, oldState, actionData)
 		newState = video(this, oldState, actionData)
+		newState = toggleVideoDock(this, oldState, actionData)
 	end
 	
 end
