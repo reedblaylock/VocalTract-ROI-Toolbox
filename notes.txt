@@ -23,6 +23,9 @@ Performance: throw errors better when you go out of bounds on a range box. It's
 Performance: let the user choose (or add) different color schemes for the GUI
 			 and the regions
 
+Performance: use MATLAB's image processing roi shapes--including custom shapes!--
+			 to do your region and mask making
+
 Feature: midline...
 
 Feature: a bar on all the timeseries plots that updates as the frame changes
