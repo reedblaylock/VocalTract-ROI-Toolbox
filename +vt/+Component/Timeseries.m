@@ -65,7 +65,6 @@ classdef Timeseries < vt.Component & vt.State.Listener
 				);
 			end
 	
-			
 			if(numel(fieldnames(p.Unmatched)))
 				this.setParameters(p.Unmatched);
 			end

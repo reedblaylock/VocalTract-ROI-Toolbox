@@ -19,7 +19,7 @@ classdef Frame < vt.Component
 		function [] = update(this, frame)
 			% Use imshow?
             set(this.imageHandle, 'CData', frame);
-            axis image;
+            axis(this.handle, 'image');
             if vt.Config.isOldMatlabVersion()
                 set(gca, 'Ydir', 'reverse');
             end

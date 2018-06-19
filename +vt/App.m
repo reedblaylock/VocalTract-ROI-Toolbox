@@ -463,50 +463,44 @@ classdef App < vt.Root & vt.State.Listener
 		function [] = redrawRegionEditingArea(this, state)
 			% REDRAW REGION EDITING AREA
 			% Prevent re-drawing when other changes than shape changes are made
-			currentRegion = [];
+			curRegion = [];
 			for iRegion = 1:numel(state.regions)
 				if state.regions{iRegion}.id == state.currentRegion
-					currentRegion = state.regions{iRegion};
+					curRegion = state.regions{iRegion};
 					break;
 				end
 			end
-			if isempty(currentRegion) || strcmp(this.currentRegion.shape, currentRegion.shape)
+			if isempty(curRegion) || strcmp(this.currentRegion.shape, curRegion.shape)
 				return;
 			end
 			
 			% TODO: If isEditing='region', 'Enable'='on'; otherwise,
 			% 'Enable'='off'
-			switch(currentRegion.shape)
+			switch(curRegion.shape)
 				case 'Circle'
 					% 1-2 + Radius
 					this.gui.RegionSettings1_2.setParameters( ...
 						'Title', 'Radius', ...
 						'Selection', 2 ...
 					);
-% 					this.gui.RegionSettings1_2.setParameters('Selection', 2);
 					% 2-2 + Empty space
 					this.gui.RegionSettings2_2.setParameters( ...
 						'Title', '', ...
 						'Selection', 2 ...
 					);
-% 					this.gui.RegionSettings2_2.setParameters('Title', '');
 					% 3-2 + Empty space
-% 					this.gui.RegionSettings3_2.setParameters('Selection', 2);
 				case 'Rectangle'
 					% 1-2 + Width
 					this.gui.RegionSettings1_2.setParameters( ...
 						'Title', 'Width', ...
 						'Selection', 1 ...
 					);
-% 					this.gui.RegionSettings1_2.setParameters('Selection', 1);
 					% 2-2 + Height
 					this.gui.RegionSettings2_2.setParameters( ...
 						'Title', 'Height', ...
 						'Selection', 1 ...
 					);
-% 					this.gui.RegionSettings2_2.setParameters('Selection', 1);
 					% 3-2 + Empty space
-% 					this.gui.RegionSettings3_2.setParameters('Selection', 1);
 				case 'Statistically-generated'
 					% TODO: Use the panel Selection property instead
 					% 1-2 + Minimum # pixels textbox
@@ -516,7 +510,7 @@ classdef App < vt.Root & vt.State.Listener
 					);
 					this.gui.MinimumPixels = vt.Component.TextBox.MinimumPixels( ...
 						this.gui.RegionSettings1_2, ...
-						'String', num2str(currentRegion.minimumPixels) ...
+						'String', num2str(curRegion.minimumPixels) ...
 					);
 					if(~strcmp(state.isEditing, 'region'))
 						this.gui.MinimumPixels.setParameters('Enable', 'off');
@@ -524,7 +518,7 @@ classdef App < vt.Root & vt.State.Listener
 					this.initializeComponent(this.gui.RegionSettings1_2);
 					this.initializeComponent(this.gui.MinimumPixels);
 					% TODO: this is a hack
-					this.gui.MinimumPixels.currentRegion = currentRegion;
+					this.gui.MinimumPixels.currentRegion = curRegion;
 					this.gui.MinimumPixels.video = state.video;
 					% 2-2 + Search radius textbox
 					this.gui.RegionSettings2_2 = vt.Component.Layout.Panel( ...
@@ -533,7 +527,7 @@ classdef App < vt.Root & vt.State.Listener
 					);
 					this.gui.SearchRadius = vt.Component.TextBox.SearchRadius( ...
 						this.gui.RegionSettings2_2, ...
-						'String', num2str(currentRegion.searchRadius) ...
+						'String', num2str(curRegion.searchRadius) ...
 					);
 					if(~strcmp(state.isEditing, 'region'))
 						this.gui.SearchRadius.setParameters('Enable', 'off');
@@ -541,7 +535,7 @@ classdef App < vt.Root & vt.State.Listener
 					this.initializeComponent(this.gui.RegionSettings2_2);
 					this.initializeComponent(this.gui.SearchRadius);
 					% TODO: this is a hack
-					this.gui.SearchRadius.currentRegion = currentRegion;
+					this.gui.SearchRadius.currentRegion = curRegion;
 					this.gui.SearchRadius.video = state.video;
 					% 3-2 + Tau textbox
 					this.gui.RegionSettings3_2 = vt.Component.Layout.Panel( ...
@@ -550,7 +544,7 @@ classdef App < vt.Root & vt.State.Listener
 					);
 					this.gui.Tau = vt.Component.TextBox.Tau( ...
 						this.gui.RegionSettings3_2, ...
-						'String', num2str(currentRegion.tau) ...
+						'String', num2str(curRegion.tau) ...
 					);
 					if(~strcmp(state.isEditing, 'region'))
 						this.gui.Tau.setParameters('Enable', 'off');
@@ -558,40 +552,36 @@ classdef App < vt.Root & vt.State.Listener
 					this.initializeComponent(this.gui.RegionSettings3_2);
 					this.initializeComponent(this.gui.Tau);
 					% TODO: this is a hack
-					this.gui.Tau.currentRegion = currentRegion;
+					this.gui.Tau.currentRegion = curRegion;
 					this.gui.Tau.video = state.video;
 				otherwise
 					% TODO: add the rest
 			end
 			
-			% re-order the elements so that elements 16:18 are 10:12
-% 			newOrder = [1:9 16:17 10:15]; % 17, now that I took out the save button
-% 			this.gui.RightBoxGrid.handle.Contents = this.gui.RightBoxGrid.handle.Contents(newOrder);
-			
 			% Update the local copy of currentRegion
-			this.currentRegion = currentRegion;
+			this.currentRegion = curRegion;
 		end
 		
 		% Dynamically called by State.Listener
 		function [] = onCurrentRegionChange(this, state)
 			% REDRAW TIMESERIES 
-			this.redrawCurrentTimeseries(state);
+% 			this.redrawCurrentTimeseries(state);
 			
 			% Also sets this.currentRegion = currentRegion
 			this.redrawRegionEditingArea(state);
 		end
 		
 		function [] = redrawCurrentTimeseries(this, state)
-			currentRegion = [];
+			curRegion = [];
 			for iRegion = 1:numel(state.regions)
 				if state.regions{iRegion}.id == state.currentRegion
-					currentRegion = state.regions{iRegion};
+					curRegion = state.regions{iRegion};
 					break;
 				end
 			end
 			
 			% If there's no mask, you can't have a timeseries
-			if isempty(currentRegion) || isempty(currentRegion.mask)
+			if isempty(curRegion) || isempty(curRegion.mask)
 				return;
 			end
 			
@@ -603,7 +593,7 @@ classdef App < vt.Root & vt.State.Listener
 % 				return;
 % 			end
 			
-			region = currentRegion;
+			region = curRegion;
 			label = ['Timeseries' num2str(region.id)];
 			if(isfield(this.gui, label))
 				% If the timeseries with this id is already being displayed, just

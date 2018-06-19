@@ -8,6 +8,11 @@ Bug: clicking on a region's origin or boundary doesn't select the region
 Bug: if you leave the video panel popped out, there are a lot of print-outs to
 	 the command line when you interact with it
 
+Bug: the last timeseries shrinks after you do anything. From the Gui Layout
+	 Toolbox comments, it sounds like you can't put your axes directly in a
+	 Gui Layout Toolbox object; you have to put them in a uicontainer or
+	 something else first
+
 Check: after you delete the app (whether you delete the whole thing at once, or
 	   the main window and then the video popout separately)
 	   - are state and everything else still in memory?
