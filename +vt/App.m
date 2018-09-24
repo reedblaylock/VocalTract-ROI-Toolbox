@@ -238,7 +238,9 @@ classdef App < vt.Root & vt.State.Listener
 			gui.LoadMenu = vt.Component.MenuItem( gui.FileMenu, 'Load...' );
 			gui.LoadAvi  = vt.Component.MenuItem.Load( gui.LoadMenu, 'AVI', 'avi' );
 			
-			gui.Export   = vt.Component.MenuItem.Export( gui.FileMenu, 'Export timeseries' );
+			gui.Export   = vt.Component.MenuItem.Export( gui.FileMenu, 'Export for mview' );
+			gui.ExportFrame = vt.Component.MenuItem.ExportFrame ( gui.FileMenu, 'Export frame to jpg' );
+			gui.Save     = vt.Component.MenuItem.SaveRegions( gui.FileMenu, 'Save regions' );
 			
 % 			gui.ExitMenu = vt.Component.MenuItem.Exit( gui.FileMenu, 'Exit' );
 
