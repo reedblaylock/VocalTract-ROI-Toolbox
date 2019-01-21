@@ -1,4 +1,4 @@
-function newState = toggleVideoDock(this, varargin)
+function newState = videoIsDocked(this, varargin)
 	p = inputParser;
 	addOptional(p, 'oldState', true);
 	addOptional(p, 'action', struct('type', ''));

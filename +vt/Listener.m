@@ -40,7 +40,7 @@ classdef (Abstract) Listener < vt.Root
 			p.parse(this, methodName);
 			
 			methodList = methods(p.Results.this);
-			b = ismember(methodName, methodList);
+			b = ismember(p.Results.methodName, methodList);
 		end
 	end
 	

@@ -6,6 +6,7 @@ classdef Reducer < vt.Listener & vt.State.Setter
 	
 	properties
 		stateObj
+		reducerPath = 'D:\Programs\MATLAB\R2014b\toolbox\VocalTract ROI Toolbox\+vt\@Reducer';
 	end
 	
 	methods
@@ -13,7 +14,7 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		function this = Reducer(stateObj)
 			this.stateObj = stateObj;
 			
-			this.initializeState();
+			this.reduce();
 		end
 		
 		function [] = register(this, actionObj)
@@ -36,67 +37,53 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		
 		% The main reduce function. Calls all the other reduce functions in this
 		% class (by calling some from within others).
-		function [] = reduce(this, ~, eventData)
-			actionData = eventData.data;
-			newState = struct();
+		function [] = reduce(this, ~, varargin)
+			p = inputParser;
+			addOptional(p, 'eventData', struct(), @(eventData) isa(eventData, 'vt.EventData'));
+			p.StructExpand = false;
+			parse(p, varargin{:});
+			
 			oldState = this.stateObj.state;
+			newState = struct();
 			
-			% Frame functions
-			newState.currentFrameNo = this.currentFrameNo(oldState.currentFrameNo, actionData);
-			newState.frameType = this.frameType(oldState.frameType, actionData);
+			reducerFcns = this.getReducerFcns();
 			
-			% Video functions
-			newState.video = this.video(oldState.video, actionData);
-			
-			% Region functions
-			newState.regions = this.regions(oldState.regions, actionData);
-			newState.currentRegion = this.currentRegion(oldState.currentRegion, actionData);
-			
-			% isEditing functions
-			newState.isEditing = this.isEditing(oldState.isEditing, actionData);
-			
-			% Video popout
-			newState.videoIsDocked = this.toggleVideoDock(oldState.videoIsDocked, actionData);
+			for fcnidx = 1:numel(reducerFcns)
+				method = reducerFcns{fcnidx};
+				try
+					assert(this.isMethod(method));
+					if numel(fieldnames(p.Results.eventData))
+						actionData = p.Results.eventData.data;
+						newState.(method) = this.(method)(oldState.(method), actionData);
+					else
+						newState.(method) = this.(method)();
+					end
+					
+				catch excp
+					this.log.exception(excp);
+					% TODO: stop executing
+				end
+			end
 			
 			this.stateObj.state = newState;
 		end
 		
-		% Initialize the vt.State object by reducing without any input
-		% parameters.
-		function [] = initializeState(this)
-			newState = struct();
-			
-			% Frame functions
-			newState.currentFrameNo = this.currentFrameNo();
-			newState.frameType = this.frameType();
-			
-			% Video functions
-			newState.video = this.video();
-			
-			% Region functions
-			newState.regions = this.regions();
-			newState.currentRegion = this.currentRegion();
-			
-			% isEditing functions
-			newState.isEditing = this.isEditing();
-			
-			% Video popout
-			newState.videoIsDocked = this.toggleVideoDock();
-			
-			this.stateObj.state = newState;
+		function reducerFcns = getReducerFcns(this)
+			reducerCls = what(this.reducerPath);
+			reducerFcns = reducerCls(1).m;
+			reducerFcns(ismember(reducerFcns, 'Reducer.m')) = [];
+			reducerFcns = cellfun(@(x) x(1:end-2), reducerFcns, 'un', 0);
 		end
 		
 		% Function declarations for the other reducer methods. You can find them
 		% in +vt/@Reducer
 		newState = currentFrameNo(this, oldState, actionData)
 		newState = currentRegion(this, oldState, actionData)
-% 		newState = frame(this, oldState, action)
 		newState = frameType(this, oldState, actionData)
 		newState = isEditing(this, oldState, actionData)
-% 		newState = region(this, oldState, action)
 		newState = regions(this, oldState, actionData)
 		newState = video(this, oldState, actionData)
-		newState = toggleVideoDock(this, oldState, actionData)
+		newState = videoIsDocked(this, oldState, actionData)
 	end
 	
 end
