@@ -77,13 +77,13 @@ classdef Reducer < vt.Listener & vt.State.Setter
 		
 		% Function declarations for the other reducer methods. You can find them
 		% in +vt/@Reducer
-		newState = currentFrameNo(this, oldState, actionData)
-		newState = currentRegion(this, oldState, actionData)
-		newState = frameType(this, oldState, actionData)
-		newState = isEditing(this, oldState, actionData)
-		newState = regions(this, oldState, actionData)
-		newState = video(this, oldState, actionData)
-		newState = videoIsDocked(this, oldState, actionData)
+% 		newState = currentFrameNo(this, oldState, actionData)
+% 		newState = currentRegion(this, oldState, actionData)
+% 		newState = frameType(this, oldState, actionData)
+% 		newState = isEditing(this, oldState, actionData)
+% 		newState = regions(this, oldState, actionData)
+% 		newState = video(this, oldState, actionData)
+% 		newState = videoIsDocked(this, oldState, actionData)
 	end
 	
 end
