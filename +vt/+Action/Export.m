@@ -64,6 +64,7 @@ function [] = exportMview(regions, video)
 	data = formatData(data, filename, wav_dir, avi_dir);
 
 	save(filename, 'data');
+	disp('Finished smoothing.');
 end
 
 function d = formatData(v, fName, wav_dir, avi_dir)

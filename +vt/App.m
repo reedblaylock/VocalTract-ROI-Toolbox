@@ -158,12 +158,18 @@ classdef App < redux.App
 		function gui = addMenu(~, gui)
 			% + File menu
 			gui.FileMenu = redux.Component.MenuItem( gui.Window,   'File' );
-			gui.LoadMenu = redux.Component.MenuItem( gui.FileMenu, 'Load...' );
-			gui.LoadAvi  = vt.Component.MenuItem.Load( gui.LoadMenu, 'AVI', 'avi' );
+			
+			% + Video menus
+			gui.VideoMenu = redux.Component.MenuItem( gui.FileMenu, 'Video...' );
+			gui.LoadAvi   = vt.Component.MenuItem.Load( gui.VideoMenu, 'Load AVI', 'avi' );
+			
+			% + Region menus
+			gui.RegionMenu = redux.Component.MenuItem( gui.FileMenu, 'Regions...' );
+			gui.ExportRegions = vt.Component.MenuItem.ExportRegions( gui.RegionMenu, 'Export regions' );
+			gui.ImportRegions = vt.Component.MenuItem.ImportRegions( gui.RegionMenu, 'Import regions' );
 			
 			gui.Export   = vt.Component.MenuItem.Export( gui.FileMenu, 'Export for mview' );
 			gui.ExportFrame = vt.Component.MenuItem.ExportFrame ( gui.FileMenu, 'Export frame to jpg' );
-			gui.Save     = vt.Component.MenuItem.SaveRegions( gui.FileMenu, 'Save regions' );
 			
 % 			gui.ExitMenu = vt.Component.MenuItem.Exit( gui.FileMenu, 'Exit' );
 
