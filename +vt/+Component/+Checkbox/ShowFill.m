@@ -1,11 +1,11 @@
-classdef ShowFill < vt.Component.Checkbox
+classdef ShowFill < redux.Component.Checkbox
 	properties
-		actionType = @vt.Action.ToggleShowFill
+		actionType = @redux.Action.ToggleShowFill
 	end
 	
 	methods
 		function this = ShowFill(parent, label)
-			this@vt.Component.Checkbox(parent, label);
+			this@redux.Component.Checkbox(parent, label);
 		end
 		
 		function [] = onIsEditingChange(this, state)

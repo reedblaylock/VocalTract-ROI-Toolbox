@@ -1,11 +1,11 @@
-classdef ShowOutline < vt.Component.Checkbox & vt.State.Listener & vt.Action.Dispatcher
+classdef ShowOutline < redux.Component.Checkbox & redux.State.Listener & redux.Action.Dispatcher
 	properties
 		currentRegion
 	end
 	
 	methods
 		function this = ShowOutline(parent, label)
-			this@vt.Component.Checkbox(parent, label);
+			this@redux.Component.Checkbox(parent, label);
 			
 			this.setCallback();
 		end

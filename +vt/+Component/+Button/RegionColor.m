@@ -1,11 +1,11 @@
-classdef RegionColor < vt.Component.Button & vt.Action.Dispatcher & vt.State.Listener
+classdef RegionColor < redux.Component.Button & redux.Action.Dispatcher & redux.State.Listener
 	properties
 		currentRegion
 	end
 	
 	methods
 		function this = RegionColor(parent, label, varargin)
-			this@vt.Component.Button(parent, label, varargin{:});
+			this@redux.Component.Button(parent, label, varargin{:});
 			
 			this.setCallback();
 		end

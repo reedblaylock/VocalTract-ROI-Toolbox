@@ -1,4 +1,4 @@
-classdef EditRegion < vt.Action
+classdef EditRegion < redux.Action
 	events
 		EDIT_REGION
 	end

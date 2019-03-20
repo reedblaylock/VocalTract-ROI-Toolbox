@@ -1,11 +1,11 @@
-classdef DeleteRegion < vt.Component.Button & vt.State.Listener & vt.Action.Dispatcher
+classdef DeleteRegion < redux.Component.Button & redux.State.Listener & redux.Action.Dispatcher
 	properties
 		regionId
 	end
 	
 	methods
 		function this = DeleteRegion(parent, label, varargin)
-			this@vt.Component.Button(parent, label, varargin{:});
+			this@redux.Component.Button(parent, label, varargin{:});
 			
 			this.setCallback();
 		end

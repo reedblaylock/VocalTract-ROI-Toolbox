@@ -1,5 +1,5 @@
 % The textbox that displays the radius of the current circular region.
-classdef Radius < vt.Component.TextBox.RangeBox & vt.State.Listener
+classdef Radius < redux.Component.TextBox.RangeBox & redux.State.Listener
 	properties
 		currentRegion
 		video
@@ -12,16 +12,16 @@ classdef Radius < vt.Component.TextBox.RangeBox & vt.State.Listener
 		% Adds this component to its parent, subclassing the RangeBox class 
 		% (which accepts only numbers in a certain range).
 		% Notable superclasses:
-		% - vt.Component.TextBox.RangeBox
-		% - vt.Action.Dispatcher (via RangeBox)
-		% - vt.State.Listener
+		% - redux.Component.TextBox.RangeBox
+		% - redux.Action.Dispatcher (via RangeBox)
+		% - redux.State.Listener
 		function this = Radius(parent, varargin)
-			p = vt.InputParser();
+			p = redux.InputParser();
 			p.KeepUnmatched = true;
 			p.addParent();
 			p.parse(parent, varargin{:});
 			
-			this@vt.Component.TextBox.RangeBox(parent, varargin{:});
+			this@redux.Component.TextBox.RangeBox(parent, varargin{:});
 		end
 		
 		%%%%% STATE LISTENER %%%%%

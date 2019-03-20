@@ -1,4 +1,4 @@
-classdef SetFrameType < vt.Action
+classdef SetFrameType < redux.Action
 	events
 		SET_FRAME_TYPE
 	end

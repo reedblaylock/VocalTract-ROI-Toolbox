@@ -1,4 +1,4 @@
-classdef SetCurrentRegion < vt.Action
+classdef SetCurrentRegion < redux.Action
 	events
 		SET_CURRENT_REGION
 	end

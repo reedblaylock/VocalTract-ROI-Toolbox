@@ -1,5 +1,5 @@
 % This is the slider that controls the current frame number shown.
-classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listener
+classdef FrameNo < redux.Component.Slider & redux.Action.Dispatcher & redux.State.Listener
 	properties
 		maxFrame
 	end
@@ -9,9 +9,9 @@ classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listene
 		%%%%% CONSTRUCTOR %%%%%
 		
 		% Create a slider object, and set its callback (see
-		% vt.Action.Dispatcher).
+		% redux.Action.Dispatcher).
 		function this = FrameNo(parent)
-			this@vt.Component.Slider(parent);
+			this@redux.Component.Slider(parent);
 			
 			this.setCallback();
 		end
@@ -75,13 +75,13 @@ classdef FrameNo < vt.Component.Slider & vt.Action.Dispatcher & vt.State.Listene
 	end
 		
 	%%%%% ACTION DISPATCHER %%%%%
-	methods (Access = ?vt.Action.Dispatcher)
+	methods (Access = ?redux.Action.Dispatcher)
 		
-		% Overwrite the vt.Component function setCallback. Dispatch an action
+		% Overwrite the redux.Component function setCallback. Dispatch an action
 		% whenever the Value value of ths slider changes.
 		function [] = setCallback(this, varargin)
-			p = vt.InputParser;
-			p.addRequired('this', @(this) isa(this, 'vt.Action.Dispatcher'));
+			p = redux.InputParser;
+			p.addRequired('this', @(this) isa(this, 'redux.Action.Dispatcher'));
 			p.addOptional('callbackName', 'Callback', @ischar);
 			p.parse(this, varargin{:});
 

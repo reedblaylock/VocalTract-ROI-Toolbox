@@ -1,4 +1,4 @@
-classdef RegionType < vt.Component.Popup & vt.State.Listener & vt.Action.Dispatcher
+classdef RegionType < redux.Component.Popup & redux.State.Listener & redux.Action.Dispatcher
 	properties
 		currentRegion
 		video
@@ -6,7 +6,7 @@ classdef RegionType < vt.Component.Popup & vt.State.Listener & vt.Action.Dispatc
 	
 	methods
 		function this = RegionType(parent)
-			this@vt.Component.Popup(parent);
+			this@redux.Component.Popup(parent);
 			
 			this.setParameters( ...
 				'String', {'Average', 'Binary'}, ...

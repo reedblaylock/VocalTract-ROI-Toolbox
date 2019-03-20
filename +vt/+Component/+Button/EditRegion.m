@@ -1,7 +1,7 @@
-classdef EditRegion < vt.Component.Button & vt.Action.Dispatcher & vt.State.Listener
+classdef EditRegion < redux.Component.Button & redux.Action.Dispatcher & redux.State.Listener
 	methods
 		function this = EditRegion(parent, label, varargin)
-			this@vt.Component.Button(parent, label, varargin{:});
+			this@redux.Component.Button(parent, label, varargin{:});
 			this.setParameters('Enable', 'off');
 			
 			this.setCallback();

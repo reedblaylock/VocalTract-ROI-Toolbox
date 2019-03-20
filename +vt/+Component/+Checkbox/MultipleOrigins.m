@@ -1,11 +1,11 @@
-classdef MultipleOrigins < vt.Component.Checkbox
+classdef MultipleOrigins < redux.Component.Checkbox
 	properties
-		actionType = @vt.Action.ToggleMultipleOrigins
+		actionType = @redux.Action.ToggleMultipleOrigins
 	end
 	
 	methods
 		function this = MultipleOrigins(parent, label)
-			this@vt.Component.Checkbox(parent, label);
+			this@redux.Component.Checkbox(parent, label);
 		end
 		
 		function [] = onIsEditingChange(this, state)

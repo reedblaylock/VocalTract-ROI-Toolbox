@@ -1,11 +1,11 @@
-classdef Frame < vt.Component
+classdef Frame < redux.Component
 	properties
 		imageHandle
 	end
 	
 	methods
 		function this = Frame(parent)
-			p = vt.InputParser;
+			p = redux.InputParser;
 			p.addParent();
 			p.parse(parent);
 			
@@ -27,7 +27,7 @@ classdef Frame < vt.Component
 		end
 		
 		function [] = drawOrigin(this, regionId, coordinates, color)
-			p = vt.InputParser;
+			p = inputParser;
 			p.addRequired('regionId', @isnumeric);
 			p.addRequired('coordinates', @isnumeric);
 			p.addRequired('color', @(color) (isnumeric(color) || ischar(color)));

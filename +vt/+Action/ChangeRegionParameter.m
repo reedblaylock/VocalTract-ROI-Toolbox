@@ -1,4 +1,4 @@
-classdef ChangeRegionParameter < vt.Action
+classdef ChangeRegionParameter < redux.Action
 	events
 		CHANGE_REGION_PARAMETER
 	end

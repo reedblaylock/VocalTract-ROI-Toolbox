@@ -1,4 +1,4 @@
-classdef DeleteRegion < vt.Action
+classdef DeleteRegion < redux.Action
 	events
 		DELETE_REGION
 	end

@@ -1,6 +1,6 @@
 % An abstract class, inherited by textboxes that enforce their values to fit a
 % numerical range.
-classdef (Abstract) RangeBox < vt.Component.TextBox & vt.Action.Dispatcher
+classdef (Abstract) RangeBox < redux.Component.TextBox & redux.Action.Dispatcher
 	properties
 		% Specify a default min and max value. These are usually over-written by
 		% child classes.
@@ -17,16 +17,16 @@ classdef (Abstract) RangeBox < vt.Component.TextBox & vt.Action.Dispatcher
 		% Adds this component to its parent, subclassing the TextBox class. Set
 		% the callback function for dispatching an action.
 		% Notable superclasses:
-		% - vt.Component.TextBox
-		% - vt.Action.Dispatcher
-		% - vt.State.Listener
+		% - redux.Component.TextBox
+		% - redux.Action.Dispatcher
+		% - redux.State.Listener
 		function this = RangeBox(parent, varargin)
-			p = vt.InputParser();
+			p = redux.InputParser();
 			p.KeepUnmatched = true;
 			p.addParent();
 			p.parse(parent, varargin{:});
 			
-			this@vt.Component.TextBox(parent, varargin{:});
+			this@redux.Component.TextBox(parent, varargin{:});
 			
 			this.setCallback();
 		end
@@ -46,7 +46,7 @@ classdef (Abstract) RangeBox < vt.Component.TextBox & vt.Action.Dispatcher
 		
 		% Make sure that the current value is within the specified range.
 		function validatedNum = validateData(this, num)
-			p = vt.InputParser;
+			p = redux.InputParser;
 			p.addRequired('num', @isnumeric);
 			parse(p, num);
 			

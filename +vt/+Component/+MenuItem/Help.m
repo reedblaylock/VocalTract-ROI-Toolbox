@@ -1,7 +1,7 @@
-classdef Help < vt.Component.MenuItem & vt.Action.Dispatcher
+classdef Help < redux.Component.MenuItem & redux.Action.Dispatcher
 	methods
 		function this = Help(parent, label)
-			this@vt.Component.MenuItem(parent, label);
+			this@redux.Component.MenuItem(parent, label);
 			
 			this.setCallback();
 		end

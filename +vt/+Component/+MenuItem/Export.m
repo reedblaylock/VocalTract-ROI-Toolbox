@@ -1,4 +1,4 @@
-classdef Export < vt.Component.MenuItem & vt.State.Listener & vt.Action.Dispatcher
+classdef Export < redux.Component.MenuItem & redux.State.Listener & redux.Action.Dispatcher
 	properties
 		regions
 		video
@@ -6,12 +6,12 @@ classdef Export < vt.Component.MenuItem & vt.State.Listener & vt.Action.Dispatch
 	
 	methods
 		function this = Export(parent, label)
-			p = vt.InputParser;
+			p = redux.InputParser;
 			p.addParent();
 			p.addRequired('label', @ischar);
 			parse(p, parent, label);
 			
-			this@vt.Component.MenuItem(p.Results.parent, p.Results.label);
+			this@redux.Component.MenuItem(p.Results.parent, p.Results.label);
 			
 			this.setCallback();
 		end

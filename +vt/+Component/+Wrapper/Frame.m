@@ -1,11 +1,11 @@
-% This class is a wrapper for vt.Component.Frame, providing the logic required
+% This class is a wrapper for redux.Component.Frame, providing the logic required
 % to make appropriate updates to the frame's visualization.
-classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
+classdef Frame < redux.Component.Wrapper & redux.State.Listener & redux.Action.Dispatcher
 	properties
 		regions
 		video
 		
-		% An object of type vt.Component.Frame
+		% An object of type redux.Component.Frame
 		frame
 		
 		% The current value for isEditing, given by State.
@@ -19,10 +19,10 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		
 		%%%%% CONSTRUCTOR %%%%%
 		
-		% Store a vt.Component.Frame object, and register a callback function
-		% (see vt.Component and vt.Action.Dispatcher).
+		% Store a redux.Component.Frame object, and register a callback function
+		% (see redux.Component and redux.Action.Dispatcher).
 		function this = Frame(frame)
-			p = vt.InputParser;
+			p = redux.InputParser;
 			p.addRequired('frame', @(frame) isa(frame, 'vt.Component.Frame'));
 			parse(p, frame);
 			
@@ -34,7 +34,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		%%%%% STATE LISTENER %%%%%
 		
 		% Update the current frame shown. This function is called by
-		% vt.State.Listener when the current frame number changes in State.
+		% redux.State.Listener when the current frame number changes in State.
 		function [] = onCurrentFrameNoChange(this, state)
 			if ~isempty(state.video) && ~isempty(state.frameType) && ~isempty(state.currentFrameNo)
 				this.switchFrameType(state.frameType, state.video, state.currentFrameNo);
@@ -42,20 +42,20 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		end
 		
 		% Update the current frame shown. This function is called by
-		% vt.State.Listener when the current video changes in State.
+		% redux.State.Listener when the current video changes in State.
 		function [] = onVideoChange(this, state)
 			this.video = state.video;
 			this.switchFrameType(state.frameType, state.video, 1);
 		end
 		
 		% Update the current frame shown. This function is called by
-		% vt.State.Listener when the current frame type changes in State.
+		% redux.State.Listener when the current frame type changes in State.
 		function [] = onFrameTypeChange(this, state)
 			this.switchFrameType(state.frameType, state.video, state.currentFrameNo);
 		end
 		
 		% Prepare to add/edit a region, or redraw all regions. This function is 
-		% called by vt.State.Listener when the current value for isEditing 
+		% called by redux.State.Listener when the current value for isEditing 
 		% changes in State.
 		function [] = onIsEditingChange(this, state)
 			this.isEditing = state.isEditing;
@@ -117,7 +117,7 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 		
 		%%%%% ACTION DISPATCHER %%%%%
 		
-		% Overwrite the vt.Action.Dispatcher function dispatchAction to include
+		% Overwrite the redux.Action.Dispatcher function dispatchAction to include
 		% the current isEditing state and the coordinates that were clicked.
 		function [] = dispatchAction(this, ~, ~)
 % 			d = struct();
@@ -277,8 +277,8 @@ classdef Frame < vt.Component.Wrapper & vt.State.Listener & vt.Action.Dispatcher
 	end
 	
 	%%%%% ACTION DISPATCHER %%%%%
-	methods (Access = ?vt.Action.Dispatcher)
-		% Overwrite the vt.Component function setCallback to use the frame
+	methods (Access = ?redux.Action.Dispatcher)
+		% Overwrite the redux.Component function setCallback to use the frame
 		% property's image handle (rather than the frame handle).
 		function [] = setCallback(this, varargin)
 			set( ...

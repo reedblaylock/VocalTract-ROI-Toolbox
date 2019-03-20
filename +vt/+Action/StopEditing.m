@@ -1,4 +1,4 @@
-classdef StopEditing < vt.Action
+classdef StopEditing < redux.Action
 	events
 		STOP_EDITING
 	end

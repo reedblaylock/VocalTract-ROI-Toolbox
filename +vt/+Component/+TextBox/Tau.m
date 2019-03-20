@@ -1,6 +1,6 @@
 % The textbox that displays the tau value of the current statistically-generated
 % region.
-classdef Tau < vt.Component.TextBox.RangeBox & vt.State.Listener
+classdef Tau < redux.Component.TextBox.RangeBox & redux.State.Listener
 	properties
 		currentRegion
 		video
@@ -14,16 +14,16 @@ classdef Tau < vt.Component.TextBox.RangeBox & vt.State.Listener
 		% (which accepts only numbers in a certain range). The minimum value for
 		% this range is hard-coded as 0.01.
 		% Notable superclasses:
-		% - vt.Component.TextBox.RangeBox
-		% - vt.Action.Dispatcher (via RangeBox)
-		% - vt.State.Listener
+		% - redux.Component.TextBox.RangeBox
+		% - redux.Action.Dispatcher (via RangeBox)
+		% - redux.State.Listener
 		function this = Tau(parent, varargin)
-			p = vt.InputParser();
+			p = redux.InputParser();
 			p.KeepUnmatched = true;
 			p.addParent();
 			p.parse(parent, varargin{:});
 			
-			this@vt.Component.TextBox.RangeBox(parent, varargin{:});
+			this@redux.Component.TextBox.RangeBox(parent, varargin{:});
 			
 			this.minValue = 0.01;
 			this.maxValue = 1;

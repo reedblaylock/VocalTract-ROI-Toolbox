@@ -1,7 +1,7 @@
-classdef FrameType < vt.Component.Layout.HButtonGroup & vt.Action.Dispatcher & vt.State.Listener
+classdef FrameType < redux.Component.Layout.HButtonGroup & redux.Action.Dispatcher & redux.State.Listener
 	methods
 		function this = FrameType(parent, varargin)
-			this@vt.Component.Layout.HButtonGroup(parent, varargin{:});
+			this@redux.Component.Layout.HButtonGroup(parent, varargin{:});
 			
 			this.setParameters('ButtonStyle', 'radio', 'Enable', 'off');
 			this.handle.Buttons = {'frame', 'mean', 'std dev'};

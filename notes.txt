@@ -28,6 +28,8 @@ Performance: use MATLAB's image processing roi shapes--including custom shapes!-
 
 Feature: midline...
 
+Feature: play video sections with audio
+
 Feature: make the vertical line on each timeseries drag-able, and put the
 		 current frame number beneath it
 		 You might be able to use imline for this, since imroi objects are

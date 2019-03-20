@@ -1,4 +1,4 @@
-classdef SetCurrentFrameNo < vt.Action
+classdef SetCurrentFrameNo < redux.Action
 	events
 		SET_CURRENT_FRAME_NO
 	end

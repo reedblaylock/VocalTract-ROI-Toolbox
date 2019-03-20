@@ -1,11 +1,11 @@
-classdef FrameType < vt.Component
+classdef FrameType < redux.Component
 	properties
 		buttons % A structure of radio buttons
 	end
 	
 	methods
 		function this = FrameType(parent)
-			p = vt.InputParser;
+			p = redux.InputParser;
 			p.addParent();
 			parse(p, parent);
 			

@@ -1,11 +1,11 @@
-classdef SnapToMidline < vt.Component.Checkbox
+classdef SnapToMidline < redux.Component.Checkbox
 	properties
-		actionType = @vt.Action.ToggleSnapToMidline
+		actionType = @redux.Action.ToggleSnapToMidline
 	end
 	
 	methods
 		function this = SnapToMidline(parent, label)
-			this@vt.Component.Checkbox(parent, label);
+			this@redux.Component.Checkbox(parent, label);
 		end
 		
 		function [] = onIsEditingChange(this, state)

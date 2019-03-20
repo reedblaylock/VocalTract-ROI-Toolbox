@@ -1,5 +1,5 @@
 % This is the notification bar at the bottom of the GUI.
-classdef NotificationBar < vt.Component.Text
+classdef NotificationBar < redux.Component.Text
 	methods
 		
 		%%%%% CONSTRUCTOR %%%%%
@@ -7,7 +7,7 @@ classdef NotificationBar < vt.Component.Text
 		% Call the parent constructor (a text object), and apply certain
 		% parameters.
 		function this = NotificationBar(parent)
-			this@vt.Component.Text(parent);
+			this@redux.Component.Text(parent);
 			
 			this.setParameters( ...
 				'String', 'Welcome to the VocalTract ROI Toolbox!', ...

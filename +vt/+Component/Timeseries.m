@@ -1,4 +1,4 @@
-classdef Timeseries < vt.Component & vt.State.Listener
+classdef Timeseries < redux.Component & redux.State.Listener
 	properties
 		currentFrameNoLine = []
 		lineLabel
@@ -6,7 +6,7 @@ classdef Timeseries < vt.Component & vt.State.Listener
 	
 	methods
 		function this = Timeseries(parent, data, color, currentFrameNo, varargin)
-			p = vt.InputParser;
+			p = redux.InputParser;
 			p.KeepUnmatched = true;
 			p.addParent();
 			p.addRequired('data', @isnumeric)
@@ -20,7 +20,7 @@ classdef Timeseries < vt.Component & vt.State.Listener
 		end
 		
 		function [] = updateTimeseries(this, data, color, currentFrameNo, varargin)
-			p = vt.InputParser;
+			p = redux.InputParser;
 			p.KeepUnmatched = true;
 			p.addRequired('data', @isnumeric)
 			p.addRequired('color', @(color) (ischar(color) || isnumeric(color)));

@@ -1,4 +1,4 @@
-classdef Export < vt.Action
+classdef Export < redux.Action
 	events
 		EXPORT
 	end

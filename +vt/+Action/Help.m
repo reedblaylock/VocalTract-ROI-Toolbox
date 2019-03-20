@@ -1,4 +1,4 @@
-classdef Help < vt.Action
+classdef Help < redux.Action
 	events
 		HELP
 	end

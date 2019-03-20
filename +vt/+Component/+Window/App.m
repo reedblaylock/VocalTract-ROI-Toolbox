@@ -1,11 +1,11 @@
-classdef App < vt.Component.Window & vt.State.Listener
+classdef App < redux.Component.Window & redux.State.Listener
 	methods
 		function this = App(name)
-			p = vt.InputParser();
+			p = redux.InputParser();
 			p.addRequired('name', @ischar);
 			p.parse(name);
 			
-			this@vt.Component.Window(name);
+			this@redux.Component.Window(name);
 		end
 		
 		function [] = onVideoChange(this, state)
@@ -13,12 +13,12 @@ classdef App < vt.Component.Window & vt.State.Listener
 		end
 		
 		function [] = delete(this)
-			delete@vt.State.Listener(this);
+			delete@redux.State.Listener(this);
 			this.log.off();
-% 			clear vt.Config;
-% 			clear vt.Action.NewRegion;
+% 			clear redux.Config;
+% 			clear redux.Action.NewRegion;
 % 			delete(this.log)
-% 			clear vt.Log;
+% 			clear redux.Log;
 		end
 	end
 	

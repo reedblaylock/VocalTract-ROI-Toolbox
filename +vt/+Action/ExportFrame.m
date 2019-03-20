@@ -1,4 +1,4 @@
-classdef ExportFrame < vt.Action
+classdef ExportFrame < redux.Action
 	events
 		EXPORT_FRAME
 	end

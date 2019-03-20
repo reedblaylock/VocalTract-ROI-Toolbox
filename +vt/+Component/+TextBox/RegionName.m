@@ -1,5 +1,5 @@
 % The textbox that displays the name of the current region region.
-classdef RegionName < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Listener
+classdef RegionName < redux.Component.TextBox & redux.Action.Dispatcher & redux.State.Listener
 	properties
 		currentRegion
 	end
@@ -10,16 +10,16 @@ classdef RegionName < vt.Component.TextBox & vt.Action.Dispatcher & vt.State.Lis
 		
 		% Adds this component to its parent, subclassing the TextBox class.
 		% Notable superclasses:
-		% - vt.Component.TextBox
-		% - vt.Action.Dispatcher
-		% - vt.State.Listener
+		% - redux.Component.TextBox
+		% - redux.Action.Dispatcher
+		% - redux.State.Listener
 		function this = RegionName(parent, varargin)
-			p = vt.InputParser();
+			p = redux.InputParser();
 			p.KeepUnmatched = true;
 			p.addParent();
 			p.parse(parent, varargin{:});
 			
-			this@vt.Component.TextBox(parent, varargin{:});
+			this@redux.Component.TextBox(parent, varargin{:});
 			
 			this.setCallback();
 		end

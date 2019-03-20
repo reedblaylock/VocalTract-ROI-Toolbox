@@ -1,22 +1,22 @@
 % The textbox that displays the minimum pixel size of the current
 % statistically-generated region.
-classdef MinimumPixels < vt.Component.TextBox.RangeBox & vt.State.Listener
+classdef MinimumPixels < redux.Component.TextBox.RangeBox & redux.State.Listener
 	methods
 		%%%%% CONSTRUCTOR %%%%%
 		
 		% Adds this component to its parent, subclassing the RangeBox class 
 		% (which accepts only numbers in a certain range).
 		% Notable superclasses:
-		% - vt.Component.TextBox.RangeBox
-		% - vt.Action.Dispatcher (via RangeBox)
-		% - vt.State.Listener
+		% - redux.Component.TextBox.RangeBox
+		% - redux.Action.Dispatcher (via RangeBox)
+		% - redux.State.Listener
 		function this = MinimumPixels(parent, varargin)
-			p = vt.InputParser();
+			p = redux.InputParser();
 			p.KeepUnmatched = true;
 			p.addParent();
 			p.parse(parent, varargin{:});
 			
-			this@vt.Component.TextBox.RangeBox(parent, varargin{:});
+			this@redux.Component.TextBox.RangeBox(parent, varargin{:});
 		end
 		
 		%%%%% STATE LISTENER %%%%%

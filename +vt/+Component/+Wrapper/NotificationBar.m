@@ -1,12 +1,12 @@
 % This class handles the more complicated logic required before updating the
 % GUI's NotificationBar.
-classdef NotificationBar < vt.Root & vt.Component.Wrapper
+classdef NotificationBar < redux.Root & redux.Component.Wrapper
 	properties
-		% An object of class vt.Component.Text.NotificationBar
+		% An object of class redux.Component.Text.NotificationBar
 		notificationBar
 		
-		% vt.Root has a log property that will hold a vt.Log object (set in
-		% vt.Gui).
+		% redux.Root has a log property that will hold a redux.Log object (set in
+		% redux.Gui).
 	end
 	
 	methods
@@ -14,7 +14,7 @@ classdef NotificationBar < vt.Root & vt.Component.Wrapper
 		%%%%% CONSTRUCTOR %%%%%
 		
 		% Create a logical wrapper around the NotificationBar component.
-		% Register an event listener for the log property (see vt.Root).
+		% Register an event listener for the log property (see redux.Root).
 		function this = NotificationBar(notificationBar)
 			this.notificationBar = notificationBar;
 			

@@ -1,5 +1,5 @@
 % The textbox that displays the current frame number beneath the video frame.
-classdef FrameNo < vt.Component.TextBox.RangeBox & vt.State.Listener
+classdef FrameNo < redux.Component.TextBox.RangeBox & redux.State.Listener
 	
 	methods
 		
@@ -8,16 +8,16 @@ classdef FrameNo < vt.Component.TextBox.RangeBox & vt.State.Listener
 		% Adds this component to its parent, subclassing the RangeBox class 
 		% (which accepts only numbers in a certain range).
 		% Notable superclasses:
-		% - vt.Component.TextBox.RangeBox
-		% - vt.Action.Dispatcher (via RangeBox)
-		% - vt.State.Listener
+		% - redux.Component.TextBox.RangeBox
+		% - redux.Action.Dispatcher (via RangeBox)
+		% - redux.State.Listener
 		function this = FrameNo(parent, varargin)
-			p = vt.InputParser();
+			p = redux.InputParser();
 			p.KeepUnmatched = true;
 			p.addParent();
 			p.parse(parent, varargin{:});
 			
-			this@vt.Component.TextBox.RangeBox(parent, varargin{:});
+			this@redux.Component.TextBox.RangeBox(parent, varargin{:});
 		end
 		
 		%%%%% STATE LISTENER %%%%%

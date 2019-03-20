@@ -1,4 +1,4 @@
-classdef LoadVideo < vt.Action
+classdef LoadVideo < redux.Action
 	events
 		LOAD_VIDEO
 	end

@@ -1,4 +1,4 @@
-classdef NewRegion < vt.Action
+classdef NewRegion < redux.Action
 	events
 		NEW_REGION
 	end

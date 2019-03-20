@@ -1,4 +1,4 @@
-classdef RegionShape < vt.Component.Popup & vt.State.Listener & vt.Action.Dispatcher
+classdef RegionShape < redux.Component.Popup & redux.State.Listener & redux.Action.Dispatcher
 	properties
 		currentRegion
 		video
@@ -6,7 +6,7 @@ classdef RegionShape < vt.Component.Popup & vt.State.Listener & vt.Action.Dispat
 	
 	methods
 		function this = RegionShape(parent)
-			this@vt.Component.Popup(parent);
+			this@redux.Component.Popup(parent);
 			
 			this.setParameters( ...
 				'String', {'Circle', 'Rectangle'}, ...

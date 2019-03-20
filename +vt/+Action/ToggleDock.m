@@ -1,4 +1,4 @@
-classdef ToggleDock < vt.Action
+classdef ToggleDock < redux.Action
 	events
 		TOGGLE_DOCK
 	end

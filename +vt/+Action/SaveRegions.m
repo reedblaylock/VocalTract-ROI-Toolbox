@@ -1,4 +1,4 @@
-classdef SaveRegions < vt.Action
+classdef SaveRegions < redux.Action
 	events
 		SAVE_REGIONS
 	end

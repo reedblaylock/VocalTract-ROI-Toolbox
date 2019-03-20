@@ -1,11 +1,11 @@
-classdef StopEditing < vt.Component.Button & vt.State.Listener & vt.Action.Dispatcher
+classdef StopEditing < redux.Component.Button & redux.State.Listener & redux.Action.Dispatcher
 	properties
 		currentRegion
 	end
 	
 	methods
 		function this = StopEditing(parent, label, varargin)
-			this@vt.Component.Button(parent, label, varargin{:});
+			this@redux.Component.Button(parent, label, varargin{:});
 			
 			this.setCallback();
 		end
