@@ -84,6 +84,36 @@ classdef Frame < redux.Component
 			delete(oldOutline);
 		end
 		
+		function [] = drawCentroid(this, coordinates, regionId, mask, color)
+			p = inputParser;
+			p.addRequired('coordinates', @isnumeric);
+			p.addRequired('regionId', @isnumeric);
+			p.addRequired('mask', @isnumeric);
+			p.addRequired('color', @(color) (isnumeric(color) || ischar(color)));
+			parse(p, coordinates, regionId, mask, color);
+			
+			[r, c] = find(mask > 0, 1, 'first');
+			
+			regionId = num2str(p.Results.regionId);
+% 			coordinates = p.Results.coordinates - .5;
+			coordinates = p.Results.coordinates + [r, c] - 0.5;
+			rectangle('Parent', this.handle, 'Position', [coordinates(1), coordinates(2), 0.5, 0.5], 'FaceColor', p.Results.color, 'Tag', [regionId '-centroid']);
+						
+% 			hold on;
+% 			plot(coordinates(1), coordinates(2), 'Marker', 'o', 'MarkerFaceColor', color, 'Parent', this.handle, 'Tag', [regionId '-centroid']);
+% 			hold off;
+			
+		end
+		
+		function [] = deleteCentroid(this, regionId)
+			regionId = num2str(regionId);
+			
+			oldCentroid = findobj('Tag', [regionId '-centroid'], 'Parent', this.handle);
+			if ~isempty(oldCentroid)
+				delete(oldCentroid);
+			end
+		end
+		
 % 		function [] = renameAll(this, oldName, newName)
 % 			objs = findobj('Parent', this.handle, 'Tag', oldName);
 % 			set(objs, 'Tag', newName);

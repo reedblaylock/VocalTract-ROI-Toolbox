@@ -38,6 +38,13 @@ classdef Frame < redux.Component.Wrapper & redux.State.Listener & redux.Action.D
 		function [] = onCurrentFrameNoChange(this, state)
 			if ~isempty(state.video) && ~isempty(state.frameType) && ~isempty(state.currentFrameNo)
 				this.switchFrameType(state.frameType, state.video, state.currentFrameNo);
+				
+				% Update the centroid markers for each centroid region
+				for iRegion = 1:numel(state.regions)
+					if strcmpi(state.regions{iRegion}.type, 'centroid')
+						this.triggerCentroidUpdate(state.regions{iRegion}, state.currentFrameNo);
+					end
+				end
 			end
 		end
 		
@@ -167,6 +174,13 @@ classdef Frame < redux.Component.Wrapper & redux.State.Listener & redux.Action.D
 		% Force the stored Frame object to render an update.
 		function [] = triggerFrameUpdate(this, img)
 			this.frame.update(img);
+		end
+		
+		function [] = triggerCentroidUpdate(this, region, currentFrameNo)
+			this.frame.deleteCentroid(region.id);
+			
+			coordinates = region.timeseries(currentFrameNo, :);
+			this.frame.drawCentroid(coordinates, region.id, region.mask, region.color);
 		end
 		
 		% Display the specified frame of the video.
