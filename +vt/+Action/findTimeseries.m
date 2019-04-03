@@ -52,6 +52,7 @@ function timeseries = findTimeseries(region, video)
 			[xbar, ybar] = find(ROI == max(ROI(:)));
 			xbar = xbar(1);
 			ybar = ybar(1);
+
 		
 			
 			x_cent = zeros(video.nFrames, 1);
@@ -97,8 +98,8 @@ function timeseries = findTimeseries(region, video)
 				x_cent(frameNo) = xbar;
 				y_cent(frameNo) = ybar;
 			end
-% 			timeseries = [x_cent y_cent];
-			timeseries = y_cent;
+			timeseries = [x_cent y_cent];
+% 			timeseries = y_cent;
 		otherwise
 			error('Invalid region type or other error in (vt.Action.findTimeseries.m)');
 	end

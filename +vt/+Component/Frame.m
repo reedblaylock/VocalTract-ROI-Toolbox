@@ -92,11 +92,11 @@ classdef Frame < redux.Component
 			p.addRequired('color', @(color) (isnumeric(color) || ischar(color)));
 			parse(p, coordinates, regionId, mask, color);
 			
-			[r, c] = find(mask > 0, 1, 'first');
+			[y, x] = find(mask > 0, 1, 'first')
 			
 			regionId = num2str(p.Results.regionId);
 % 			coordinates = p.Results.coordinates - .5;
-			coordinates = p.Results.coordinates + [r, c] - 0.5;
+			coordinates = p.Results.coordinates + [x, y] - 0.5
 			rectangle('Parent', this.handle, 'Position', [coordinates(1), coordinates(2), 0.5, 0.5], 'FaceColor', p.Results.color, 'Tag', [regionId '-centroid']);
 						
 % 			hold on;

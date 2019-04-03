@@ -257,6 +257,7 @@ classdef Frame < redux.Component.Wrapper & redux.State.Listener & redux.Action.D
 				end
 				if ~isempty(region.mask) && region.showOutline
 					this.frame.drawOutline(region.id, region.mask, region.color);
+					this.triggerCentroidUpdate(region, state.currentFrameNo);
 				end
 			end
 			
