@@ -1,4 +1,4 @@
-classdef Timeseries < redux.Component & redux.State.Listener
+classdef Timeseries < redux.Component
 	properties
 		currentFrameNoLine = []
 		lineLabel
@@ -16,10 +16,10 @@ classdef Timeseries < redux.Component & redux.State.Listener
 			
 			this.handle = axes('Parent', p.Results.parent.handle);
 			
-			this.updateTimeseries(p.Results.data, p.Results.color, p.Results.currentFrameNo, varargin{:});
+			this.renderTimeseries(p.Results.data, p.Results.color, p.Results.currentFrameNo, varargin{:});
 		end
 		
-		function [] = updateTimeseries(this, data, color, currentFrameNo, varargin)
+		function [] = renderTimeseries(this, data, color, currentFrameNo, varargin)
 			p = redux.InputParser;
 			p.KeepUnmatched = true;
 			p.addRequired('data', @isnumeric)
@@ -84,9 +84,9 @@ classdef Timeseries < redux.Component & redux.State.Listener
 			end
 		end
 		
-		function [] = onCurrentFrameNoChange(this, state)
+		function [] = updateFrameNoLine(currentFrameNo)
 			set(this.currentFrameNoLine, ...
-				'XData', [state.currentFrameNo, state.currentFrameNo] ...
+				'XData', [currentFrameNo, currentFrameNo] ...
 			);
 		end
 	end

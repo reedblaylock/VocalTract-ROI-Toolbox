@@ -1,18 +1,27 @@
-classdef RegionSettings < redux.Component & redux.State.Listener
+classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 	
 	properties
 		gui
-		regionSettingIds
+		styles
+		regionParameterPanelIds
 	end
 	
 	methods
-		function this = RegionSettings()
-			this.regionSettingIds = struct();
+		function this = RegionSettingsTab(parent, gui, styles)
+			this@redux.Component.Layout.VBox( ...
+				parent, ...
+				'Padding', styles.Padding, ...
+				'Spacing', styles.Spacing ...
+			);
+		
+			this.gui = gui;
+			this.regionParameterPanelIds = struct();
+			this.styles = styles;
 		end
 		
-		function gui = renderRegionConstants(this, gui)
+		function gui = renderRegionConstants(this, parent, gui)
 			gui.RegionConstants = redux.Component.Layout.Grid( ...
-				gui.RightBoxGrid, ...
+				parent, ...
 				'Spacing', this.styles.Spacing + 2 ...
 			);
 		
@@ -51,13 +60,17 @@ classdef RegionSettings < redux.Component & redux.State.Listener
 			gui.RegionConstants.setParameters('Widths', [-1 -1], 'Heights', [-1 -1]);
 		end
 		
-		function setRegionSettingId(this, shape)
-			this.regionSettingIds.(shape) = numel(fields(this.regionSettingIds)) + 1;
+		function generateRegionParameterPanelId(this, shape)
+			this.regionParameterPanelIds.(shape) = numel(fields(this.regionParameterPanelIds)) + 1;
 		end
 		
-		function gui = addCircleParameters(this, gui)
+		function setRegionParameterPanel(this, shape)
+			this.gui.RegionParameters.setParameters('Selection', this.regionParameterPanelIds.(shape));
+		end
+		
+		function gui = renderCircleParameters(this, parent, gui)
 			gui.RegionParameters_Circle = redux.Component.Layout.Grid( ...
-				gui.RegionParameters, ...
+				parent, ...
 				'Spacing', this.styles.Spacing + 2 ...
 			);
 			
@@ -78,12 +91,12 @@ classdef RegionSettings < redux.Component & redux.State.Listener
 		
 			gui.RegionParameters_Circle.setParameters('Widths', [-1], 'Heights', [-1 -1]);
 		
-			this.setRegionSettingId('circle');
+			this.generateRegionParameterPanelId('circle');
 		end
 		
-		function gui = addRectangleParameters(this, gui)
+		function gui = renderRectangleParameters(this, parent, gui)
 			gui.RegionParameters_Rectangle = redux.Component.Layout.Grid( ...
-				gui.RegionParameters, ...
+				parent, ...
 				'Spacing', this.styles.Spacing + 2 ...
 			);
 		
@@ -122,63 +135,60 @@ classdef RegionSettings < redux.Component & redux.State.Listener
 		
 			gui.RegionParameters_Rectangle.setParameters('Widths', [-1 -1], 'Heights', [-1 -1]);
 		
-			this.setRegionSettingId('rectangle');
+			this.generateRegionParameterPanelId('rectangle');
 		end
 		
-		function gui = addStatisticalRegionParameters(this, gui)
+		function gui = renderStatisticalRegionParameters(this, parent, gui)
 			gui.RegionParameters_Stat = redux.Component.Layout.Grid( ...
-				gui.RegionParameters, ...
+				parent, ...
 				'Spacing', this.styles.Spacing + 2 ...
 			);
 		
 			% Minimum # pixels textbox
-			this.gui.RegionMinimumPixelsPanel = redux.Component.Layout.Panel( ...
-				this.gui.RegionParameters_Stat, ...
+			gui.RegionMinimumPixelsPanel = redux.Component.Layout.Panel( ...
+				gui.RegionParameters_Stat, ...
 				'Title', 'Minimum number of pixels' ...
 			);
-			this.gui.RegionMinimumPixels = vt.Component.TextBox.MinimumPixels( ...
-				this.gui.RegionNumPixels ...
+			gui.RegionMinimumPixels = vt.Component.TextBox.MinimumPixels( ...
+				gui.RegionMinimumPixelsPanel ...
 			);
 			
 			% Search radius textbox
-			this.gui.RegionSearchRadiusPanel = redux.Component.Layout.Panel( ...
-				this.gui.RegionParameters_Stat, ...
+			gui.RegionSearchRadiusPanel = redux.Component.Layout.Panel( ...
+				gui.RegionParameters_Stat, ...
 				'Title', 'Search radius' ...
 			);
-			this.gui.RegionSearchRadius = vt.Component.TextBox.SearchRadius( ...
-				this.gui.RegionSearchRadiusPanel ...
+			gui.RegionSearchRadius = vt.Component.TextBox.SearchRadius( ...
+				gui.RegionSearchRadiusPanel ...
 			);
 			
 			% Tau textbox
-			this.gui.RegionTauPanel = redux.Component.Layout.Panel( ...
-				this.gui.RegionParameters_Stat, ...
+			gui.RegionTauPanel = redux.Component.Layout.Panel( ...
+				gui.RegionParameters_Stat, ...
 				'Title', 'Tau' ...
 			);
-			this.gui.RegionTau = vt.Component.TextBox.Tau( ...
-				this.gui.RegionTau ...
+			gui.RegionTau = vt.Component.TextBox.Tau( ...
+				gui.RegionTauPanel ...
 			);
 		
 			gui.RegionParameters_Stat.setParameters('Widths', [-1 -1], 'Heights', [-1 -1]);
 		
-			this.setRegionSettingId('statistically_generated');
+			this.generateRegionParameterPanelId('statistically_generated');
 		end
 		
-		function gui = addRegionParameters(this, gui)
+		function gui = renderRegionParameters(this, parent, gui)
 			gui.RegionParameters = redux.Component.Layout.CardPanel( ...
-				gui.RightBoxGrid, ...
-				'Spacing', this.styles.Spacing + 2 ...
+				parent ...
 			);
 			
-			gui = this.renderStatisticalRegionParameters(gui);
-			gui = this.renderRectangleParameters(gui);
-			gui = this.renderCircleParameters(gui);
-			
-			gui.RegionParameters.setParameters('Widths', [-1 -1], 'Heights', [-1 -1]);
+			gui = this.renderStatisticalRegionParameters(gui.RegionParameters, gui);
+			gui = this.renderRectangleParameters(gui.RegionParameters, gui);
+			gui = this.renderCircleParameters(gui.RegionParameters, gui);
 		end
 		
-		function gui = addRegionDisplay(this, gui)
+		function gui = renderRegionDisplay(this, parent, gui)
 			gui.RegionDisplay = redux.Component.Layout.Grid( ...
-				gui.RightBoxGrid, ...
+				parent, ...
 				'Spacing', this.styles.Spacing + 2 ...
 			);
 		
@@ -194,18 +204,17 @@ classdef RegionSettings < redux.Component & redux.State.Listener
 				'Show outline' ...
 			);
 		
-			gui.RegionDisplay.setParameters('Widths', [-1], 'Heights', [-1]);
+			gui.RegionDisplay.setParameters('Widths', [-1 -1], 'Heights', [-1]);
 		end
 		
-		function gui = addRegionButtons(this, gui)
+		function gui = renderRegionButtons(this, parent, gui)
 			gui.RegionButtonsPanel = redux.Component.Layout.CardPanel( ...
-				gui.RightBoxGrid, ...
-				'Spacing', this.styles.Spacing + 2 ...
+				parent ...
 			);
 		
 			% Panel view 2: Edit region mode
 			gui.RegionButtonsView2 = redux.Component.Layout.Grid( ...
-				gui.RightButtonsPanel, ...
+				gui.RegionButtonsPanel, ...
 				'Spacing', this.styles.Spacing + 2 ...
 			);
 			gui.RegionButtonsEmpty1 = redux.Component.Layout.Empty( ...
@@ -223,7 +232,7 @@ classdef RegionSettings < redux.Component & redux.State.Listener
 			
 			% Panel view 1
 			gui.RegionButtonsView1 = redux.Component.Layout.Grid( ...
-				gui.RightButtonsPanel, ...
+				gui.RegionButtonsPanel, ...
 				'Spacing', this.styles.Spacing + 2 ...
 			);
 			gui.NewRegionButton = vt.Component.Button.NewRegion( ...
@@ -241,25 +250,16 @@ classdef RegionSettings < redux.Component & redux.State.Listener
 			gui.RegionButtonsView1.setParameters('Widths', [-1], 'Heights', [-1]);
 		end
 		
-		function gui = addRegionSettingsGrid(this, gui)
-			gui.RightBoxGrid = redux.Component.Layout.VBox( ...
-				gui.RegionSettingsTab, ...
-				'Spacing', this.styles.Spacing + 2 ...
-			);
-		
-			gui = this.renderRegionConstants(gui);
-			gui = this.renderRegionParameters(gui);
-			gui = this.renderRegionDisplay(gui);
-			gui = this.renderRegionButtons(gui);
+		function gui = render(this, parent)
+			gui = this.gui;
 			
-			gui.RightBoxGrid.setParameters('Widths', [-1], 'Heights', -1.*ones(1, 4));
-			
-			this.gui = gui;
+			gui = this.renderRegionConstants(parent, gui);
+			gui = this.renderRegionParameters(parent, gui);
+			gui = this.renderRegionDisplay(parent, gui);
+			gui = this.renderRegionButtons(parent, gui);
 		end
 		
 		function [] = redrawRegionEditingArea(this, state)
-			% REDRAW REGION EDITING AREA
-			% Prevent re-drawing when other changes than shape changes are made
 			curRegion = [];
 			for iRegion = 1:numel(state.regions)
 				if state.regions{iRegion}.id == state.currentRegion
@@ -267,32 +267,29 @@ classdef RegionSettings < redux.Component & redux.State.Listener
 					break;
 				end
 			end
-% 			if isempty(curRegion) || strcmp(this.currentRegion.shape, curRegion.shape)
-% 				return;
-% 			end
 			
-			this.gui.RegionParameters.setParameters( ...
-				'Selection', lower(strrep(this.regionSettingIds.(curRegion.shape), '-', '_')) ...
-			);
-			
-			% Update the local copy of currentRegion
-% 			this.currentRegion = curRegion;
+			shape = lower(strrep(curRegion.shape, '-', '_'));
+			this.setRegionParameterPanel(shape);
 		end
 		
 		%%% State.Listener functions
 		function [] = onCurrentRegionChange(this, state)
-			% Sets this.currentRegion = currentRegion
 			this.redrawRegionEditingArea(state);
 		end
 		
 		function [] = onRegionsChange(this, state)
-			% TODO: You should probably show currentRegion's timeseries too. Maybe you
-			% can color the back panel differently to indicate that it's
-			% temporary, somehow?
-			
 			% TODO: order display by (xcoordinate + ycoordinate) increasing
 			
 			this.redrawRegionEditingArea(state);
+		end
+		
+		function [] = onIsEditingChange(this, state)
+			switch (state.isEditing)
+				case 'region'
+					this.gui.RegionButtonsPanel.setParameters('Selection', 2);
+				otherwise
+					this.gui.RegionButtonsPanel.setParameters('Selection', 1);
+			end
 		end
 	end
 	
