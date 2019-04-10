@@ -34,11 +34,8 @@ classdef ChangeRegionParameter < redux.Action
 						region.mask = vt.Action.getMask(region, video);
 						region.timeseries = vt.Action.findTimeseries(region, video);
 					end
-				case {'color', 'name', 'showOrigin', 'showOutline', 'showFill'}
+				case {'color', 'name', 'showOrigin', 'showOutline', 'timeseriesDimension'}
 					region.(parameter) = value;
-% 				% Toggles
-% 				case {'showOrigin', 'showOutline', 'showFill'}
-% 					region.(parameter) = ~region.(parameter);
 				otherwise
 					% TODO: throw error
 			end

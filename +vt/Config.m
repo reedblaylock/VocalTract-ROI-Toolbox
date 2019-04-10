@@ -28,12 +28,12 @@ classdef Config < redux.Config
 			this.region.tau = .6; % type='statistically-generated'
 			this.region.searchRadius = 1; % how far away from click location to look for regions; type='statistically-generated'
 			this.region.mask = []; % a binary matrix, where 1 represents a pixel within the region
+			this.region.timeseriesDimension = 'y'; % 'x' or 'y'
 			
 			% Region appearance
 			this.region.color = 'red'; % region color
 			this.region.showOrigin = 1; % connected to the "Show origin" checkbox
 			this.region.showOutline = 1; % connected to the "Show outline" checkbox
-			this.region.showFill = 0; % connected to the "Show fill" checkbox
 			
 			% Timeseries
 			this.region.timeseries = [];
