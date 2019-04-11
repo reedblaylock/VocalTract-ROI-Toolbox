@@ -1,6 +1,11 @@
 % The textbox that displays the minimum pixel size of the current
 % statistically-generated region.
 classdef MinimumPixels < redux.Component.TextBox.RangeBox & redux.State.Listener
+	properties
+		video
+		currentRegion
+	end
+	
 	methods
 		%%%%% CONSTRUCTOR %%%%%
 		
@@ -51,7 +56,7 @@ classdef MinimumPixels < redux.Component.TextBox.RangeBox & redux.State.Listener
 				this.setParameters('String', '');
 				this.backupText = '';
 			else
-				this.setParameters('String', num2str(this.currentRegion.minimumPixels));
+				this.setParameters('String', num2str(this.currentRegion.minPixels));
 				this.backupText = num2str(this.currentRegion.minPixels);
 			end
 		end
