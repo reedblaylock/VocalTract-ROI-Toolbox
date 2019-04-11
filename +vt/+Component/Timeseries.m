@@ -32,19 +32,7 @@ classdef Timeseries < redux.Component
 				return
 			end
 			
-			if size(p.Results.data, 2) == 2
-				data = p.Results.data(:, 2);
-				% flip the data
-				data = max(data) - data + min(data);
-				
-% 				% Get distance between consecutive points
-% 				% https://www.mathworks.com/matlabcentral/answers/323030-how-to-find-distance-between-consecutive-points
-% 				data = sqrt( sum( abs( diff( p.Results.data ) ).^2, 2 ) );
-% 				% TODO: hack to get the right number of frames
-% 				data(end+1) = data(end);
-			else
-				data = p.Results.data;
-			end
+			data = p.Results.data;
 			
 			plot( ...
 				data, ...
@@ -84,7 +72,7 @@ classdef Timeseries < redux.Component
 			end
 		end
 		
-		function [] = updateFrameNoLine(currentFrameNo)
+		function [] = updateFrameNoLine(this, currentFrameNo)
 			set(this.currentFrameNoLine, ...
 				'XData', [currentFrameNo, currentFrameNo] ...
 			);

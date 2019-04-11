@@ -66,13 +66,6 @@ classdef Frame < redux.Component.Wrapper & redux.State.Listener & redux.Action.D
 		% changes in State.
 		function [] = onIsEditingChange(this, state)
 			this.isEditing = state.isEditing;
-% 			switch(state.isEditing)
-% 				case 'region'
-% % 					this.setCurrentRegionDefaults();
-% 				otherwise
-% 					this.deleteCurrentRegion(state);
-% 					this.redrawAllRegions(state);
-% 			end
 		end
 		
 		% Update the visual display of the current region. Update the
@@ -89,20 +82,6 @@ classdef Frame < redux.Component.Wrapper & redux.State.Listener & redux.Action.D
 					end
 				end
 			end
-			
-% 			if(~strcmp(state.isEditing, 'region'))
-% 				return;
-% 			end
-% 			
-% 			if ~isempty(this.currentRegion) && ~isempty(this.currentRegion.mask)
-% 				this.deleteCurrentRegion(state);
-% 				if(this.currentRegion.showOrigin)
-% 					this.frame.drawOrigin(this.currentRegion.id, this.currentRegion.origin, this.currentRegion.color);
-% 				end
-% 				if(this.currentRegion.showOutline)
-% 					this.frame.drawOutline(this.currentRegion.id, this.currentRegion.mask, this.currentRegion.color);
-% 				end
-% 			end
 		end
 		
 		% Redraw all saved regions. This function is called by State.Listener
@@ -118,22 +97,13 @@ classdef Frame < redux.Component.Wrapper & redux.State.Listener & redux.Action.D
 					break;
 				end
 			end
-			
-% 			this.deleteCurrentRegion(state);
 		end
 		
 		%%%%% ACTION DISPATCHER %%%%%
 		
 		% Overwrite the redux.Action.Dispatcher function dispatchAction to include
 		% the current isEditing state and the coordinates that were clicked.
-		function [] = dispatchAction(this, ~, ~)
-% 			d = struct();
-% 			d.isEditing = this.isEditing;
-% 			coordinates = this.frame.getParameter('CurrentPoint');
-% 			d.coordinates = round(coordinates(1, 1:2));
-% 			
-% 			this.action.dispatch(d);
-			
+		function [] = dispatchAction(this, ~, ~)	
 			coordinates = this.frame.getParameter('CurrentPoint');
 			coordinates = round(coordinates(1, 1:2));
 			switch(this.isEditing)
@@ -228,14 +198,6 @@ classdef Frame < redux.Component.Wrapper & redux.State.Listener & redux.Action.D
 			);
 		end
 		
-		% Delete any visualization of the current region.
-% 		function [] = deleteCurrentRegion(this, state)
-% 			if ~isempty(state.currentRegion)
-% 				this.frame.deleteOrigin(state.currentRegion);
-% 				this.frame.deleteOutline(state.currentRegion);
-% 			end
-% 		end
-		
 		% Redraw all regions stored in State.regions.
 		function [] = redrawAllRegions(this, state)
 			% Delete regions that are currently visible
@@ -257,30 +219,11 @@ classdef Frame < redux.Component.Wrapper & redux.State.Listener & redux.Action.D
 				end
 				if ~isempty(region.mask) && region.showOutline
 					this.frame.drawOutline(region.id, region.mask, region.color);
+				end
+				if ~isempty(region.mask) && strcmpi(region.type, 'centroid')
 					this.triggerCentroidUpdate(region, state.currentFrameNo);
 				end
 			end
-			
-% 			if isempty(state.regions) || ~numel(state.regions)
-% 				% There are no regions saved right now
-% 				return;
-% 			end
-% 			
-% 			nRegions = numel(state.regions);
-% 			for iRegion = 1:nRegions
-% 				region = state.regions{iRegion};
-% 				
-% 				if(~isempty(region.mask))
-% 					this.frame.deleteOrigin(region.id);
-% 					this.frame.deleteOutline(region.id);
-% 					if(region.showOrigin)
-% 						this.frame.drawOrigin(region.id, region.origin, region.color);
-% 					end
-% 					if(region.showOutline)
-% 						this.frame.drawOutline(region.id, region.mask, region.color);
-% 					end
-% 				end
-% 			end
 		end
 		
 		% Fill this object's currentRegion property with the same defaults found

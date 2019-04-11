@@ -51,7 +51,7 @@ classdef TimeseriesDimension < redux.Component.Popup & redux.State.Listener & re
 		function [] = dispatchAction(this, ~, ~)
 			str = this.getCurrentPopupString();
 			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
-			action.prepare(this.currentRegion, 'type', str, this.video);
+			action.prepare(this.currentRegion, 'timeseriesDimension', str, this.video);
 			action.dispatch();
 		end
 		

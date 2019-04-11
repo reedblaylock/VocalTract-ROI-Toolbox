@@ -7,24 +7,21 @@ classdef TimeseriesArray < redux.Component.Layout.VBox & redux.State.Listener
 	end
 	
 	methods
-		function this = TimeseriesArray(parent, gui, styles)
+		function this = TimeseriesArray(parent, styles)
 			this@redux.Component.Layout.VBox( ...
 				parent, ...
 				'Padding', styles.Padding, ...
 				'Spacing', styles.Spacing ...
 			);
 			
-			this.gui = gui;
 			this.timeseriesLabels = {};
 			this.containerLabels = {};
 % 			this.styles = styles;
 		end
 		
-% 		function gui = render(this)
-% 			gui = this.gui;
-% 			
-% 			
-% 		end
+		function gui = render(this, gui)
+			this.gui = gui;
+		end
 		
 		function label = generateLabel(this, idNo)
 			label = ['Timeseries' num2str(idNo)];
@@ -37,7 +34,7 @@ classdef TimeseriesArray < redux.Component.Layout.VBox & redux.State.Listener
 		function [] = unregisterLabel(this, label)
 			for iLabel = 1:numel(this.timeseriesLabels)
 				if strcmp(this.timeseriesLabels{iLabel}, label)
-					this.timeseriesLabels{iLabel} = [];
+					this.timeseriesLabels(iLabel) = [];
 					break;
 				end
 			end
@@ -54,7 +51,7 @@ classdef TimeseriesArray < redux.Component.Layout.VBox & redux.State.Listener
 		function [] = unregisterContainerLabel(this, containerLabel)
 			for iLabel = 1:numel(this.containerLabels)
 				if strcmp(this.containerLabels{iLabel}, containerLabel)
-					this.containerLabels{iLabel} = [];
+					this.containerLabels(iLabel) = [];
 					break;
 				end
 			end
@@ -70,8 +67,8 @@ classdef TimeseriesArray < redux.Component.Layout.VBox & redux.State.Listener
 				
 				this.unregisterLabel(label);
 				this.unregisterContainerLabel(containerLabel);
-				this.gui.guiDelete(containerLabel);
-				this.gui.guiDelete(label);
+% 				this.gui.guiDelete(containerLabel);
+% 				this.gui.guiDelete(label);
 			end
 			
 			delete(this.handle.Contents(:));
@@ -103,10 +100,31 @@ classdef TimeseriesArray < redux.Component.Layout.VBox & redux.State.Listener
 				this.gui.TimeseriesArray, ...
 				'Tag', label ...
 			);
+		
+			if strcmpi(region.type, 'centroid')
+				switch (region.timeseriesDimension)
+					case 'x'
+						timeseries = region.timeseries(:,1);
+					case 'y'
+						timeseries = region.timeseries(:,2);
+						% flip
+						timeseries = max(timeseries) - timeseries + min(timeseries);
+% 					case 'tangential_velocity'
+% 				% Get distance between consecutive points
+% 				% https://www.mathworks.com/matlabcentral/answers/323030-how-to-find-distance-between-consecutive-points
+% 				data = sqrt( sum( abs( diff( p.Results.data ) ).^2, 2 ) );
+% 				% TODO: hack to get the right number of frames
+% 				data(end+1) = data(end);
+					otherwise
+						error('Not a valid timeseriesDimension');
+				end
+			else
+				timeseries = region.timeseries;
+			end
 
 			this.gui.(label) = vt.Component.Timeseries( ...
 				this.gui.(containerLabel), ...
-				region.timeseries, ...
+				timeseries, ...
 				region.color, ...
 				currentFrameNo, ...
 				'Title', region.name, ...
@@ -131,7 +149,7 @@ classdef TimeseriesArray < redux.Component.Layout.VBox & redux.State.Listener
 		end
 		
 		function [] = onCurrentFrameNoChange(this, state)
-			for iTimeseriesLabels = 1:numel(this.timeseriesLabels)
+			for iTimeseriesLabel = 1:numel(this.timeseriesLabels)
 				label = this.timeseriesLabels{iTimeseriesLabel};
 				this.gui.(label).updateFrameNoLine(state.currentFrameNo);
 			end

@@ -7,14 +7,13 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 	end
 	
 	methods
-		function this = RegionSettingsTab(parent, gui, styles)
+		function this = RegionSettingsTab(parent, styles)
 			this@redux.Component.Layout.VBox( ...
 				parent, ...
 				'Padding', styles.Padding, ...
 				'Spacing', styles.Spacing ...
 			);
 		
-			this.gui = gui;
 			this.regionParameterPanelIds = struct();
 			this.styles = styles;
 		end
@@ -126,10 +125,10 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 		
 			% + Timeseries display for centroid
 			gui.TimeseriesDimensionPanel = redux.Component.Layout.Panel( ...
-				gui.RegionParameters, ...
+				gui.RegionParameters_Rectangle, ...
 				'Title', 'Dimension' ...
 			);
-			gui.RegionShapePopup = vt.Component.Popup.TimeseriesDimension( ...
+			gui.TimeseriesDimensionPopup = vt.Component.Popup.TimeseriesDimension( ...
 				gui.TimeseriesDimensionPanel ...
 			);
 		
@@ -250,13 +249,13 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 			gui.RegionButtonsView1.setParameters('Widths', [-1], 'Heights', [-1]);
 		end
 		
-		function gui = render(this, parent)
-			gui = this.gui;
-			
+		function gui = render(this, parent, gui)
 			gui = this.renderRegionConstants(parent, gui);
 			gui = this.renderRegionParameters(parent, gui);
 			gui = this.renderRegionDisplay(parent, gui);
 			gui = this.renderRegionButtons(parent, gui);
+			
+			this.gui = gui;
 		end
 		
 		function [] = redrawRegionEditingArea(this, state)

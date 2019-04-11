@@ -80,12 +80,12 @@ classdef App < redux.App
 			% First, get objects for the tab contents
 			
  			% TODO: Is the problem that these aren't part of the gui explicitly?
-			gui.RegionSettingsTab = vt.Component.Layout.RegionSettingsTab(gui.RightBox, gui, this.styles);
-			gui.TimeseriesArray = vt.Component.Wrapper.TimeseriesArray(gui.RightBox, gui, this.styles);
+			gui.RegionSettingsTab = vt.Component.Layout.RegionSettingsTab(gui.RightBox, this.styles);
+			gui.TimeseriesArray = vt.Component.Wrapper.TimeseriesArray(gui.RightBox, this.styles);
 			% Then, render each tab's contents. The gui fields are defined
 			% inside the object's render function, which is maybe smelly code?
-			gui.RegionSettingsTab.render(gui.RegionSettingsTab);
-% 			gui.TimeseriesArrayWrapper.render();
+			gui = gui.RegionSettingsTab.render(gui.RegionSettingsTab, gui);
+			gui = gui.TimeseriesArray.render(gui);
 			
 			gui.RightBox.setParameters('TabTitles', {'Regions', 'Timeseries'});
             
