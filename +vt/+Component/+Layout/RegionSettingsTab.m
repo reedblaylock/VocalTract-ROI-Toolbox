@@ -88,7 +88,8 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 				'Change color' ...
 			);
 		
-			gui.RegionParameters_Circle.setParameters('Widths', [-1], 'Heights', [-1 -1]);
+% 			gui.RegionParameters_Circle.setParameters('Widths', [-1], 'Heights', [-1 -1]);
+			gui.RegionParameters_Circle.setParameters('Heights', [-1 -1]);
 		
 			this.generateRegionParameterPanelId('circle');
 		end
@@ -124,13 +125,11 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 			);
 		
 			% + Timeseries display for centroid
-			gui.TimeseriesDimensionPanel = redux.Component.Layout.Panel( ...
+			gui.TimeseriesDimensionOrEmpty = vt.Component.Layout.TimeseriesDimensionOrEmpty( ...
 				gui.RegionParameters_Rectangle, ...
-				'Title', 'Dimension' ...
+				this.styles ...
 			);
-			gui.TimeseriesDimensionPopup = vt.Component.Popup.TimeseriesDimension( ...
-				gui.TimeseriesDimensionPanel ...
-			);
+			gui = gui.TimeseriesDimensionOrEmpty.render(gui);
 		
 			gui.RegionParameters_Rectangle.setParameters('Widths', [-1 -1], 'Heights', [-1 -1]);
 		
@@ -203,7 +202,9 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 				'Show outline' ...
 			);
 		
-			gui.RegionDisplay.setParameters('Widths', [-1 -1], 'Heights', [-1]);
+% 			gui.RegionDisplay.setParameters('Widths', [-1 -1], 'Heights', [-1]);
+			gui.RegionDisplay.setParameters('Widths', [-1 -1]);
+
 		end
 		
 		function gui = renderRegionButtons(this, parent, gui)
@@ -227,7 +228,7 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 				gui.RegionButtonsView2, ...
 				'Stop editing' ...
 			);
-			gui.RegionButtonsView2.setParameters('Widths', [-1], 'Heights', [-1]);
+% 			gui.RegionButtonsView2.setParameters('Widths', [-1], 'Heights', [-1]);
 			
 			% Panel view 1
 			gui.RegionButtonsView1 = redux.Component.Layout.Grid( ...
@@ -246,14 +247,14 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 				gui.RegionButtonsView1, ...
 				'Delete region' ...
 			);
-			gui.RegionButtonsView1.setParameters('Widths', [-1], 'Heights', [-1]);
+% 			gui.RegionButtonsView1.setParameters('Widths', [-1], 'Heights', [-1]);
 		end
 		
-		function gui = render(this, parent, gui)
-			gui = this.renderRegionConstants(parent, gui);
-			gui = this.renderRegionParameters(parent, gui);
-			gui = this.renderRegionDisplay(parent, gui);
-			gui = this.renderRegionButtons(parent, gui);
+		function gui = render(this, gui)
+			gui = this.renderRegionConstants(this, gui);
+			gui = this.renderRegionParameters(this, gui);
+			gui = this.renderRegionDisplay(this, gui);
+			gui = this.renderRegionButtons(this, gui);
 			
 			this.gui = gui;
 		end

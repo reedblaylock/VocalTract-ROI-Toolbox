@@ -84,7 +84,7 @@ classdef App < redux.App
 			gui.TimeseriesArray = vt.Component.Wrapper.TimeseriesArray(gui.RightBox, this.styles);
 			% Then, render each tab's contents. The gui fields are defined
 			% inside the object's render function, which is maybe smelly code?
-			gui = gui.RegionSettingsTab.render(gui.RegionSettingsTab, gui);
+			gui = gui.RegionSettingsTab.render(gui);
 			gui = gui.TimeseriesArray.render(gui);
 			
 			gui.RightBox.setParameters('TabTitles', {'Regions', 'Timeseries'});
