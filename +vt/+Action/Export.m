@@ -34,7 +34,18 @@ function [] = exportMview(regions, video)
 
 	for iRegion = 1:numel(regions)
 		region = regions{iRegion};
-		timeseries = region.timeseries;
+		
+		type = lower(strrep(region.type, '-', '_'));
+		switch (type)
+			case 'centroid'
+				if strcmp(region.timeseriesDimension, 'x')
+					timeseries = region.timeseries(:, 1);
+				else
+					timeseries = region.timeseries(:, 2);
+				end
+			otherwise
+				timeseries = region.timeseries;
+		end
 
 		data.gest(iRegion).name = region.name;
 		data.gest(iRegion).location = region.origin;
