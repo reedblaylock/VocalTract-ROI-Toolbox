@@ -87,6 +87,11 @@ function d = formatData(v, fName, wav_dir, avi_dir)
 	if nargin > 2
 		audio_name = fullfile(wav_dir, audio_name);
 	end
+	
+	if ~exist(audio_name, 'file') == 2
+		[file, path] = uigetfile('.wav', 'Select an audio file (.wav) to export with');
+		audio_name = fullfile(path, file);
+	end
 
 	video_name = [fName '.avi'];
 	if nargin > 3
@@ -95,9 +100,13 @@ function d = formatData(v, fName, wav_dir, avi_dir)
 
 	% load audio
 	try
-		if exist('audioread', 'file'), [s,sr] = audioread(audio_name); else [s,sr] = wavread(audio_name); end
+		if exist('audioread', 'file')
+			[s, sr] = audioread(audio_name);
+		else
+			[s, sr] = wavread(audio_name);
+		end
 	catch
-		error('unable to load WAV file %s',audio_name);
+		error('unable to load WAV file %s', audio_name);
 	end
 	ht = floor(v.gest(1).times*sr) + 1;
 	s = s(ht(1):ht(end));
