@@ -25,7 +25,7 @@ classdef ExportRegions < redux.Component.MenuItem & redux.State.Listener & redux
 		end
 		
 		function [] = dispatchAction(this, ~, ~)
-			action = this.actionFactory.actions.EXPORT_REGIONS;
+			action = this.actionFactory.actions.SAVE_REGIONS;
 			action.prepare(this.regions, this.video);
 			action.dispatch();
 		end

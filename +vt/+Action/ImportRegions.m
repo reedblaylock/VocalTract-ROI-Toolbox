@@ -17,7 +17,7 @@ classdef ImportRegions < redux.Action
 			end
 			
 			vtload = load(fullfile(path, file));
-			regions = vtload.vt.regions;
+			regions = vtload.vt_regions.regions;
 			
 			% TODO: Check for regions that have somehow been corrupted, and fill
 			% in the blank parameters with some default values

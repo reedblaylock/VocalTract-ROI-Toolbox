@@ -20,18 +20,18 @@ classdef SaveRegions < redux.Action
 				this.regions{iRegion}.timeseries  = [];
 			end
 			
-			[file, path] = uiputfile([this.videoName '_regions.m']);
+			[file, path] = uiputfile([this.videoName '_regions.mat']);
 			
 			if ~file
 				% The user canceled. Do nothing.
 				return
 			end
 			
-			vt = struct();
-			vt.regions = this.regions;
-			vt.videoName = this.videoName;
+			vt_regions = struct();
+			vt_regions.regions = this.regions;
+			vt_regions.videoName = this.videoName;
 			
-			save(fullfile(path, file), 'vt');
+			save(fullfile(path, file), 'vt_regions');
 		end
 	end
 end

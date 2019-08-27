@@ -268,8 +268,10 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 				end
 			end
 			
-			shape = lower(strrep(curRegion.shape, '-', '_'));
-			this.setRegionParameterPanel(shape);
+			if ~isempty(curRegion)
+				shape = lower(strrep(curRegion.shape, '-', '_'));
+				this.setRegionParameterPanel(shape);
+			end
 		end
 		
 		%%% State.Listener functions

@@ -49,7 +49,10 @@ classdef TimeseriesDimensionOrEmpty < redux.Component.Layout.CardPanel & redux.S
 				end
 			end
 			
-			type = lower(strrep(curRegion.type, '-', '_'));
+			type = '';
+			if ~isempty(curRegion)
+				type = lower(strrep(curRegion.type, '-', '_'));
+			end
 			
 			switch (type)
 				case 'centroid'
