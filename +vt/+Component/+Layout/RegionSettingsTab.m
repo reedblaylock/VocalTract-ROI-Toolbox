@@ -286,9 +286,9 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 		function [] = onIsEditingChange(this, state)
 			switch (state.isEditing)
 				case 'region'
-					this.gui.RegionButtonsPanel.setParameters('Selection', 2);
-				otherwise
 					this.gui.RegionButtonsPanel.setParameters('Selection', 1);
+				otherwise
+					this.gui.RegionButtonsPanel.setParameters('Selection', 2);
 			end
 		end
 	end
