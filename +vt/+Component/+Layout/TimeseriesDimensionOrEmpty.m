@@ -61,6 +61,28 @@ classdef TimeseriesDimensionOrEmpty < redux.Component.Layout.CardPanel & redux.S
 					this.gui.(this.targetComponentName).setParameters('Selection', 2);
 			end
 		end
+		
+		function [] = onCurrentRegionChange(this, state)
+			curRegion = [];
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					curRegion = state.regions{iRegion};
+					break;
+				end
+			end
+			
+			type = '';
+			if ~isempty(curRegion)
+				type = lower(strrep(curRegion.type, '-', '_'));
+			end
+			
+			switch (type)
+				case 'centroid'
+					this.gui.(this.targetComponentName).setParameters('Selection', 1);
+				otherwise
+					this.gui.(this.targetComponentName).setParameters('Selection', 2);
+			end
+		end
 	end
 	
 end
