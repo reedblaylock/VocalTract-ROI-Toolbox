@@ -9,7 +9,7 @@ classdef RegionShape < redux.Component.Popup & redux.State.Listener & redux.Acti
 			this@redux.Component.Popup(parent);
 			
 			this.setParameters( ...
-				'String', {'Circle', 'Rectangle'}, ...
+				'String', {'Circle', 'Rectangle', 'Correlated'}, ...
 				'Enable', 'off' ...
 			);
 			% 'String', {'Circle', 'Rectangle', 'Statistically-generated', 'Custom'}, ...
@@ -51,9 +51,19 @@ classdef RegionShape < redux.Component.Popup & redux.State.Listener & redux.Acti
 		
 		function [] = dispatchAction(this, ~, ~)
 			str = this.getCurrentPopupString();
-			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
-			action.prepare(this.currentRegion, 'shape', str, this.video);
-			action.dispatch();
+% 			action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+% 			action.prepare(this.currentRegion, 'shape', str, this.video);
+% 			action.dispatch();
+            
+            switch(str)
+                case {'Correlated'}
+                    action = this.actionFactory.actions.CHANGE_MULTIPLE_REGION_PARAMETERS;
+                    action.prepare(this.currentRegion, {'shape', 'type'}, {str, 'Average'}, this.video);
+                otherwise
+                    action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
+                    action.prepare(this.currentRegion, 'shape', str, this.video);
+            end
+            action.dispatch();
 		end
 		
 		function [] = onRegionsChange(this, state)

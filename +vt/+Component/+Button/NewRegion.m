@@ -1,4 +1,9 @@
 classdef NewRegion < redux.Component.Button & redux.Action.Dispatcher & redux.State.Listener
+    
+    properties
+        regions
+    end
+    
 	methods
 		function this = NewRegion(parent, label, varargin)
 			this@redux.Component.Button(parent, label, varargin{:});
@@ -17,11 +22,15 @@ classdef NewRegion < redux.Component.Button & redux.Action.Dispatcher & redux.St
 				otherwise
 					this.setParameters('Enable', 'on');
 			end
-		end
+        end
+        
+        function [] = onRegionsChange(this, state)
+            this.regions = state.regions;
+        end
 		
 		function [] = dispatchAction(this, ~, ~)
 			action = this.actionFactory.actions.NEW_REGION;
-			action.prepare();
+			action.prepare(this.regions);
 			action.dispatch();
 		end
 	end

@@ -59,8 +59,8 @@ classdef (Abstract) RangeBox < redux.Component.TextBox & redux.Action.Dispatcher
 				% The user entered something that isn't a number. You can't fix
 				% this one, so return early.
 				this.setParameters('String', this.backupText);
-				excp = MException('InvalidInput:RangeBox:Non-numerical', 'Value must be numerical.');
-				this.log.exception(excp);
+				throw MException('InvalidInput:RangeBox:Non-numerical', 'Value must be numerical.');
+% 				this.log.exception(excp);
 				return;
 			end
 			
@@ -69,8 +69,8 @@ classdef (Abstract) RangeBox < redux.Component.TextBox & redux.Action.Dispatcher
 			catch
 				% The user entered a value that was too low.
 				validatedNum = this.minValue;
-				excp = MException('InvalidInput:RangeBox:ExceedsMinValue', ['The minimum value for this field is ' num2str(this.minValue) '.']);
-				this.log.exception(excp);
+				throw MException('InvalidInput:RangeBox:ExceedsMinValue', ['The minimum value for this field is ' num2str(this.minValue) '.']);
+% 				this.log.exception(excp);
 			end
 			
 			try
@@ -78,8 +78,8 @@ classdef (Abstract) RangeBox < redux.Component.TextBox & redux.Action.Dispatcher
 			catch
 				% The user entered a value that was too high.
 				validatedNum = this.maxValue;
-				excp = MException('InvalidInput:RangeBox:ExceedsMaxValue', ['The maximum value for this field is ' num2str(this.maxValue) '.']);
-				this.log.exception(excp);
+				throw MException('InvalidInput:RangeBox:ExceedsMaxValue', ['The maximum value for this field is ' num2str(this.maxValue) '.']);
+% 				this.log.exception(excp);
 			end
 			
 			if(isempty(validatedNum))

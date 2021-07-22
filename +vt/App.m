@@ -82,11 +82,14 @@ classdef App < redux.App
  			% TODO: Is the problem that these aren't part of the gui explicitly?
 			gui.RegionSettingsTab = vt.Component.Layout.RegionSettingsTab(gui.RightBox, this.styles);
 			gui.TimeseriesArray = vt.Component.Wrapper.TimeseriesArray(gui.RightBox, this.styles);
+%             gui.MidlineTab = vt.Component.Layout.MidlineTab(gui.RightBox, this.styles);
 			% Then, render each tab's contents. The gui fields are defined
 			% inside the object's render function, which is maybe smelly code?
 			gui = gui.RegionSettingsTab.render(gui);
 			gui = gui.TimeseriesArray.render(gui);
+%             gui = gui.MidlineTab.render(gui);
 			
+% 			gui.RightBox.setParameters('TabTitles', {'Regions', 'Timeseries', 'Midline'});
 			gui.RightBox.setParameters('TabTitles', {'Regions', 'Timeseries'});
             
             % Make sure Regions tab is the currently open one
@@ -100,6 +103,9 @@ classdef App < redux.App
 			% + Video menus
 			gui.VideoMenu = redux.Component.MenuItem( gui.FileMenu, 'Video...' );
 			gui.LoadAvi   = vt.Component.MenuItem.Load( gui.VideoMenu, 'Load AVI', 'avi' );
+			gui.LoadVariable   = vt.Component.MenuItem.Load( gui.VideoMenu, 'Load variable from workspace', 'variable' );
+			gui.CorrectHeadMovement = vt.Component.MenuItem.CorrectHeadMovement( gui.VideoMenu, 'Correct head movement');
+			gui.ConvertToBlackAndWhite = vt.Component.MenuItem.ConvertToBlackAndWhite( gui.VideoMenu, 'Convert to black and white');
 			
 			% + Region menus
 			gui.RegionMenu = redux.Component.MenuItem( gui.FileMenu, 'Regions...' );
@@ -107,7 +113,7 @@ classdef App < redux.App
 			gui.ImportRegions = vt.Component.MenuItem.ImportRegions( gui.RegionMenu, 'Import regions' );
 			
 			gui.Export   = vt.Component.MenuItem.Export( gui.FileMenu, 'Export for mview' );
-			gui.ExportFrame = vt.Component.MenuItem.ExportFrame ( gui.FileMenu, 'Export frame to jpg' );
+			gui.ExportFrame = vt.Component.MenuItem.ExportFrame ( gui.FileMenu, 'Export frame to png' );
 			
 			% + Help menu
 			gui.HelpMenu = redux.Component.MenuItem( gui.Window, 'Help' );

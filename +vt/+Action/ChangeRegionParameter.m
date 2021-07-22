@@ -27,7 +27,7 @@ classdef ChangeRegionParameter < redux.Action
 			
 			switch(parameter)
 				% Parameter/value sets
-				case {'origin', 'shape', 'type', 'radius', 'width', 'height', 'minPixels'}
+				case {'origin', 'shape', 'type', 'radius', 'width', 'height', 'search_radius', 'tau', 'pixel_minimum'}
 					region.(parameter) = value;
 					
 					if ~isempty(region.origin)

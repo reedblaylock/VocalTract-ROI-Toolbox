@@ -23,6 +23,9 @@ classdef SearchRadius < redux.Component.TextBox.RangeBox & redux.State.Listener
 			p.parse(parent, varargin{:});
 			
 			this@redux.Component.TextBox.RangeBox(parent, varargin{:});
+            
+            this.minValue = 0;
+            this.maxValue = Inf;
 		end
 		
 		%%%%% STATE LISTENER %%%%%
@@ -57,16 +60,25 @@ classdef SearchRadius < redux.Component.TextBox.RangeBox & redux.State.Listener
 				this.setParameters('String', '');
 				this.backupText = '';
 			else
-				this.setParameters('String', num2str(this.currentRegion.searchRadius));
-				this.backupText = num2str(this.currentRegion.searchRadius);
+				this.setParameters('String', num2str(this.currentRegion.search_radius));
+				this.backupText = num2str(this.currentRegion.search_radius);
 			end
 		end
 		
 		function [] = onVideoChange(this, state)
 			this.maxValue = round(min(state.video.height, state.video.width) / 2);
 			this.video = state.video;
-		end
+        end
 		
+        function [] = onRegionsChange(this, state)
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					this.currentRegion = state.regions{iRegion};
+					break;
+				end
+			end
+		end
+        
 		function [] = dispatchAction(this, ~, ~)
 			str = this.getParameter('String');
 			num = str2double(str);
@@ -75,7 +87,7 @@ classdef SearchRadius < redux.Component.TextBox.RangeBox & redux.State.Listener
 				this.setParameters('String', num2str(validatedNum));
 				this.backupText = num2str(validatedNum);
 				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
-				action.prepare(this.currentRegion, 'searchRadius', validatedNum, this.video);
+				action.prepare(this.currentRegion, 'search_radius', validatedNum, this.video);
 				action.dispatch();
 			end
 		end

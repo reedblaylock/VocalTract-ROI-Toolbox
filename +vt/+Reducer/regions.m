@@ -8,7 +8,7 @@ function newState = regions(varargin)
 	switch(p.Results.action.type)
 		case 'NEW_REGION'
 			newState = horzcat(p.Results.oldState, p.Results.action.region);
-		case 'CHANGE_REGION_PARAMETER'
+		case {'CHANGE_REGION_PARAMETER', 'CHANGE_MULTIPLE_REGION_PARAMETERS'}
 			% Find region by ID
 			for iRegion = 1:numel(p.Results.oldState)
 				if p.Results.oldState{iRegion}.id == p.Results.action.region.id
@@ -30,10 +30,11 @@ function newState = regions(varargin)
 			newState = p.Results.oldState;
 			newState(iRegion) = [];
 		case 'IMPORT_REGIONS'
-			newState = p.Results.oldState;
-			for iRegion = 1:numel(p.Results.action.regions)
-				newState = horzcat(newState, p.Results.action.regions{iRegion});
-			end
+            newState = horzcat(p.Results.oldState, p.Results.action.regions);
+% 			newState = p.Results.oldState;
+% 			for iRegion = 1:numel(p.Results.action.regions)
+% 				newState = horzcat(newState, p.Results.action.regions{iRegion});
+% 			end
 		otherwise
 			newState = p.Results.oldState;
 	end

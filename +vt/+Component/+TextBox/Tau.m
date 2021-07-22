@@ -67,6 +67,15 @@ classdef Tau < redux.Component.TextBox.RangeBox & redux.State.Listener
 		
 		function [] = onVideoChange(this, state)
 			this.video = state.video;
+        end
+        
+        function [] = onRegionsChange(this, state)
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					this.currentRegion = state.regions{iRegion};
+					break;
+				end
+			end
 		end
 		
 		function [] = dispatchAction(this, ~, ~)

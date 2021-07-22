@@ -119,7 +119,7 @@ classdef Frame < redux.Component.Wrapper & redux.State.Listener & redux.Action.D
 					%    set currentRegion = the clicked region
 					% 2. The click location is not within a region, so clear the
 					%    currentRegion (or, do nothing)
-					action = this.actionFactory.actions.SET_CURRENT_REGION();
+					action = this.actionFactory.actions.SET_CURRENT_REGION;
 					action.prepare(coordinates, this.regions);
 					action.dispatch();
 			end

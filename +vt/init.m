@@ -1,6 +1,6 @@
 % This function runs the VocalTract ROI Toolbox. This is the only function you
 % need to explicitly call in the MATLAB command line.
-function init()
+function [app] = init()
 	close all force;
 	clear;
 	
@@ -8,8 +8,8 @@ function init()
 	warning on all;
 	warning on verbose;
 	
-	s = warning('error', 'MATLAB:callback:error');
-	warning('error', 'MATLAB:class:InvalidHandle');
+	s = warning('error', 'MATLAB:callback:error'); %#ok<CTPCT>
+	warning('error', 'MATLAB:class:InvalidHandle'); %#ok<CTPCT>
 	
 	fpath = mfilename('fullpath');
 	fparts = regexp(fpath, filesep, 'split');
@@ -18,7 +18,7 @@ function init()
 		packageName = packageName(2:end);
 	end
 	
-	app = vt.App(2);
+	app = vt.App(0);
 	app.run(packageName);
 	
 	warning(s);

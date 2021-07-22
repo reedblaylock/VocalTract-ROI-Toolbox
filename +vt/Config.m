@@ -24,9 +24,9 @@ classdef Config < redux.Config
 			this.region.radius = 3; % radius of the region; type='circle'
 			this.region.height = 3; % height of the region; type='rectangle'
 			this.region.width = 3; % width of the region; type='rectangle'
-			this.region.minPixels = 5; % minimum number of pixels required for a valid region; type='statistically-generated'
-			this.region.tau = .6; % type='statistically-generated'
-			this.region.searchRadius = 1; % how far away from click location to look for regions; type='statistically-generated'
+			this.region.pixel_minimum = 5; % minimum number of pixels required for a valid region; type='Correlated'
+			this.region.tau = .6; % type='Correlated'
+			this.region.search_radius = 1; % how far away from click location to look for regions; type='Correlated'
 			this.region.mask = []; % a binary matrix, where 1 represents a pixel within the region
 			this.region.timeseriesDimension = 'y'; % 'x' or 'y'
 			

@@ -29,19 +29,19 @@ classdef RegionType < redux.Component.Popup & redux.State.Listener & redux.Actio
 			this.currentRegion = [];
 			
 			regions = state.regions;
-			for iRegion = 1:numel(regions)
+            for iRegion = 1:numel(regions)
 				if regions{iRegion}.id == state.currentRegion
 					this.currentRegion = regions{iRegion};
 					break;
 				end
-			end
+            end
 			
-			if isempty(this.currentRegion)
-				config = vt.Config();
-				this.setCurrentPopupString(config.region.type);
-			else
-				this.setCurrentPopupString(this.currentRegion.type);
-			end
+            if isempty(this.currentRegion)
+                config = vt.Config();
+                this.setCurrentPopupString(config.region.type);
+            else
+                this.setCurrentPopupString(this.currentRegion.type);
+            end
 		end
 		
 		function [] = onVideoChange(this, state)
@@ -56,12 +56,21 @@ classdef RegionType < redux.Component.Popup & redux.State.Listener & redux.Actio
 		end
 		
 		function [] = onRegionsChange(this, state)
-			for iRegion = 1:numel(state.regions)
+            for iRegion = 1:numel(state.regions)
 				if state.regions{iRegion}.id == state.currentRegion
 					this.currentRegion = state.regions{iRegion};
 					break;
 				end
-			end
+            end
+            
+            if ~isempty(this.currentRegion)
+                switch(this.currentRegion.type)
+                    case 'Correlated'
+                        this.setParameters('Enable', 'off');
+                    otherwise
+                        this.setParameters('Enable', 'on');
+                end
+            end
 		end
 	end
 end

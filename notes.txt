@@ -1,3 +1,22 @@
+Notes from July 2021
+
+- Get rid of inert "Delete Region" button when not in editing mode
+- Move the Region Color button to a fixed position near the Show checkboxes
+- Delete notification bar or make it useful
+
+
+**Memory**
+While the toolbox definitely adds a couple hundred MB (and a few more once
+videos have been loaded), a chunk of that gets cleared when the figure is 
+closed and the workspace is cleared (or the ans/app variable that stores
+the toolbox information is overwritten in the workspace, probably).
+
+I didn't do tons of testing or great testing, but just loading videos and
+closing the GUI a few times didn't make the memory skyrocket or anything.
+It seems to clear itself out well enough when the GUI is closed.
+
+---------------------------------------------------------------------------
+
 NOTES FROM JUNE 3-16, 2018
 
 Bug: The New Region ID doesn't get cleared after you exit the program. Either stop

@@ -136,7 +136,7 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 			this.generateRegionParameterPanelId('rectangle');
 		end
 		
-		function gui = renderStatisticalRegionParameters(this, parent, gui)
+		function gui = renderCorrelatedRegionParameters(this, parent, gui)
 			gui.RegionParameters_Stat = redux.Component.Layout.Grid( ...
 				parent, ...
 				'Spacing', this.styles.Spacing + 2 ...
@@ -171,7 +171,7 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 		
 			gui.RegionParameters_Stat.setParameters('Widths', [-1 -1], 'Heights', [-1 -1]);
 		
-			this.generateRegionParameterPanelId('statistically_generated');
+			this.generateRegionParameterPanelId('correlated');
 		end
 		
 		function gui = renderRegionParameters(this, parent, gui)
@@ -179,7 +179,7 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 				parent ...
 			);
 			
-			gui = this.renderStatisticalRegionParameters(gui.RegionParameters, gui);
+			gui = this.renderCorrelatedRegionParameters(gui.RegionParameters, gui);
 			gui = this.renderRectangleParameters(gui.RegionParameters, gui);
 			gui = this.renderCircleParameters(gui.RegionParameters, gui);
 		end

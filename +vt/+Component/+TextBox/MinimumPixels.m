@@ -22,6 +22,8 @@ classdef MinimumPixels < redux.Component.TextBox.RangeBox & redux.State.Listener
 			p.parse(parent, varargin{:});
 			
 			this@redux.Component.TextBox.RangeBox(parent, varargin{:});
+            
+            this.maxValue = Inf;
 		end
 		
 		%%%%% STATE LISTENER %%%%%
@@ -56,8 +58,17 @@ classdef MinimumPixels < redux.Component.TextBox.RangeBox & redux.State.Listener
 				this.setParameters('String', '');
 				this.backupText = '';
 			else
-				this.setParameters('String', num2str(this.currentRegion.minPixels));
-				this.backupText = num2str(this.currentRegion.minPixels);
+				this.setParameters('String', num2str(this.currentRegion.pixel_minimum));
+				this.backupText = num2str(this.currentRegion.pixel_minimum);
+			end
+        end
+        
+        function [] = onRegionsChange(this, state)
+			for iRegion = 1:numel(state.regions)
+				if state.regions{iRegion}.id == state.currentRegion
+					this.currentRegion = state.regions{iRegion};
+					break;
+				end
 			end
 		end
 		
@@ -74,7 +85,7 @@ classdef MinimumPixels < redux.Component.TextBox.RangeBox & redux.State.Listener
 				this.setParameters('String', num2str(validatedNum));
 				this.backupText = num2str(validatedNum);
 				action = this.actionFactory.actions.CHANGE_REGION_PARAMETER;
-				action.prepare(this.currentRegion, 'minPixels', validatedNum, this.video);
+				action.prepare(this.currentRegion, 'pixel_minimum', validatedNum, this.video);
 				action.dispatch();
 			end
 		end
