@@ -1,3 +1,0 @@
-Check if implementing AbortSet in vt.State is more or less overhead than not
-implementing it (which would mean that state change notifications are triggered
-even when this state is equal to the previous state)
