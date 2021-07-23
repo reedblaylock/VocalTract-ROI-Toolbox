@@ -2,8 +2,8 @@
 
 Author: Reed Blaylock
 
-Adam Lammert wrote the original region of interest code that inspired this toolbox.
-Miran Oh wrote the centroid algorithm for tracking objects within a region.
+Adam Lammert (Lammert et al. 2010) wrote the original region of interest code that inspired this toolbox.
+Miran Oh and Yoonjeong Lee (Oh & Lee 2018) wrote the centroid algorithm for tracking objects within a region.
 
 ## About the VocalTract ROI Toolbox
 
@@ -160,7 +160,15 @@ Short answer:
 
 Note: if you had trouble opening your videos in QuickTime, this should fix that problem too.
 
-## Acknowledgements
+## How to cite
+
+Reed Blaylock. (2021). VocalTract ROI Toolbox.
+
+## References
+
+- Adam Lammert, Michael I. Proctor, Shrikanth S. Narayanan, "Data-Driven analysis of realtime vocal tract MRI using correlated image regions", Interspeech, Makuhari, Japan, 2010. <a href="https://sail.usc.edu/span/pdfs/lammert2010datadriven.pdf">[Paper]</a>
+- Miran Oh, Yoonjeong Lee, “ACT: An Automatic Centroid Tracking tool for analyzing vocal tract actions in real-time magnetic resonance imaging speech production data”, Journal of the Acoustical Society of America, vol. 144, no. 4, pp. EL290-EL296, 2018. <a href="https://asa.scitation.org/doi/10.1121/1.5057367">[Paper]</a>
+
 
 The burden of creation was eased by:
 - Adam Lammert
