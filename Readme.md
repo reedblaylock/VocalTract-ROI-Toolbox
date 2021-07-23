@@ -170,12 +170,7 @@ Reed Blaylock. (2021). VocalTract ROI Toolbox. Available online at <a href="http
 
 - Adam Lammert, Michael I. Proctor, Shrikanth S. Narayanan, "Data-Driven analysis of realtime vocal tract MRI using correlated image regions", Interspeech, Makuhari, Japan, 2010. <a href="https://sail.usc.edu/span/pdfs/lammert2010datadriven.pdf">[Paper]</a>
 - Miran Oh, Yoonjeong Lee, “ACT: An Automatic Centroid Tracking tool for analyzing vocal tract actions in real-time magnetic resonance imaging speech production data”, Journal of the Acoustical Society of America, vol. 144, no. 4, pp. EL290-EL296, 2018. <a href="https://asa.scitation.org/doi/10.1121/1.5057367">[Paper]</a>
-
-
-The burden of creation was eased by:
-- Adam Lammert
-- <a href="https://www.mathworks.com/matlabcentral/fileexchange/47982-gui-layout-toolbox">GUI Layout Toolbox</a>
-- <a href="https://www.mathworks.com/matlabcentral/fileexchange/46289-rgb2hex-and-hex2rgb">hex2rgb</a>
+- Chad Greene (2021). rgb2hex and hex2rgb (<a href="https://www.mathworks.com/matlabcentral/fileexchange/46289-rgb2hex-and-hex2rgb">hex2rgb</a>), MATLAB Central File Exchange. Retrieved July 23, 2021.
 
 ## Things I haven't talked about here but should
 
