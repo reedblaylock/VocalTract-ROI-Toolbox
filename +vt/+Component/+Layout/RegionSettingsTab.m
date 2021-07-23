@@ -82,14 +82,15 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 				gui.RegionRadiusPanel ...
 			);
 		
-			% Change color button
-			gui.RegionColor_Circle = vt.Component.Button.RegionColor( ...
-				gui.RegionParameters_Circle, ...
-				'Change color' ...
-			);
+% 			% Change color button
+% 			gui.RegionColor_Circle = vt.Component.Button.RegionColor( ...
+% 				gui.RegionParameters_Circle, ...
+% 				'Change color' ...
+% 			);
 		
 % 			gui.RegionParameters_Circle.setParameters('Widths', [-1], 'Heights', [-1 -1]);
-			gui.RegionParameters_Circle.setParameters('Heights', [-1 -1]);
+% 			gui.RegionParameters_Circle.setParameters('Heights', [-1 -1]);
+            gui.RegionParameters_Circle.setParameters('Widths', [-1], 'Heights', [-1]);
 		
 			this.generateRegionParameterPanelId('circle');
 		end
@@ -118,11 +119,11 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 				gui.RegionHeightPanel ...
 			);
 		
-			% Change color button
-			gui.RegionColor_Rectangle = vt.Component.Button.RegionColor( ...
-				gui.RegionParameters_Rectangle, ...
-				'Change color' ...
-			);
+% 			% Change color button
+% 			gui.RegionColor_Rectangle = vt.Component.Button.RegionColor( ...
+% 				gui.RegionParameters_Rectangle, ...
+% 				'Change color' ...
+% 			);
 		
 			% + Timeseries display for centroid
 			gui.TimeseriesDimensionOrEmpty = vt.Component.Layout.TimeseriesDimensionOrEmpty( ...
@@ -131,7 +132,8 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 			);
 			gui = gui.TimeseriesDimensionOrEmpty.render(gui);
 		
-			gui.RegionParameters_Rectangle.setParameters('Widths', [-1 -1], 'Heights', [-1 -1]);
+% 			gui.RegionParameters_Rectangle.setParameters('Widths', [-1 -1], 'Heights', [-1 -1]);
+			gui.RegionParameters_Rectangle.setParameters('Widths', [-1 -1], 'Heights', [-1]);
 		
 			this.generateRegionParameterPanelId('rectangle');
 		end
@@ -201,9 +203,15 @@ classdef RegionSettingsTab < redux.Component.Layout.VBox & redux.State.Listener
 				gui.RegionDisplay, ...
 				'Show outline' ...
 			);
+        
+            % Change color button
+			gui.RegionColor = vt.Component.Button.RegionColor( ...
+				gui.RegionDisplay, ...
+				'Change color' ...
+			);
 		
-% 			gui.RegionDisplay.setParameters('Widths', [-1 -1], 'Heights', [-1]);
-			gui.RegionDisplay.setParameters('Widths', [-1 -1]);
+			gui.RegionDisplay.setParameters('Widths', [-1 -1], 'Heights', [-1 -1]);
+% 			gui.RegionDisplay.setParameters('Widths', [-1 -1]);
 
 		end
 		

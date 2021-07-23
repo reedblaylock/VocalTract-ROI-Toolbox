@@ -90,7 +90,7 @@ classdef App < redux.App
 %             gui = gui.MidlineTab.render(gui);
 			
 % 			gui.RightBox.setParameters('TabTitles', {'Regions', 'Timeseries', 'Midline'});
-			gui.RightBox.setParameters('TabTitles', {'Regions', 'Timeseries'});
+			gui.RightBox.setParameters('TabTitles', {'Regions', 'Time series'});
             
             % Make sure Regions tab is the currently open one
             gui.RightBox.setParameters('Selection', 1);
