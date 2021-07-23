@@ -42,12 +42,12 @@ Here's an example of how I organize my code. First, I keep toolboxes like <a hre
 
 The videos I want to analyze are stored in a completely separate folder (and preferably backed up to the cloud, i.e., in a Google Drive or Dropbox folder), usually with .AVIs and .WAVs stored in their own folders:
 
-- Google Drive
-    - Video folder
-        - speaker A
+- Google Drive/
+    - Project folder/
+        - speaker A/
             - avi/
             - wav/
-        - speaker B
+        - speaker B/
             - avi/
             - wav/
 
