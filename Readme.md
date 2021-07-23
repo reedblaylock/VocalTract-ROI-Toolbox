@@ -1,4 +1,5 @@
 # VocalTract ROI Toolbox
+<a href="https://zenodo.org/badge/latestdoi/98065485"><img src="https://zenodo.org/badge/98065485.svg" alt="DOI"></a>
 
 Author: Reed Blaylock
 
@@ -162,7 +163,8 @@ Note: if you had trouble opening your videos in QuickTime, this should fix that 
 
 ## How to cite
 
-Reed Blaylock. (2021). VocalTract ROI Toolbox.
+Reed Blaylock. (2021). VocalTract ROI Toolbox. Available online at <a href="https://github.com/reedblaylock/VocalTract-ROI-Toolbox">https://github.com/reedblaylock/VocalTract-ROI-Toolbox</a>. DOI: <a href="https://zenodo.org/badge/latestdoi/98065485">https://zenodo.org/badge/latestdoi/98065485</a>
+
 
 ## References
 
