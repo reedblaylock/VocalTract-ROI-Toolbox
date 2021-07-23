@@ -1,30 +1,22 @@
-# VocalTract ROI Toolbox (beta)
+# VocalTract ROI Toolbox
 
-Author: Reed Blaylock, with crucial contributions from Adam Lammert
+Author: Reed Blaylock
+Adam Lammert wrote the original region of interest code that inspired this toolbox.
+Miran Oh wrote the centroid algorithm for tracking objects within a region.
 
-## What is this?
+## About the VocalTract ROI Toolbox
 
-This is a MATLAB program for assisting region of interest (ROI) analysis of the movements of the vocal tract articulators in real-time magnetic resonance (rtMR) videos.
+This is a MATLAB program for assisting region of interest (ROI) analysis of the movements of the vocal tract articulators in real-time magnetic resonance (rtMR) videos. It allows you to create regions and generate time-series that can be used for a variety of analyses. For example, time series exported from this tool can be loaded directly into mviewRT (Proctor, 2010).
 
-This toolbox does not perform any sort of analysis for you; instead, you can use it to easily make regions and generate time-series that can be analyzed in a different program. For instance, the exported data format can be loaded directly into mviewRT by Mike Proctor ((INSERT LINK)).
+This toolbox was built for linguists studying the movements of the speech articulators in the vocal tract, but in theory it could be used by anyone who wants to use an intensity-based the region of interest technique.
 
-## Who should use this toolbox?
+The GUI was designed to minimize the overhead required to perform data analysis. It was made to aid users with any level of programming experience and therefore requires very little programming knowledge.
 
-This toolbox was built for linguists studying the movements of the speech articulators in the vocal tract, but in theory it could be used by anyone who wants to use the region of interest technique for any type of video (though only AVIs are currently supported).
+## Installation
 
-The GUI was designed to minimize the overhead required to perform data analysis. It was made for users with any level of programming experience, from "none" to "I could have built this myself".
+This code runs in MATLAB and requires the Image Processing Toolbox as well as the <a href="https://github.com/reedblaylock/MATLAB-Redux">MATLAB-Redux</a> package. It was tested on versions R2014b and R2020a, but should work well enough on any version after R2010b.
 
-## How to install this toolbox
-
-### What do I need?
-
-You will need MATLAB to run this code after it has been installed.
-
-This toolbox uses the MATLAB class VideoReader; as a result, MATLAB versions earlier than 2010b will be incompatible. Some versions of MATLAB running on OSX may also be incompatible.
-
-### What's the installation process?
-
-You can install this toolbox with a 3-step process:
+Installation is a 3-step process:
 
 1. Download this code as a .zip file by clicking the green "Clone or download" button above
 2. Unzip/extract the files you just downloaded into a new folder
@@ -36,23 +28,105 @@ That's it!
 
 ### Opening the toolbox
 
-To get started, type `vttoolbox` into the MATLAB command window, like so:
+To get started, type `vt.init;` into the MATLAB command window, like so:
 
 ```
->> vttoolbox
+>> vt.init;
 ```
 
-You should see a new MATLAB figure with some axes, text boxes, and buttons. None of it works yet because there's no video to make regions for.
-
-You won't need the MATLAB command window again while you use the GUI.
+The command `vt.init` displays the graphical user interface (GUI) for the toolbox. Users who want more direct access to their data can intialize the GUI as `app = vt.init;` to store the updating state of the application in the variable `app`. (If `vt.init` is called without a trailing semicolon, MATLAB stores this state information in the `ans` variable by default.)
 
 ### Load a video
 
-You can load an AVI video into the GUI by going to the figure's `File` menu and selecting `Load...` > `AVI`. Once you've done this, you should see the first frame of your video, and a few of the figure's controls should be usable.
+Clicking on `File` > `Video...` > `Load AVI` to open the file selection window. Select the video you want to analyze, then click `Open`.
 
-#### What if I get an error when loading a video?
+If your video isn't encoded as an .AVI file, you'll need to load it into the MATLAB workspace separately as a matrix of size (video width in pixels) x (video height in pixels) x (number of video frames), then load the video with `File` > `Video...` > `Load variable from workspace`.
 
-This StackOverflow answer may be helpful: https://stackoverflow.com/questions/22773403/cant-read-an-avi-file-to-matlab-using-videoread?answertab=votes#tab-top.
+When your video has loaded, the GUI should display the first frame of your video and enable the "New region" button.
+
+### Video interaction
+
+A set of controls beneath the video frame lets you change how your video is displayed. While the video is set to `frame`, a text box with a number inside displays the number of the currently displayed video frame; you can move to a particular frame by changing that number. You can also use the slider to move back and forth through your video.
+
+Aside from `frame`, there are two other radio buttons:
+- `mean`: Display the average intensity for each pixel of the video
+- `std dev`: Display the standard deviation of the intensity of each pixel of the video
+
+These different views may be helpful when determining where to place regions of interest.
+
+### Region settings
+
+#### Creating a new region
+
+Once you have loaded a video, you can make and edit regions of interest. To create a new region, start by clicking the "New region" button, then click somewhere on the image of your video to place the new region centered on the point you click. If you don't like the placement of your region, you can click somewhere else in the video frame, and the region will move to that location.
+
+You can change several properties about your region:
+
+- Region name: How you can refer to your region
+- Region type: How the time series for this region is calculated (see below)
+- Region shape: A pseudo-circle ("Circle"), a rectangle ("Rectangle"), or a region shaped by calculating which pixels tend to change together near the pixel you selected ("Correlated")
+
+Time series for different region types are calculated as follows:
+
+- Average: The frame-by-frame average of all the pixels within a region
+- Binary: A value of 0 or 1 indicating that the region is empty (0, dark) or full (1, bright)
+- Centroid: A center of brightness (or "centroid") is calculated that tracks brightness as it moves through the region
+
+Region shapes have these parameters:
+
+- Circle: Radius changes the radius of the pseudo-circular region, with larger values yielding larger regions
+- Rectangle: Width and Height determine how many pixels tall and wide the region will be
+- Correlated regions are calculated based on the following options:
+    - Minimum number of pixels: The lowest number of pixels that can be in this region for the region to be well-defined
+    - Tau: How well-correlated nearby pixels must be to become part of the region (must be greater than 0 and less than 1, default 0.6)
+    - Search radius: How far the algorithm can look for viable origin points beyond the value you initially selected; a search radius of 1 means the correlation algorithm is run separately over 9 different pixels (the one you selected and its eight nearest neighbors), and the result with the greatest range in average pixel intensity is returned as the best region
+
+Note that because of how the correlated pixels are found, regions with shapes of "Correlated" can only have Region types of "Average".
+
+You can change how the region is displayed in the GUI by changing its color, hiding or showing the origin point of the region, and hiding or showing the border of your region. (These display settings will persist even when you're done editing the region, so it's recommended to always keep either the origin point or border visible so you can find it again.)
+
+Once you have successfully placed a region on your video, exit region-editing mode by you can edit it by clicking "Stop editing". If you decide that you actually don't want this region, you can keep making changes to it or click "Delete Region" to get rid of it entirely.
+
+#### Editing a region
+
+To edit a region, first select it by clicking somewhere inside it (currently, you must select a pixel of the video that is visible inside the region; it won't work if you click on the origin point itself or on the border line). Then, click the `Edit region` button.
+
+Once you are back in editing mode, you can change the region in any way, just as if you were creating a new region (see above).
+
+#### Deleting a region
+
+To delete a region: select the region by clicking on it, click "Edit Region", then "Delete Region".
+
+### Time series
+
+The "Timeseries" tab replaces the "Regions" tab with a display of all the time series of all the regions that have been created so far. When the video is in `frame` display mode, a vertical bar will be positioned over each time series at the time point corresponding to the current frame being displayed.
+
+Time series are not currently editable, but are helpful for visually evaluating how effectively your regions are capturing the information you want them to capture.
+
+### Export and import regions
+
+If you want to save the regions you've made, click `File` > `Regions...` > `Export regions`. A familiar file-save prompt will appear asking you where you want to save your regions and what you want to name them. The default is "[the name of your video]_regions.mat". It is recommended, but not required, to end your exported region file names with "[...]_regions.mat" to facilitate importing them later on, but any file name will work fine.
+
+To import regions you've saved (e.g., from a previous session or from a different video), click `File` > `Regions...` > `Import regions`. A file selection interface will ask which regions you want to load, defaulting to files in the working directory ending with "_regions.mat". However, you can load any .mat file that's holding saved regions.
+
+### Export time series for MviewRT
+
+When you are satisfied with your regions, you can export the corresponding time series to a format that will work in other applications like MviewRT (Proctor, 2010). To export your time series, click `File` > `Export for mview`. This will prompt you to save your time series as a .mat file of the form "[the name of your video]_mview.mat". As with "_regions" part of the name when exporting regions, you are not required to keep the "_mview" part. This file can be loaded into the MATLAB workspace and loaded directly into MviewRT as `mviewRT(data)`.
+
+Note that exporting for MviewRT currently depends on a specific folder structure:
+- Project folder/
+    - avi/
+    - wav/
+
+The `avi/` folder should contain the video(s) whose time series you plan to analyze, and the `wav/` folder should hold the corresponding audio files. If you are not using this folder structure, the call to `mviewRT(data)` won't know where to find the audio and video files that MviewRT requires.
+
+If you are not using MviewRT for time series analysis, the time series for each region is accessible as part of the `app` variable returned by the command that initializes the GUI, `app = vt.init`.
+
+## Troubleshooting
+
+### Video won't load
+
+Depending on your MATLAB version and your operating system, you may have trouble opening an .AVI file with the toolbox. I don't know all the possible problems, but this StackOverflow answer was helpful for someone once: https://stackoverflow.com/questions/22773403/cant-read-an-avi-file-to-matlab-using-videoread?answertab=votes#tab-top.
 
 Short answer:
 1. Download ffmpeg (on Mac, brew install ffmpeg)
@@ -60,73 +134,15 @@ Short answer:
 
 Note: if you had trouble opening your videos in QuickTime, this should fix that problem too.
 
-### Video interaction
+## Acknowledgements
 
-Beneath the image of your video frame is a set of controls. The text box with a number inside can be edited to take you to any frame you want. You can also use the slider to change frames incrementally.
+The burden of creation was eased by:
+- Adam Lammert
+- <a href="https://www.mathworks.com/matlabcentral/fileexchange/47982-gui-layout-toolbox">GUI Layout Toolbox</a>
+- <a href="https://www.mathworks.com/matlabcentral/fileexchange/46289-rgb2hex-and-hex2rgb">hex2rgb</a>
 
-There are also three radio buttons: `frame`, `mean`, and `std dev`.
-- `frame` (default): display one frame at a time
-- `mean`: display the average intensity for each pixel of the video
-- `std dev`: display the standard deviation of the intensity of each pixel of the video
 
-You can use the radio buttons to change the video display at any time. You can only change which frame is displayed in `frame` mode.
-
-### A brief note about GUI tabs
-
-This GUI currently has two tabbed panels to the right of the video frame display: a `Region settings` panel and a `Timeseries` panel.
-
-The `Region settings` panel contains all the controls and options for creating, saving, editing, and deleting regions.
-
-The `Timeseries` panel displays the time-series found for each region you have placed, including a region you may be currently editing. Because the `Timeseries` panel currently has no interactivity, there are no instructions for how to use it.
-
-### Region settings
-
-#### Creating a new region
-
-Whenever you load a new video, or when you're not busy editing another region, the `New region` button will be available. To make a new region, start by clicking that button.
-
-When you click the `New region` button, many of the region-settings input fields will become enabled. The default setting is a red, "circular" region with a radius of 3 pixels.
-
-You can place a region by clicking somewhere in the video frame. A region will appear with its origin centered at the pixel you clicked. If you don't like the placement of your region, you can click somewhere else in the video frame, and the region will move to that location.
-
-Currently, the name, shape, size, and location of your region are all editable.
-
-- Name: How you can refer to your region; your region must have a name before it can be saved
-- Shape: "Circle" or rectangle
-- Size: The radius of a circular region, or the width and height of a rectangular region
-- Location: See above for instructions on how to place a region; your region must have a location before it can be saved
-
-You can also change how the region is displayed in the GUI by changing its color, hiding or showing the origin point of the region, and hiding or showing the border of your region. Note: these display settings will persist after you save a region, so you are advised to always keep the origin point or border visible.
-
-If you decide that you don't want a new region after all, you can click the `Cancel region changes` button.
-
-#### Saving a region
-
-If you have successfully placed a region on the video frame and given it a name, you can edit it by clicking the `Save region` button. This will cause the GUI to exit region-editing mode; however, the region you just saved will still be selected, and can be changed by clicking the `Edit region` button.
-
-#### Editing a region
-
-To edit a region, first select it by clicking somewhere inside it (currently, clicking the origin point or the border will not cause the region to be selected; you must select a pixel of the video that is visible inside the region). Then, click the `Edit region` button.
-
-Once you are back in editing mode, you can change the region in any way, just as if you were creating a new region (see above). There are only two differences between editing a region and creating a new region:
-
-1. When editing a region, canceling your changes reverts the region to its saved state, rather than destroying it
-2. The `Delete region` button is available
-
-#### Deleting a region
-
-To delete a region, first select it by clicking on a point contained by the region, then click the `Delete region` button. Note that regions can only be deleted if they have first been saved; to remove a new region that has not been saved, click `Cancel region changes`.
-
-### What do I do with all these regions?
-
-#### Export all time-series
-
-Because this toolbox does not perform analysis for you, you must export the time-series from the GUI to a .mat file if you want to use the regions and time-series you created.
-
-To export all your saved regions, go to the figure's `File` menu and selecting `Export timeseries`. Regions that have not been saved will not be exported.
-
-Caution: the exported time-series will be saved to a .mat file with the same name as the video you loaded. If you already have a .mat file by that name, it will be over-written.
-
+<!--
 #### Use the exported time-series
 
 After you export time-series, you can load them back into MATLAB by double-clicking on the exported .mat file, dragging and dropping it into the MATLAB command window, or by using the command prompt directly:
@@ -155,6 +171,7 @@ If you are using mviewRT, you can load this data structure directly into mviewRT
 ```
 
 If you are not using mviewRT, you will need to access each time-series manually.
+-->
 
 <!--
 ## Application architecture
@@ -207,10 +224,5 @@ extending the vt.State, vt.Reducer, and vt.Component classes to suit their own
 needs.
 -->
 
-## Acknowledgements
 
-The burden of creation was eased by:
-- Adam Lammert
-- <a href="https://www.mathworks.com/matlabcentral/fileexchange/47982-gui-layout-toolbox">GUI Layout Toolbox</a>
-- <a href="https://www.mathworks.com/matlabcentral/fileexchange/46289-rgb2hex-and-hex2rgb>hex2rgb</a>
 <!-- - <a href="http://www.mathworks.com/matlabcentral/fileexchange/1039-hline-and-vline" target="_blank">vline</a> -->
