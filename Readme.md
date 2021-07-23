@@ -1,6 +1,7 @@
 # VocalTract ROI Toolbox
 
 Author: Reed Blaylock
+
 Adam Lammert wrote the original region of interest code that inspired this toolbox.
 Miran Oh wrote the centroid algorithm for tracking objects within a region.
 
@@ -23,6 +24,31 @@ Installation is a 3-step process:
 3. Open MATLAB and add the folder you just created *and its subfolders* to your MATLAB path
 
 That's it!
+
+## Folder structure
+
+Here's an example of how I organize my code. First, I keep toolboxes like <a href="https://github.com/reedblaylock/MATLAB-Redux">MATLAB-Redux</a> and VocalTract-ROI-Toolbox next to each other inside a folder specifically designated for MATLAB packages I download:
+
+- MATLAB_toolboxes/
+    - MATLAB-Redux/
+        - +redux/
+        - GUI Layout Toolbox
+        - etc.
+    - VocalTract-ROI-Toolbox/
+        - +vt/
+        - hex_and_rgb_v2/
+        - etc.
+
+The videos I want to analyze are stored in a completely separate folder (and preferably backed up to the cloud, i.e., in a Google Drive or Dropbox folder), usually with .AVIs and .WAVs stored in their own folders:
+
+- Google Drive
+    - Video folder
+        - speaker A
+            - avi/
+            - wav/
+        - speaker B
+            - avi/
+            - wav/
 
 ## How to use this toolbox
 
@@ -140,6 +166,12 @@ The burden of creation was eased by:
 - Adam Lammert
 - <a href="https://www.mathworks.com/matlabcentral/fileexchange/47982-gui-layout-toolbox">GUI Layout Toolbox</a>
 - <a href="https://www.mathworks.com/matlabcentral/fileexchange/46289-rgb2hex-and-hex2rgb">hex2rgb</a>
+
+## Things I haven't talked about here but should
+
+- Loading multiple videos at the same time
+- The structure of the `app` variable
+- How to download MATLAB-redux
 
 
 <!--
