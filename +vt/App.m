@@ -102,9 +102,9 @@ classdef App < redux.App
 			
 			% + Video menus
 			gui.VideoMenu = redux.Component.MenuItem( gui.FileMenu, 'Video...' );
-			gui.LoadAvi   = vt.Component.MenuItem.Load( gui.VideoMenu, 'Load AVI', 'avi' );
-			gui.LoadVariable   = vt.Component.MenuItem.Load( gui.VideoMenu, 'Load variable from workspace', 'variable' );
-			gui.CorrectHeadMovement = vt.Component.MenuItem.CorrectHeadMovement( gui.VideoMenu, 'Correct head movement');
+			gui.LoadAvi   = vt.Component.MenuItem.Load( gui.VideoMenu, 'Load video from file', 'video' );
+			gui.LoadVariable   = vt.Component.MenuItem.Load( gui.VideoMenu, 'Load video from workspace', 'variable' );
+			gui.CorrectHeadMovement = vt.Component.MenuItem.CorrectHeadMovement( gui.VideoMenu, 'Correct head movement (beta)');
 			gui.ConvertToBlackAndWhite = vt.Component.MenuItem.ConvertToBlackAndWhite( gui.VideoMenu, 'Convert to black and white');
 			
 			% + Region menus

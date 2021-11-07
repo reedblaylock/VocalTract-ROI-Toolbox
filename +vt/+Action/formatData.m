@@ -66,7 +66,7 @@ function d = formatData(v, fName, wav_dir, avi_dir, video)
         try
             h = VideoReader(video_name);
         catch
-            error('unable to load AVI file %s',video_name);
+            error('unable to load file %s',video_name);
         end
         frames = v.gest(1).frames + 1;		% 0- to 1-based
         try

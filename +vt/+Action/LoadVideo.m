@@ -38,12 +38,12 @@ function video = loadVideo(loadType)
         };
         default_input = { ...
             pwd, ...
-            'jr_all_beats.avi', ...
+            'video_name.avi', ...
             '84', ...
             '84', ...
-            '21100', ...
+            '1000', ...
             '83.2778', ...
-            'beat_avi_M' ...
+            'my_variable' ...
         };
         input_response = inputdlg(prompts, 'Load video from workspace variable', 1, default_input);
         video = struct( ...
@@ -56,7 +56,7 @@ function video = loadVideo(loadType)
             'matrix', evalin('base', input_response{7}) ...
         );
     else
-        [filename, pathname] = uigetfile(['*.' loadType], ['Select ' loadType ' file(s) to load'], 'MultiSelect', 'on');
+        [filename, pathname] = uigetfile('*.*', 'Select video file(s) to load', 'MultiSelect', 'on');
         if isequal(filename,0) || isequal(pathname,0)
             return;
         end
@@ -83,26 +83,29 @@ function video = loadVideo(loadType)
             end
 
             % Check that the file really has extension loadType
-            [~, ~, ext] = fileparts(fullpath);
-            if(~strcmp(ext, ['.' loadType]))
-                % Error: file is incorrect type
-                excp = MException('VTToolbox:WrongExtension', ['The file you selected is not of type ' loadType '.']);
-                throw(excp);
-                % But maybe a user thought they wanted an AVI but actually
-                % wanted a VT. Is it worth making them start again, or should
-                % you load the VT but issue a notification that the target file
-                % wasn't of the target file type?
-            end
+%             [~, ~, ext] = fileparts(fullpath);
+%             if(~strcmp(ext, ['.' loadType]))
+%                 % Error: file is incorrect type
+%                 excp = MException('VTToolbox:WrongExtension', ['The file you selected is not of type ' loadType '.']);
+%                 throw(excp);
+%                 % But maybe a user thought they wanted an AVI but actually
+%                 % wanted a VT. Is it worth making them start again, or should
+%                 % you load the VT but issue a notification that the target file
+%                 % wasn't of the target file type?
+%             end
 
-            switch(ext)
-                case '.avi'
-                    vr = VideoReader(fullpath);
-                    matrix = vr2matrix(vr);
-                otherwise
-                    % Error: unknown request type
-                    excp = MException('VTToolbox:InvalidExtension', ['File type ' ext ' is unknown.']);
-                    throw(excp);
-            end
+%             switch(ext)
+%                 case '.avi'
+%                     vr = VideoReader(fullpath);
+%                     matrix = vr2matrix(vr);
+%                 otherwise
+%                     % Error: unknown request type
+%                     excp = MException('VTToolbox:InvalidExtension', ['File type ' ext ' is unknown.']);
+%                     throw(excp);
+%             end
+
+            vr = VideoReader(fullpath);
+            matrix = vr2matrix(vr);
             
             if iFile == 1
                 video = struct( ...
@@ -113,9 +116,9 @@ function video = loadVideo(loadType)
                     'nFrames', vr.NumberOfFrames, ...
                     'frameRate', vr.FrameRate, ...
                     'matrix', matrix ...
-                ); %#ok<GENDEP> vr.NumberOfFrames is still ok to use as of R2017a
+                ); %#ok<VIDREAD> vr.NumberOfFrames is still ok to use as of R2017a and R2020a
             else
-                video.nFrames = video.nFrames + vr.NumberOfFrames;
+                video.nFrames = video.nFrames + vr.NumberOfFrames; %#ok<VIDREAD> vr.NumberOfFrames is still ok to use as of R2017a and R2020a
                 video.matrix = [video.matrix; matrix];
             end
         end
@@ -141,7 +144,7 @@ function [M] = vr2matrix(vr)
 	vidFrames = read(vr);
 
 	% Convert VideoReader output to something usable
-	for k = 1 : vr.NumberOfFrames;
+	for k = 1:vr.NumberOfFrames
 		mov(k).cdata = vidFrames(:,:,:,k); %#ok<AGROW>
 		mov(k).colormap = []; %#ok<AGROW>
 	end
