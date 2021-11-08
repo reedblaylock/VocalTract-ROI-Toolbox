@@ -29,6 +29,8 @@ function newState = regions(varargin)
 			
 			newState = p.Results.oldState;
 			newState(iRegion) = [];
+        case 'DELETE_ALL_REGIONS'
+            newState = {};
 		case 'IMPORT_REGIONS'
             newState = horzcat(p.Results.oldState, p.Results.action.regions);
 % 			newState = p.Results.oldState;

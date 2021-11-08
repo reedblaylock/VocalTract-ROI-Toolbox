@@ -109,6 +109,7 @@ classdef App < redux.App
 			
 			% + Region menus
 			gui.RegionMenu = redux.Component.MenuItem( gui.FileMenu, 'Regions...' );
+            gui.DeleteAllRegions = vt.Component.MenuItem.DeleteAllRegions( gui.RegionMenu, 'Delete all regions' );
 			gui.ExportRegions = vt.Component.MenuItem.ExportRegions( gui.RegionMenu, 'Export regions' );
 			gui.ImportRegions = vt.Component.MenuItem.ImportRegions( gui.RegionMenu, 'Import regions' );
 			
