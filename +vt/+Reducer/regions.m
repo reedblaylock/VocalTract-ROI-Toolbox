@@ -37,6 +37,8 @@ function newState = regions(varargin)
 % 			for iRegion = 1:numel(p.Results.action.regions)
 % 				newState = horzcat(newState, p.Results.action.regions{iRegion});
 % 			end
+        case 'LOAD_VIDEO'
+            newState = p.Results.action.regions;
 		otherwise
 			newState = p.Results.oldState;
 	end

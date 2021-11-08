@@ -5,18 +5,29 @@ classdef LoadVideo < redux.Action
 	
 	properties
 		video
+        regions
 	end
 	
 	methods
-		function [] = prepare(this, loadType)
+		function [] = prepare(this, loadType, regions)
 			p = inputParser;
 			addRequired(p, 'loadType', @ischar);
-			parse(p, loadType);
+            addRequired(p, 'regions', @iscell);
+			parse(p, loadType, regions);
 			
 			disp('Loading video data...');
-			
+			this.video = loadVideo(p.Results.loadType);
+            
+            if numel(regions) > 0
+                for iRegion = 1:numel(regions)
+                    regions{iRegion}.timeseries = vt.Action.findTimeseries(regions{iRegion}, this.video);
+                end
+            end
+            
+            this.regions = regions;
+            
 % 			try
-				this.video = loadVideo(p.Results.loadType);
+% 				this.video = loadVideo(p.Results.loadType);
 % 			catch excp
 % 				this.log.exception(excp);
 % 				% TODO: Do something about this

@@ -9,9 +9,10 @@
 % redux.LoadMenuItems in the menu bar, then put your implementation logic in
 % redux.Reducer (and any classes it might need to work with).
 	
-classdef Load < redux.Component.MenuItem & redux.Action.Dispatcher
+classdef Load < redux.Component.MenuItem & redux.Action.Dispatcher & redux.State.Listener
 	properties
 		loadType
+        regions = {}
 	end
 	
 	methods
@@ -31,8 +32,12 @@ classdef Load < redux.Component.MenuItem & redux.Action.Dispatcher
 		
 		function [] = dispatchAction(this, source, eventData)
 			action = this.actionFactory.actions.LOAD_VIDEO;
-			action.prepare(this.loadType);
+			action.prepare(this.loadType, this.regions);
 			action.dispatch();
+        end
+        
+        function [] = onRegionsChange(this, state)
+			this.regions = state.regions;
 		end
 	end
 	
