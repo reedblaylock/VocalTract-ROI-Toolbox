@@ -14,29 +14,34 @@ This toolbox was built for linguists studying the movements of the speech articu
 
 The GUI was designed to minimize the overhead required to perform data analysis. It was made to aid users with any level of programming experience and therefore requires very little programming knowledge.
 
+## How to cite
+
+Reed Blaylock. (2021). VocalTract ROI Toolbox. Available online at <a href="https://github.com/reedblaylock/VocalTract-ROI-Toolbox">https://github.com/reedblaylock/VocalTract-ROI-Toolbox</a>. DOI: <a href="https://zenodo.org/badge/latestdoi/98065485">https://zenodo.org/badge/latestdoi/98065485</a>
+
 ## Installation
 
-This code runs in MATLAB and requires the Image Processing Toolbox as well as the <a href="https://github.com/reedblaylock/MATLAB-Redux">MATLAB-Redux</a> package. It was tested on versions R2014b and R2020a, but should work well enough on any version after R2010b.
+This code runs in MATLAB and requires the Image Processing Toolbox as well as the <a href="https://github.com/reedblaylock/MATLAB-Redux">MATLAB-Redux</a> package. It was built on versions R2014b and R2020a, but should work well enough on any version after R2010b.
 
 Installation is a 3-step process:
 
 1. Download this code as a .zip file by clicking the green "Clone or download" button above
 2. Unzip/extract the files you just downloaded into a new folder
-3. Open MATLAB and add the folder you just created *and its subfolders* to your MATLAB path
+3. In MATLAB, add the folder you just created *and its subfolders* to your MATLAB path
 
 That's it!
 
 ## Folder structure
 
-Here's an example of how I organize my code. First, I keep toolboxes like <a href="https://github.com/reedblaylock/MATLAB-Redux">MATLAB-Redux</a> and VocalTract-ROI-Toolbox next to each other inside a folder specifically designated for MATLAB packages I download:
+Here's an example of how I organize my code. First, I keep toolboxes like <a href="https://github.com/reedblaylock/MATLAB-Redux">MATLAB-Redux</a> and VocalTract-ROI-Toolbox next to each other inside a folder specifically designated for MATLAB packages I download. When you're done installing these toolboxes, you should have something like:
 
 - MATLAB_toolboxes/
     - MATLAB-Redux/
         - +redux/
-        - GUI Layout Toolbox
+        - GUI Layout Toolbox/
         - etc.
     - VocalTract-ROI-Toolbox/
         - +vt/
+        - +gs/
         - hex_and_rgb_v2/
         - etc.
 
@@ -49,6 +54,27 @@ The videos I want to analyze are stored in a completely separate folder (and pre
             - wav/
         - speaker B/
             - avi/
+            - wav/
+
+If you're planning to use the VocalTract-ROI-Toolbox to its fullest extent, you may want to organize your workspace with additional folders for region configurations you save for later and other folders helpful for automatic gesture-finding using those regions. A fuller folder structure might look like:
+
+- Google Drive/
+    - Project folder/
+        - speaker A/
+            - avi/
+            - gestural_scores/
+            - images/
+            - manual_gest/
+            - regions/
+            - textgrid/
+            - wav/
+        - speaker B/
+            - avi/
+            - gestural_scores/
+            - images/
+            - manual_gest/
+            - regions/
+            - textgrid/
             - wav/
 
 ## How to use this toolbox
@@ -149,6 +175,13 @@ The `avi/` folder should contain the video(s) whose time series you plan to anal
 
 If you are not using MviewRT for time series analysis, the time series for each region is accessible as part of the `app` variable returned by the command that initializes the GUI, `app = vt.init`.
 
+### Automatic gesture-finding
+
+IN PROGRESS
+- Copy `+gs/init.m` from the VocalTract-ROI-Toolbox to your project or speaker folder and rename it `gs_init.m`. Unlike `vt.init`, you might run `gs_init` with different settings under different circumstances, and you don't want to overwrite changes from one project when you start another.
+- Edit `gs_init.m` to match your preferences and folder structure
+- Run `gs_init` in your MATLAB command line
+
 ## Troubleshooting
 
 ### Video won't load
@@ -156,14 +189,10 @@ If you are not using MviewRT for time series analysis, the time series for each 
 Depending on your MATLAB version and your operating system, you may have trouble opening an .AVI file with the toolbox. I don't know all the possible problems, but this StackOverflow answer was helpful for someone once: https://stackoverflow.com/questions/22773403/cant-read-an-avi-file-to-matlab-using-videoread?answertab=votes#tab-top.
 
 Short answer:
-1. Download ffmpeg (on Mac, brew install ffmpeg)
-2. Run this command: ffmpeg -i videoIWantToUse.avi -an -vcodec rawvideo -y outputNameForUsableVideo.avi
+1. Download ffmpeg (on Mac, go to your Terminal and `brew install ffmpeg`)
+2. Run this command on your Terminal: `ffmpeg -i videoIWantToUse.avi -an -vcodec rawvideo -y outputNameForUsableVideo.avi`
 
-Note: if you had trouble opening your videos in QuickTime, this should fix that problem too.
-
-## How to cite
-
-Reed Blaylock. (2021). VocalTract ROI Toolbox. Available online at <a href="https://github.com/reedblaylock/VocalTract-ROI-Toolbox">https://github.com/reedblaylock/VocalTract-ROI-Toolbox</a>. DOI: <a href="https://zenodo.org/badge/latestdoi/98065485">https://zenodo.org/badge/latestdoi/98065485</a>
+If you had trouble opening your videos in QuickTime, this should fix that problem too.
 
 
 ## References
@@ -176,7 +205,6 @@ Reed Blaylock. (2021). VocalTract ROI Toolbox. Available online at <a href="http
 
 - Loading multiple videos at the same time
 - The structure of the `app` variable
-- How to download MATLAB-redux
 
 
 <!--
@@ -213,26 +241,26 @@ If you are not using mviewRT, you will need to access each time-series manually.
 <!--
 ## Application architecture
 
-vt.Gui.m generates the user interface by constructing various vt.Component 
-objects, most of which are wrappers for the GUI Layout Toolbox classes (uix.*) 
-and native MATLAB GUI-related functions (e.g. uimenu() ). The purpose of the 
-vt.Component wrapper is to support an event-based unidirectional data-flow 
+vt.Gui.m generates the user interface by constructing various vt.Component
+objects, most of which are wrappers for the GUI Layout Toolbox classes (uix.*)
+and native MATLAB GUI-related functions (e.g. uimenu() ). The purpose of the
+vt.Component wrapper is to support an event-based unidirectional data-flow
 framework.
 
-Changes to the GUI (i.e. responses to user interaction) are controlled by 
+Changes to the GUI (i.e. responses to user interaction) are controlled by
 MATLAB's native event system. When the user interacts with a vt.Component, that
-component emits an event; the event is processed by vt.Reducer, the "central 
-hub" for most of the application logic. Events sent to vt.Reducer are called 
+component emits an event; the event is processed by vt.Reducer, the "central
+hub" for most of the application logic. Events sent to vt.Reducer are called
 "Actions", denoting that the event occurred when a user performed an action.
-  
-When appropriate, vt.Reducer will alter the application's "state", stored in 
-vt.State. State is the repository of information being currently used in the 
-application (e.g. current frame number). vt.Components sometimes use the 
+
+When appropriate, vt.Reducer will alter the application's "state", stored in
+vt.State. State is the repository of information being currently used in the
+application (e.g. current frame number). vt.Components sometimes use the
 information in vt.State to shape their look (e.g. the component that shows the
-current frame of the video gets the frame number from the application state). 
-Whenever certain properties of the state change, a MATLAB event is emitted that 
+current frame of the video gets the frame number from the application state).
+Whenever certain properties of the state change, a MATLAB event is emitted that
 tells any components using those properties to re-render themselves (e.g.
-change the picture to another frame). Events triggered by changes in state are 
+change the picture to another frame). Events triggered by changes in state are
 referred to simply as "State changes".
 
 With this architecture in place, all the data flows in one direction:
@@ -241,23 +269,23 @@ vt.Component -> vt.Reducer -> vt.State -> vt.Component
 And for a more complicated example, here's a real one:
 vt.LoadMenuItem -> callback event -> vt.Reducer -> vt.State.isLoading -> PropSet event -> vt.VideoLoader -> dispatch action -> vt.Reducer.setVideoData { -1-> PropSet event -> vt.Axes.update(), -2-> vt.Reducer.finishedLoading }
 
-The main advantage of unidirectional data-flow is to ensure that individual 
+The main advantage of unidirectional data-flow is to ensure that individual
 components don't accidentally damage the application state, or prevent other
-components from getting the information they need. Additional benefits of this 
-architecture include: minimizing the need to pass complex callback functions 
-back and forth between components; the ability to let multiple components use 
-the same function or functions to make similar changes; and, the decreased 
+components from getting the information they need. Additional benefits of this
+architecture include: minimizing the need to pass complex callback functions
+back and forth between components; the ability to let multiple components use
+the same function or functions to make similar changes; and, the decreased
 likelihood of small errors hiding in obscure parts of the application.
 
-(All of these things could have been accomplished in any number of other 
-frameworks, but this unidirectional flow structure was adopted in part because 
-it is currently fashionable in the world of (web) app development, and in part 
+(All of these things could have been accomplished in any number of other
+frameworks, but this unidirectional flow structure was adopted in part because
+it is currently fashionable in the world of (web) app development, and in part
 because it is my preferred choice for maintaining application tidiness. If you
 discover a problem with the implementation of this framework, pleases submit a
 bug report.)
 
-Users are invited to write their own plug-ins for this application by 
-extending the vt.State, vt.Reducer, and vt.Component classes to suit their own 
+Users are invited to write their own plug-ins for this application by
+extending the vt.State, vt.Reducer, and vt.Component classes to suit their own
 needs.
 -->
 
