@@ -15,7 +15,7 @@ classdef PlotlyTask
             % getplotlyoffline('http://cdn.plot.ly/plotly-latest.min.js');
         end
         
-        function plot_url = work(obj, config, start_cut_time, end_cut_time, video_frameRate, gestures, regions, textgrid_labels, textgrid_label_times, plot_title)%, audio, fs_wav)%, textgrid_label_time_samples, meter_labels)
+        function plot_url = work(obj, config, start_cut_time, end_cut_time, video_frameRate, phones, gestures, regions, textgrid_labels, textgrid_label_times, plot_title)%, audio, fs_wav)%, textgrid_label_time_samples, meter_labels)
             all_articulators = flip(config.plot.all_timeseries_display_order);
             
             start_cut_idx = floor(start_cut_time * video_frameRate) + 1;
@@ -68,7 +68,8 @@ classdef PlotlyTask
                 plotly_data = [plotly_data(:)', {timeseries_trace}];
 
                 for iGest = 1:size(gests, 1)
-                    maxc_trace = obj.create_maxc_trace(gests(iGest), video_frameRate, s, nYAxes);%, iArticulator, articulators);
+                    maxc_label = phones([phones.local_ID] == gests(iGest).phone_ID).label;
+                    maxc_trace = obj.create_maxc_trace(gests(iGest), maxc_label, video_frameRate, s, nYAxes);%, iArticulator, articulators);
                     plotly_data = [plotly_data(:)', {maxc_trace}];
                 end
 
@@ -186,7 +187,7 @@ classdef PlotlyTask
             );
         end
         
-        function maxc_trace = create_maxc_trace(obj, gest, video_frameRate, s, nYAxes)%, iArticulator, articulators)
+        function maxc_trace = create_maxc_trace(obj, gest, label, video_frameRate, s, nYAxes)%, iArticulator, articulators)
             maxc_x = gest.MAXC;
             if isnan(maxc_x)
                 maxc_x = gest.PVEL;
@@ -200,7 +201,7 @@ classdef PlotlyTask
                     'color', '#000000', ...
                     'symbol', 'hexagon' ...
                 ), ...
-                'text', char(gest.articulator), ...
+                'text', char(label), ...%char(gest.articulator), ...
                 'textposition', 'top center', ...
                 'yaxis', ['y' num2str(nYAxes)], ...
                 'showlegend', false, ...

@@ -72,7 +72,10 @@ classdef Config
             end
 
             if ~exist(fname.avi, 'file')
-                disp(['Video file not found at ' fname.avi '.']);
+                fname.avi = fullfile(obj.basepath, config.avi_folder, [config.basename '.mp4']);
+                if ~exist(fname.avi, 'file')
+                    disp(['Video file not found at ' fname.avi '.']);
+                end
             end
             
             if ~exist(fname.manual_gest, 'file')

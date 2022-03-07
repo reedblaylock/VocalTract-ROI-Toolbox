@@ -32,7 +32,7 @@ classdef TextGridInterface
                 i = 1;
                 for labelx = obj.tg.tier{tgI(obj.tg, tiername)}.Label
                     textgrid_labels(i) = string(labelx);
-                    textgrid_label_times(i) = obj.tg.tier{tgI(obj.tg, tiername)}.T2(i) - obj.tg.tier{tgI(obj.tg, tiername)}.T1(i);
+                    textgrid_label_times(i) = mean([obj.tg.tier{tgI(obj.tg, tiername)}.T2(i), obj.tg.tier{tgI(obj.tg, tiername)}.T1(i)]);
                     i = i + 1;
                 end
             end

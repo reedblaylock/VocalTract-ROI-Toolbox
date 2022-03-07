@@ -168,7 +168,7 @@ classdef File
             [textgrid_labels, textgrid_label_times] = obj.tg.getLabelsFromTier(obj.config.phoneTier);
             
             plotlyObj = gs.PlotlyTask();
-            plot_url = plotlyObj.work(obj.config, obj.start_cut_time, obj.end_cut_time, obj.video.frameRate, vertcat(obj.phones.gestures), obj.regions, textgrid_labels, textgrid_label_times, plot_title);%, audio, fs_wav);%, textgrid_label_samples, meter_labels);
+            plot_url = plotlyObj.work(obj.config, obj.start_cut_time, obj.end_cut_time, obj.video.frameRate, vertcat(obj.phones), vertcat(obj.phones.gestures), obj.regions, textgrid_labels, textgrid_label_times, plot_title);%, audio, fs_wav);%, textgrid_label_samples, meter_labels);
         end
         
         % Works on an array of File objects. Converts them to table

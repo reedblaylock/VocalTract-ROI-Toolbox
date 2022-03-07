@@ -37,7 +37,8 @@ function d = formatData(v, fName, wav_dir, avi_dir, video)
 		audio_name = fullfile(path, file);
     end
     
-    video_name = fullfile(avi_dir, [fName '.avi']);
+%     video_name = fullfile(avi_dir, [fName '.avi']);
+    video_name = fullfile(avi_dir, video.filename);
 
 	% load audio
 	try

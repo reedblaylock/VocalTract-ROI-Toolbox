@@ -32,7 +32,8 @@ classdef Phone
                 label_articulators = strtrim(split(string(label_articulators), ','));
                 % (don't try to loop when there are no articulators)
                 if label_articulators == ""
-                    label_articulators = [];
+                    continue;
+%                     label_articulators = [];
                 end
                 
                 % Get all the regions that match label_articulators
